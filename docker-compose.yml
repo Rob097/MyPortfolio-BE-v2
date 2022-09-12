@@ -50,6 +50,8 @@ services:
     depends_on:
       - zipkin
 
+########################################################################################################################
+
   apigw:
     image: rob097/apigw:latest
     container_name: myapigw
@@ -63,7 +65,18 @@ services:
       - zipkin
       - eureka-server
 
-########################################################################################################################
+  auth-service:
+    image: rob097/auth-service:latest
+    container_name: auth-service
+    ports:
+      - "9004:9004"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+      - eureka-server
 
   core:
     image: rob097/core:latest

@@ -1,7 +1,7 @@
 package com.myprojects.myportfolio.core.project;
 
 import com.myprojects.myportfolio.clients.project.ProjectR;
-import com.myprojects.myportfolio.core.user.UserRMapper;
+import com.myprojects.myportfolio.core.user.mappers.UserRMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
