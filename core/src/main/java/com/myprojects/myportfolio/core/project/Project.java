@@ -17,14 +17,7 @@ import javax.persistence.*;
 public class Project {
 
     @Id
-    @SequenceGenerator(
-            name = "project_id_sequence",
-            sequenceName = "project_id_sequence"
-    )
-    @GeneratedValue(
-           strategy = GenerationType.SEQUENCE,
-            generator = "project_id_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(
             name = "id",
             updatable = false

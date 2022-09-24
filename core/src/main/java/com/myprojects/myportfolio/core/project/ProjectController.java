@@ -1,10 +1,7 @@
 package com.myprojects.myportfolio.core.project;
 
 import com.myprojects.myportfolio.clients.project.ProjectR;
-import com.myprojects.myportfolio.core.project.ProjectRMapper;
-import com.myprojects.myportfolio.core.project.Project;
-import com.myprojects.myportfolio.core.project.ProjectService;
-import lombok.AllArgsConstructor;
+import com.myprojects.myportfolio.core.project.mappers.ProjectRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/v1/projects")
+@RequestMapping("api/core/projects")
 @Slf4j
 public class ProjectController {
 

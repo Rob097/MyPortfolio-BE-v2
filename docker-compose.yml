@@ -1,34 +1,19 @@
 services:
-  postgres:
-    container_name: mypostgres
-    image: postgres
-    environment:
-      POSTGRES_USER: myportfolio
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
-    ports:
-      - "5432:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
 
-  pgadmin:
-    container_name: mypgadmin
-    image: dpage/pgadmin4
-    depends_on:
-      - postgres
+  mysql:
+    container_name: mysql
+    restart: always
+    image: mysql
     environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: 'root_password'
+      MYSQL_USER: 'myportfolio'
+      MYSQL_PASS: 'password'
     volumes:
-      - pgadmin:/var/lib/pgadmin4
+      - mysql:/var/lib/mysql
     ports:
-      - "5050:80"
+      - "33061:3306"
     networks:
-      - postgres
-    restart: unless-stopped
+      - mysql
 
   zipkin:
     image: openzipkin/zipkin
@@ -87,18 +72,18 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - spring
-      - postgres
+      - mysql
     depends_on:
       - zipkin
-      - postgres
+      - mysql
       - eureka-server
 
 networks:
-  postgres:
+  mysql:
     driver: bridge
   spring:
     driver: bridge
 
 volumes:
-  postgres:
+  mysql:
   pgadmin:

@@ -6,15 +6,15 @@ spring:
     name: core
   datasource:
     username: 'myportfolio'
-    url: jdbc:postgresql://mypostgres:5432/core
+    url: jdbc:mysql://mysql:33061/core
     password: 'password'
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: 'true'
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: 'true'
   zipkin:
     base-url: http://myzipkin:9411

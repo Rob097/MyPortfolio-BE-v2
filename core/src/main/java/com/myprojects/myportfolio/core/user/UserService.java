@@ -1,12 +1,12 @@
 package com.myprojects.myportfolio.core.user;
 
-import lombok.AllArgsConstructor;
+import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,9 +19,25 @@ public class UserService {
         return all;
     }
 
+    public User findById(Integer id) {
+        Validate.notNull(id, "Parametro obbligatorio mancante: id.");
+
+        Optional<User> user = this.userRepository.findById(id);
+        return user.orElseThrow(() -> new NoSuchElementException("Nessun utente trovato con id: " + id));
+    }
+
     public User save(User u){
+        Validate.notNull(u, "Parametro obbligatorio mancante: user.");
+
         User user = this.userRepository.save(u);
         return user;
+    }
+
+    public User update(User userToUpdate){
+        Validate.notNull(userToUpdate, "Parametro obbligatorio mancante: user.");
+        Validate.notNull(userToUpdate.getId(), "Parametro obbligatorio mancante: id user.");
+
+        return this.userRepository.save(userToUpdate);
     }
 
 }

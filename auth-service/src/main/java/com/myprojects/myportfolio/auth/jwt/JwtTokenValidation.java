@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.auth.jwt;
 
+import com.google.common.base.Strings;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import com.myprojects.myportfolio.clients.auth.JwtTokenVerifier;
 import io.jsonwebtoken.Claims;
@@ -61,30 +62,34 @@ public class JwtTokenValidation extends OncePerRequestFilter {
     private void setSecurityContextAuthentication(HttpServletRequest request){
 
         String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
-        String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 
-        Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token);
+        if(!Strings.isNullOrEmpty(authorizationHeader)) {
+            String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 
-        Claims body = claimsJws.getBody();
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
 
-        String username = body.getSubject();
+            Claims body = claimsJws.getBody();
 
-        var authorities = (List<Map<String, String>>) body.get("authorities");
+            String username = body.getSubject();
 
-        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
-                .map(m -> new SimpleGrantedAuthority(m.get("authority")))
-                .collect(Collectors.toSet());
+            var authorities = (List<Map<String, String>>) body.get("authorities");
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                username,
-                null,
-                simpleGrantedAuthorities
-        );
+            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
+                    .map(m -> new SimpleGrantedAuthority(m.get("authority")))
+                    .collect(Collectors.toSet());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    username,
+                    null,
+                    simpleGrantedAuthorities
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        }
 
     }
 }

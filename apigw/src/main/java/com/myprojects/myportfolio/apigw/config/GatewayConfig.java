@@ -17,11 +17,11 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("core-service", r -> r.path("/core/**")
+                .route("core-service", r -> r.path("/api/core/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://CORE"))
 
-                .route("auth-service", r -> r.path("/auth/**")
+                .route("auth-service", r -> r.path("/api/auth/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://AUTH-SERVICE"))
                 .build();

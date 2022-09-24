@@ -11,6 +11,6 @@ public class ProjectR {
 
     private Integer id;
     private String name;
-    private UserR owner;
+    private Integer ownerId;
 
 }
