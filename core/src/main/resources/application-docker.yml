@@ -18,6 +18,8 @@ spring:
     show-sql: 'true'
   zipkin:
     base-url: http://myzipkin:9411
+  jackson:
+    default-property-inclusion: non_null
 
 eureka:
   client:

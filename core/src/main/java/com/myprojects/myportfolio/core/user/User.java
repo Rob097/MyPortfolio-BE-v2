@@ -30,7 +30,8 @@ public class User {
     @OneToMany(
             mappedBy = "owner",
             orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            // In this case I don't want any cascade
+            // cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
     private List<Project> projects;

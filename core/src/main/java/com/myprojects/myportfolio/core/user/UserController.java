@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.user;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myprojects.myportfolio.clients.general.IController;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
@@ -17,11 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,6 +41,7 @@ public class UserController implements IController<UserR, UserQ> {
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
     public ResponseEntity<MessageResources<UserR>> find(UserQ parameters) {
         List<User> users = this.userService.getAllUsers();
         MessageResources<UserR> result = new MessageResources<>(users.stream().map(user -> userRMapper.map(user)).collect(Collectors.toList()));
@@ -90,6 +90,7 @@ public class UserController implements IController<UserR, UserQ> {
      * @throws Exception
      */
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).ADMIN.getName())")
     public ResponseEntity<MessageResource<UserR>> patch(@PathVariable("id") Integer id, @RequestBody List<PatchOperation> operations) throws Exception {
         Validate.notEmpty(operations, "Nessuna operazione passata come parametro");
 

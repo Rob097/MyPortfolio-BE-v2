@@ -1,7 +1,6 @@
 package com.myprojects.myportfolio.auth.security;
 
 import com.myprojects.myportfolio.auth.auth.ApplicationUserService;
-import com.myprojects.myportfolio.auth.jwt.JwtTokenValidation;
 import com.myprojects.myportfolio.auth.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import com.myprojects.myportfolio.clients.auth.JwtTokenVerifier;
@@ -60,10 +59,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(new JwtTokenValidation(secretKey, jwtConfig, jwtTokenVerifier),JwtUsernameAndPasswordAuthenticationFilter.class)
+                //.addFilterAfter(new JwtTokenValidation(secretKey, jwtConfig, jwtTokenVerifier),JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
 //                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
+//                .antMatchers("/api/core/users/**").hasRole(ApplicationUserRole.ADMIN.getName())
                 .anyRequest()
                 .authenticated();
     }

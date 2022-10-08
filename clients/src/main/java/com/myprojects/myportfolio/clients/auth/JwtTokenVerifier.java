@@ -1,5 +1,9 @@
 package com.myprojects.myportfolio.clients.auth;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import org.assertj.core.util.Strings;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -7,6 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenVerifier {
@@ -46,7 +54,9 @@ public class JwtTokenVerifier {
             } else {
 
                 String token = internalAuthorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
-                if (jwtConfig.isInvalid(token)) {
+                try {
+                    jwtConfig.isInvalid(token);
+                } catch(ExpiredJwtException e){
                     message = "Authorization header is expired";
                 }
 

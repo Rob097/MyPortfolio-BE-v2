@@ -3,48 +3,41 @@ package com.myprojects.myportfolio.auth.auth;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ApplicationUser implements UserDetails {
 
-    private final String username;
-    private final String password;
+    private DBUser user;
     private final Set<? extends GrantedAuthority> grantedAuthorities;
     private final boolean isAccountNonExpired;
     private final boolean isAccountNonLocked;
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
 
-    public ApplicationUser(String username,
-                           String password,
-                           Set<? extends GrantedAuthority> grantedAuthorities,
-                           boolean isAccountNonExpired,
-                           boolean isAccountNonLocked,
-                           boolean isCredentialsNonExpired,
-                           boolean isEnabled) {
-        this.username = username;
-        this.password = password;
-        this.grantedAuthorities = grantedAuthorities;
-        this.isAccountNonExpired = isAccountNonExpired;
-        this.isAccountNonLocked = isAccountNonLocked;
-        this.isCredentialsNonExpired = isCredentialsNonExpired;
-        this.isEnabled = isEnabled;
+    public ApplicationUser(DBUser user){
+        this.user = user;
+        this.grantedAuthorities = user.getRoles().stream().flatMap(el -> el.getPermissions().stream()).collect(Collectors.toSet());
+        this.isAccountNonExpired = true;
+        this.isAccountNonLocked = true;
+        this.isCredentialsNonExpired = true;
+        this.isEnabled = true;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return grantedAuthorities;
-    }
+    public Collection<? extends GrantedAuthority> getAuthorities() {return grantedAuthorities;}
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return user.getEmail();
     }
 
     @Override
@@ -65,5 +58,33 @@ public class ApplicationUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public DBUser getDBUser(){
+        return user;
+    }
+
+    public List<String> getAuthoritiesName() {
+        Set<DBPermission> permissions = (Set<DBPermission>) this.getAuthorities();
+        List<String> names = new ArrayList<>();
+
+        if(permissions!=null && !permissions.isEmpty()){
+            names.addAll(permissions.stream().map(el -> el.getAuthority()).collect(Collectors.toList()));
+        }
+
+        return names;
+
+    }
+
+    public List<String> getRolesName() {
+        Set<DBRole> roles = this.user.getRoles();
+        List<String> names = new ArrayList<>();
+
+        if(roles!=null && !roles.isEmpty()){
+            names.addAll(roles.stream().map(el -> el.getName()).collect(Collectors.toList()));
+        }
+
+        return names;
+
     }
 }
