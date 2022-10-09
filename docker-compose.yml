@@ -59,8 +59,10 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - spring
+      - mysql
     depends_on:
       - zipkin
+      - mysql
       - eureka-server
 
   core:

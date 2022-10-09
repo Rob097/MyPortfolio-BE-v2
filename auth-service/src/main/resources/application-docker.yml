@@ -6,16 +6,16 @@ spring:
     name: auth-service
   datasource:
     username: 'myportfolio'
-    url: jdbc:mysql://mysql:33061/auth
+    url: jdbc:mysql://mysql:3306/auth
     password: 'password'
-    jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQL8Dialect
-          format_sql: 'true'
+  jpa:
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: 'true'
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: 'true'
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
   zipkin:
     base-url: http://myzipkin:9411
 
