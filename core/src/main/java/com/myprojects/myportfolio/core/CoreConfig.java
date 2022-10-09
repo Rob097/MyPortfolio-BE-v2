@@ -30,6 +30,9 @@ public class CoreConfig {
     }
 
 
+    /**
+     * I use this method to save some packages paths in order to use variables into annotations
+     */
     @Component
     public static class DefaultMethodSecurityExpressionHandler extends org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler {
         @Override

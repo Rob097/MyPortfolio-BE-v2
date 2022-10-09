@@ -1,11 +1,11 @@
-package com.myprojects.myportfolio.auth.jwt;
+package com.myprojects.myportfolio.auth.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UsernameAndPasswordAuthenticationRequest {
+public class SignINRequest {
 
     private String username;
     private String password;

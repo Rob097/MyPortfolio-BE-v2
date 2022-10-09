@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.auth.security;
 
-import com.myprojects.myportfolio.auth.auth.ApplicationUserService;
+import com.myprojects.myportfolio.auth.auth.AuthenticationUserService;
 import com.myprojects.myportfolio.auth.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import com.myprojects.myportfolio.clients.auth.JwtTokenVerifier;
@@ -23,6 +23,8 @@ import javax.crypto.SecretKey;
 
 import java.util.List;
 
+import static com.myprojects.myportfolio.clients.auth.RouterValidator.openApiEndpoints;
+
 
 @Configuration
 @EnableWebSecurity
@@ -30,14 +32,14 @@ import java.util.List;
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
-    private final ApplicationUserService applicationUserService;
+    private final AuthenticationUserService applicationUserService;
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
     private final JwtTokenVerifier jwtTokenVerifier;
 
     @Autowired
     public ApplicationSecurityConfig(PasswordEncoder passwordEncoder,
-                                     ApplicationUserService applicationUserService,
+                                     AuthenticationUserService applicationUserService,
                                      SecretKey secretKey,
                                      JwtConfig jwtConfig,
                                      JwtTokenVerifier jwtTokenVerifier) {
@@ -62,6 +64,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.addFilterAfter(new JwtTokenValidation(secretKey, jwtConfig, jwtTokenVerifier),JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
 //                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
 //                .antMatchers("/api/core/users/**").hasRole(ApplicationUserRole.ADMIN.getName())
                 .anyRequest()

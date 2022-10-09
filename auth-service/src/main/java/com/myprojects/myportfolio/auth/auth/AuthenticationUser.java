@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ApplicationUser implements UserDetails {
+public class AuthenticationUser implements UserDetails {
 
     private DBUser user;
     private final Set<? extends GrantedAuthority> grantedAuthorities;
@@ -18,7 +18,7 @@ public class ApplicationUser implements UserDetails {
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
 
-    public ApplicationUser(DBUser user){
+    public AuthenticationUser(DBUser user){
         this.user = user;
         this.grantedAuthorities = user.getRoles().stream().flatMap(el -> el.getPermissions().stream()).collect(Collectors.toSet());
         this.isAccountNonExpired = true;

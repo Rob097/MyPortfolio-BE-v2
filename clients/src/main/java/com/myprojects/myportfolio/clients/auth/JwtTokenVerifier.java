@@ -41,7 +41,7 @@ public class JwtTokenVerifier {
             throw new IllegalStateException("Request cannot be null.");
         }
 
-        if (routerValidator.isHttpServletRequestSecured.test(request)) {
+        if (!routerValidator.isHttpServletRequestSecured.test(request)) {
             String internalAuthorizationHeader = request.getHeader(jwtConfig.getInternalAuthorizationHeader());
             String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
             String message = null;

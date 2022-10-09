@@ -29,6 +29,11 @@ public class UserService {
     public User save(User u){
         Validate.notNull(u, "Parametro obbligatorio mancante: user.");
 
+        if(u.getId()!=null) {
+            Optional<User> actual = this.userRepository.findById(u.getId());
+            Validate.isTrue(!actual.isPresent(), "Esiste già un utente applicativo registrato con ID " + u.getId());
+        }
+
         User user = this.userRepository.save(u);
         return user;
     }

@@ -1,8 +1,9 @@
 package com.myprojects.myportfolio.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myprojects.myportfolio.auth.auth.ApplicationUser;
+import com.myprojects.myportfolio.auth.auth.AuthenticationUser;
 import com.myprojects.myportfolio.auth.auth.DBUser;
+import com.myprojects.myportfolio.auth.dto.SignINRequest;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -45,8 +45,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                                                 HttpServletResponse response) throws AuthenticationException {
 
         try {
-            UsernameAndPasswordAuthenticationRequest authenticationRequest = new ObjectMapper()
-                    .readValue(request.getInputStream(), UsernameAndPasswordAuthenticationRequest.class);
+            SignINRequest authenticationRequest = new ObjectMapper()
+                    .readValue(request.getInputStream(), SignINRequest.class);
 
             this.saveRememberMeChoiceInSession(request, authenticationRequest);
 
@@ -75,7 +75,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             expirationAfterDays = jwtConfig.getTokenExpirationAfterDaysRememberMe();
         }
 
-        ApplicationUser applicationUser = (ApplicationUser) authResult.getPrincipal();
+        AuthenticationUser applicationUser = (AuthenticationUser) authResult.getPrincipal();
         DBUser dbUser = applicationUser.getDBUser();
 
         String token = Jwts.builder()
@@ -98,7 +98,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         log.error(failed.getMessage());
     }
 
-    private void saveRememberMeChoiceInSession(HttpServletRequest request, UsernameAndPasswordAuthenticationRequest authenticationRequest){
+    private void saveRememberMeChoiceInSession(HttpServletRequest request, SignINRequest authenticationRequest){
         HttpSession session = request.getSession();
         if (session != null || getAllowSessionCreation()) {
             session.setAttribute(jwtConfig.getRememberMeSessionAttribute(), authenticationRequest.getRememberMe());

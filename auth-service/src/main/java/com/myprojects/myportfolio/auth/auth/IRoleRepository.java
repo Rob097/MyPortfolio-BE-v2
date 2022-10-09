@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IApplicationUserRepository extends JpaRepository<DBUser, Integer> {
+public interface IRoleRepository extends JpaRepository<DBRole, Integer> {
 
-    DBUser findByEmail(String email);
+    DBRole findByName(String name);
 
 }
