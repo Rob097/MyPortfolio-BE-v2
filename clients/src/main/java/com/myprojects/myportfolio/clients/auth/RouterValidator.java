@@ -14,7 +14,8 @@ public class RouterValidator {
 
 
     public static final Map<String, List<HttpMethod>> openApiEndpoints = Map.of(
-            "/api/auth/**", List.of(HttpMethod.GET, HttpMethod.POST),
+            "/api/auth/signin", List.of(HttpMethod.POST),
+            "/api/auth/signup", List.of(HttpMethod.POST),
             "/api/core/users", List.of(HttpMethod.POST)
     );
 

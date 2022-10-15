@@ -2,13 +2,16 @@ package com.myprojects.myportfolio.core.user;
 
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-@Service
+@Service(value="userService")
+@Transactional
 public class UserService {
 
     @Autowired
@@ -20,18 +23,18 @@ public class UserService {
     }
 
     public User findById(Integer id) {
-        Validate.notNull(id, "Parametro obbligatorio mancante: id.");
+        Validate.notNull(id, "Mandatory parameter is missing: id.");
 
         Optional<User> user = this.userRepository.findById(id);
-        return user.orElseThrow(() -> new NoSuchElementException("Nessun utente trovato con id: " + id));
+        return user.orElseThrow(() -> new NoSuchElementException("Impossible to found any user with id: " + id));
     }
 
     public User save(User u){
-        Validate.notNull(u, "Parametro obbligatorio mancante: user.");
+        Validate.notNull(u, "Mandatory parameter is missing: user.");
 
         if(u.getId()!=null) {
             Optional<User> actual = this.userRepository.findById(u.getId());
-            Validate.isTrue(!actual.isPresent(), "Esiste già un utente applicativo registrato con ID " + u.getId());
+            Validate.isTrue(!actual.isPresent(), "It already exists an application user with id: " + u.getId());
         }
 
         User user = this.userRepository.save(u);
@@ -39,10 +42,23 @@ public class UserService {
     }
 
     public User update(User userToUpdate){
-        Validate.notNull(userToUpdate, "Parametro obbligatorio mancante: user.");
-        Validate.notNull(userToUpdate.getId(), "Parametro obbligatorio mancante: id user.");
+        Validate.notNull(userToUpdate, "Mandatory parameter is missing: user.");
+        Validate.notNull(userToUpdate.getId(), "Mandatory parameter is missinge: id user.");
 
         return this.userRepository.save(userToUpdate);
+    }
+
+    public void delete(User userToDelete){
+        Validate.notNull(userToDelete, "Mandatory parameter is missing: user.");
+
+        this.userRepository.delete(userToDelete);
+    }
+
+    /**Method used to check if an id is the same as the one of the current logged-in user*/
+    public boolean hasId(Integer id){
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = this.userRepository.findByEmail(username);
+        return user.getId().equals(id);
     }
 
 }

@@ -24,8 +24,28 @@ public class User {
     protected Integer id;
 
     private String firstName;
+
     private String lastName;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    private Integer age;
+
+    private String nationality;
+
+    private String nation;
+
+    private String province;
+
+    private String city;
+
+    private String cap;
+
+    private String address;
+
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
 
     @OneToMany(
             mappedBy = "owner",
@@ -36,5 +56,9 @@ public class User {
     )
     private List<Project> projects;
 
+    public enum Sex{
+        MALE,
+        FEMALE;
+    }
 
 }

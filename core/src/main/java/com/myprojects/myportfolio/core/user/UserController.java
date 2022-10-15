@@ -1,9 +1,7 @@
 package com.myprojects.myportfolio.core.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myprojects.myportfolio.clients.general.IController;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
-import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.user.UserQ;
@@ -19,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,8 +34,6 @@ public class UserController implements IController<UserR, UserQ> {
     @Autowired
     private UserMapper userMapper;
 
-    private ObjectMapper jacksonObjectMapper = new ObjectMapper();
-
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
@@ -50,8 +45,9 @@ public class UserController implements IController<UserR, UserQ> {
 
     @Override
     @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
     public ResponseEntity<MessageResource<UserR>> get(@PathVariable("id") Integer id, UserQ parameters) throws Exception {
-        Validate.notNull(id, "Parametro obbligatorio mancante: id.");
+        Validate.notNull(id, "Mandatory parameter is missing: id.");
 
         User user = this.userService.findById(id);
         MessageResource<UserR> result = new MessageResource<>(userRMapper.map(user));
@@ -61,7 +57,7 @@ public class UserController implements IController<UserR, UserQ> {
     @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource<UserR>> create(@RequestBody UserR user) {
-        Validate.notNull(user, "Nessuna risorsa da creare passata.");
+        Validate.notNull(user, "No valid resource was provided..");
 
         User newUser = this.userService.save(this.userMapper.map(user));
         MessageResource<UserR> result = new MessageResource<>(this.userRMapper.map(newUser));
@@ -70,10 +66,11 @@ public class UserController implements IController<UserR, UserQ> {
 
     @Override
     @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_WRITE.getName()) && @userService.hasId(#id)")
     public ResponseEntity<MessageResource<UserR>> update(@PathVariable("id") Integer id, @RequestBody UserR user) {
-        Validate.notNull(user, "Nessuna risorsa da aggiornare passata.");
-        Validate.notNull(user.getId(), "Parametro obbligatorio mancante: id user.");
-        Validate.isTrue(user.getId().equals(id), "L'id della richiesta e quello del body non coincidono");
+        Validate.notNull(user, "No valid resource to update was provided.");
+        Validate.notNull(user.getId(), "Mandatory parameter is missing: id user.");
+        Validate.isTrue(user.getId().equals(id), "The request's id and the body's id are different.");
 
         User userToUpate = this.userService.findById(user.getId());
         User updatedUser = this.userService.update(this.userMapper.map(user, userToUpate));
@@ -81,20 +78,25 @@ public class UserController implements IController<UserR, UserQ> {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    /**
-     * Tramite questo metodo è possibile aggiornare in maniera atomica alcune informazione dell'utente.
-     *
-     * @param id
-     * @param operations
-     * @return
-     * @throws Exception
-     */
-    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).ADMIN.getName())")
-    public ResponseEntity<MessageResource<UserR>> patch(@PathVariable("id") Integer id, @RequestBody List<PatchOperation> operations) throws Exception {
-        Validate.notEmpty(operations, "Nessuna operazione passata come parametro");
+    @Override
+    @DeleteMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("@userService.hasId(#id)")
+    public ResponseEntity<MessageResource<UserR>> delete(@PathVariable("id") Integer id) {
+        Validate.notNull(id, "No valid parameters were provided.");
 
-        List<Message> messages = new ArrayList<>();
+        User userToDelete = this.userService.findById(id);
+        Validate.notNull(userToDelete, "No valid user found with id " + id);
+
+        this.userService.delete(userToDelete);
+        MessageResource<UserR> result = new MessageResource<>(this.userRMapper.map(userToDelete));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_WRITE.getName()) && @userService.hasId(#id)")
+    public ResponseEntity<MessageResource<UserR>> patch(@PathVariable("id") Integer id, @RequestBody List<PatchOperation> operations) throws Exception {
+        Validate.notEmpty(operations, "No valid operation was provided.");
+
         boolean isToUpdate = false;
 
         User user = userService.findById(id);
@@ -111,18 +113,12 @@ public class UserController implements IController<UserR, UserQ> {
             }
         }
 
-        Message message = null;
         if(isToUpdate) {
             user = userService.update(user);
-            message = new Message("Aggiornamento effettuato con successo.");
-        } else {
-            message = new Message("Nessun aggiornamento effettuato.");
         }
-        messages.add(message);
-
         UserR userR = userRMapper.map(user);
 
-        return new ResponseEntity<>(new MessageResource<>(userR, messages), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResource<>(userR), HttpStatus.OK);
     }
 
 }

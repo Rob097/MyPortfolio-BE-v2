@@ -4,6 +4,7 @@ import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.clients.user.UserR;
 import com.myprojects.myportfolio.core.project.mappers.ProjectRMapper;
 import com.myprojects.myportfolio.core.user.User;
+import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,16 @@ public class UserRMapper implements Mapper<UserR, User> {
         output.setFirstName(input.getFirstName());
         output.setLastName(input.getLastName());
         output.setEmail(input.getEmail());
+        output.setAge(input.getAge());
+        output.setNationality(input.getNationality());
+        output.setNation(input.getNation());
+        output.setProvince(input.getProvince());
+        output.setCity(input.getCity());
+        output.setCap(input.getCap());
+        output.setAddress(input.getAddress());
+        if(input.getSex()!=null) {
+            output.setSex(input.getSex().toString());
+        }
         if(input.getProjects()!=null && !input.getProjects().isEmpty()) {
             output.setProjects(input.getProjects().stream().map(el -> this.projectRMapper.map(el)).collect(Collectors.toList()));
         }

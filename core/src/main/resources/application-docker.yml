@@ -12,10 +12,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: 'true'
     hibernate:
       ddl-auto: none
-    show-sql: 'true'
   zipkin:
     base-url: http://myzipkin:9411
   jackson:

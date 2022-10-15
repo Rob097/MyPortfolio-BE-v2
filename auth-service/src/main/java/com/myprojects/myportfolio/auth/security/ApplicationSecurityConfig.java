@@ -1,16 +1,18 @@
 package com.myprojects.myportfolio.auth.security;
 
 import com.myprojects.myportfolio.auth.auth.AuthenticationUserService;
+import com.myprojects.myportfolio.auth.jwt.JwtTokenValidation;
 import com.myprojects.myportfolio.auth.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
-import com.myprojects.myportfolio.clients.auth.JwtTokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,10 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.SecretKey;
-
 import java.util.List;
-
-import static com.myprojects.myportfolio.clients.auth.RouterValidator.openApiEndpoints;
 
 
 @Configuration
@@ -35,19 +34,19 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationUserService applicationUserService;
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
-    private final JwtTokenVerifier jwtTokenVerifier;
+    private final JwtTokenValidation jwtTokenValidation;
 
     @Autowired
     public ApplicationSecurityConfig(PasswordEncoder passwordEncoder,
                                      AuthenticationUserService applicationUserService,
                                      SecretKey secretKey,
                                      JwtConfig jwtConfig,
-                                     JwtTokenVerifier jwtTokenVerifier) {
+                                     JwtTokenValidation jwtTokenValidation) {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
         this.secretKey = secretKey;
         this.jwtConfig = jwtConfig;
-        this.jwtTokenVerifier = jwtTokenVerifier;
+        this.jwtTokenValidation = jwtTokenValidation;
     }
 
     @Override
@@ -61,12 +60,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                //.addFilterAfter(new JwtTokenValidation(secretKey, jwtConfig, jwtTokenVerifier),JwtUsernameAndPasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtTokenValidation,JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
-//                .antMatchers("/api/core/users/**").hasRole(ApplicationUserRole.ADMIN.getName())
+                .antMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .anyRequest()
                 .authenticated();
     }

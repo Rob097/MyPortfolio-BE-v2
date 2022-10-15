@@ -21,7 +21,7 @@ public class DBUserMapper implements Mapper<UserR, DBUser> {
             output = new UserR();
         }
 
-        output.setId(input.getId().intValue());
+        output.setId(input.getId());
         output.setFirstName(input.getFirstName());
         output.setLastName(input.getLastName());
         output.setEmail(input.getEmail());
