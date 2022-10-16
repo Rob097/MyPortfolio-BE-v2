@@ -1,6 +1,9 @@
 package com.myprojects.myportfolio.core.user;
 
+import com.myprojects.myportfolio.core.education.Education;
+import com.myprojects.myportfolio.core.experience.Experience;
 import com.myprojects.myportfolio.core.project.Project;
+import com.myprojects.myportfolio.core.skill.UserSkill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +12,18 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
+
+
+
+/**
+ * TODO: Controllare come funzionano orphanRemoval e cascade per evitare casini con tutte queste relazioni;
+ *
+ * TODO: Creare uno schema ER fatto bene di tutte le relazioni prima di perdere il controllo;
+ * */
+
+
+
+
 
 @Data
 @Builder
@@ -55,6 +70,30 @@ public class User {
             fetch = FetchType.LAZY
     )
     private List<Project> projects;
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY
+    )
+    private List<Education> educationList;
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY
+    )
+    private List<Experience> experienceList;
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY
+    )
+    private List<UserSkill> skills;
 
     public enum Sex{
         MALE,
