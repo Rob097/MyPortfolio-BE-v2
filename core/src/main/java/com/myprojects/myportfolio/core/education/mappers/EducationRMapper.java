@@ -2,9 +2,10 @@ package com.myprojects.myportfolio.core.education.mappers;
 
 import com.myprojects.myportfolio.clients.education.EducationR;
 import com.myprojects.myportfolio.clients.general.Mapper;
-import com.myprojects.myportfolio.clients.project.ProjectR;
 import com.myprojects.myportfolio.core.education.Education;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 public class EducationRMapper implements Mapper<EducationR, Education> {
@@ -35,6 +36,9 @@ public class EducationRMapper implements Mapper<EducationR, Education> {
         }
         output.setGrade(input.getGrade());
         output.setDescription(input.getDescription());
+        if(input.getStories()!=null && !input.getStories().isEmpty()){
+            output.setStoriesId(input.getStories().stream().map(el -> el.getId()).collect(Collectors.toSet()));
+        }
 
         return output;
     }

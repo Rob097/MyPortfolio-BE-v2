@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.skill;
 
-import com.myprojects.myportfolio.core.user.User;
+import com.myprojects.myportfolio.core.experience.Experience;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,13 +12,13 @@ import java.io.Serializable;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_skills")
-public class UserSkill implements Serializable {
+@Table(name = "experience_skills")
+public class ExperienceSkill implements Serializable {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "experience_id", nullable = false)
+    private Experience experience;
 
     @Id
     @ManyToOne

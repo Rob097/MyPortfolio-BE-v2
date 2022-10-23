@@ -1,15 +1,15 @@
 package com.myprojects.myportfolio.core.education;
 
+import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Calendar;
+import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -59,5 +59,8 @@ public class Education {
 
     // Description
     private String description;
+
+    @ManyToMany(mappedBy = "educationList")
+    private Set<Story> stories;
 
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +21,6 @@ public class EducationR {
     private Instant endDate;
     private Double grade;
     private String description;
+    private Set<Integer> storiesId;
 
 }

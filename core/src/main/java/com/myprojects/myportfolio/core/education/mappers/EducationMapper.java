@@ -3,12 +3,14 @@ package com.myprojects.myportfolio.core.education.mappers;
 import com.myprojects.myportfolio.clients.education.EducationR;
 import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.core.education.Education;
+import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
+import java.util.stream.Collectors;
 
 @Component
 public class EducationMapper implements Mapper<Education, EducationR> {
@@ -43,6 +45,9 @@ public class EducationMapper implements Mapper<Education, EducationR> {
         }
         output.setGrade(input.getGrade());
         output.setDescription(input.getDescription());
+        if(input.getStoriesId()!=null && !input.getStoriesId().isEmpty()){
+            output.setStories(input.getStoriesId().stream().map(el -> Story.builder().id(el).build()).collect(Collectors.toSet()));
+        }
 
         return output;
     }

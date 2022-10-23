@@ -1,14 +1,12 @@
 package com.myprojects.myportfolio.core.project;
 
 import com.myprojects.myportfolio.core.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Setter
+@Getter
 @Builder
 @Entity
 @NoArgsConstructor

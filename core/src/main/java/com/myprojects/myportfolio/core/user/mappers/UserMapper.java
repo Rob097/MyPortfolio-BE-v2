@@ -2,12 +2,35 @@ package com.myprojects.myportfolio.core.user.mappers;
 
 import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.clients.user.UserR;
+import com.myprojects.myportfolio.core.diary.mappers.DiaryMapper;
+import com.myprojects.myportfolio.core.education.mappers.EducationMapper;
+import com.myprojects.myportfolio.core.experience.mappers.ExperienceMapper;
+import com.myprojects.myportfolio.core.project.mappers.ProjectMapper;
+import com.myprojects.myportfolio.core.skill.mappers.UserSkillMapper;
 import com.myprojects.myportfolio.core.user.User;
 import org.assertj.core.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper implements Mapper<User, UserR> {
+
+    @Autowired
+    private DiaryMapper diaryMapper;
+
+    @Autowired
+    private ProjectMapper projectMapper;
+
+    @Autowired
+    private UserSkillMapper userSkillMapper;
+
+    @Autowired
+    private EducationMapper educationMapper;
+
+    @Autowired
+    private ExperienceMapper experienceMapper;
 
     @Override
     public User map(UserR input){
@@ -36,6 +59,21 @@ public class UserMapper implements Mapper<User, UserR> {
         output.setAddress(input.getAddress());
         if(!Strings.isNullOrEmpty(input.getSex())) {
             output.setSex(input.getSex().equals("MALE") ? User.Sex.MALE : input.getSex().equals("FEMALE") ? User.Sex.FEMALE : null);
+        }
+        if(input.getDiary()!=null){
+            output.setDiary(this.diaryMapper.map(input.getDiary()));
+        }
+        if(input.getProjects()!=null && !input.getProjects().isEmpty()) {
+            output.setProjects(input.getProjects().stream().map(el -> this.projectMapper.map(el)).collect(Collectors.toList()));
+        }
+        if(input.getSkills()!=null && !input.getSkills().isEmpty()) {
+            output.setSkills(input.getSkills().stream().map(el -> this.userSkillMapper.map(el)).collect(Collectors.toList()));
+        }
+        if(input.getEducationList()!=null && !input.getEducationList().isEmpty()) {
+            output.setEducationList(input.getEducationList().stream().map(el -> this.educationMapper.map(el)).collect(Collectors.toList()));
+        }
+        if(input.getExperienceList()!=null && !input.getExperienceList().isEmpty()) {
+            output.setExperienceList(input.getExperienceList().stream().map(el -> this.experienceMapper.map(el)).collect(Collectors.toList()));
         }
 
         return output;

@@ -1,14 +1,13 @@
 package com.myprojects.myportfolio.core.skill;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.myprojects.myportfolio.core.story.Story;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -26,11 +25,23 @@ public class Skill {
 
     private String name;
 
+    @ManyToMany(mappedBy = "skillList")
+    private Set<Story> stories;
+
+    /*@OneToMany(
+            mappedBy = "skill",
+            orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY
+    )
+    private List<UserSkill> userSkills;
+
     @OneToMany(
             mappedBy = "skill",
             orphanRemoval = true,
             cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
-    private List<UserSkill> skills;
+    private List<ExperienceSkill> experienceSkills;*/
+
 }

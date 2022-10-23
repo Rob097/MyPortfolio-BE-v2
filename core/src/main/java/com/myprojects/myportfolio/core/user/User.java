@@ -1,37 +1,24 @@
 package com.myprojects.myportfolio.core.user;
 
+import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.education.Education;
 import com.myprojects.myportfolio.core.experience.Experience;
 import com.myprojects.myportfolio.core.project.Project;
 import com.myprojects.myportfolio.core.skill.UserSkill;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.List;
 
-
-
-/**
- * TODO: Controllare come funzionano orphanRemoval e cascade per evitare casini con tutte queste relazioni;
- *
- * TODO: Creare uno schema ER fatto bene di tutte le relazioni prima di perdere il controllo;
- * */
-
-
-
-
-
-@Data
+@Setter
+@Getter
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
+
     @Id
     @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", strategy = "com.myprojects.myportfolio.clients.utils.UseExistingIdOtherwiseGenerateUsingIdentity")
     @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
@@ -65,8 +52,9 @@ public class User {
     @OneToMany(
             mappedBy = "owner",
             orphanRemoval = true,
-            // In this case I don't want any cascade
-            // cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            // PERSIST means that if I create a User entity with some Projects, it also creates the projects
+            // REMOVE means that if I delete a User entity with some Projects, it also deletes the projects
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
     private List<Project> projects;
@@ -74,7 +62,7 @@ public class User {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = CascadeType.REMOVE,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
     private List<Education> educationList;
@@ -82,7 +70,7 @@ public class User {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = CascadeType.REMOVE,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
     private List<Experience> experienceList;
@@ -90,10 +78,18 @@ public class User {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = CascadeType.REMOVE,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
     private List<UserSkill> skills;
+
+    @OneToOne(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private Diary diary;
 
     public enum Sex{
         MALE,

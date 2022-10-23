@@ -1,10 +1,12 @@
 package com.myprojects.myportfolio.clients.experience;
 
+import com.myprojects.myportfolio.clients.skill.ExperienceSkillR;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +22,6 @@ public class ExperienceR {
     private Instant startDate;
     private Instant endDate;
     private String description;
+    private Set<ExperienceSkillR> skills;
 
 }

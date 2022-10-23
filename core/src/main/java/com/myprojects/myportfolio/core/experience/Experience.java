@@ -1,17 +1,17 @@
 package com.myprojects.myportfolio.core.experience;
 
-import com.myprojects.myportfolio.core.skill.UserSkill;
+import com.myprojects.myportfolio.core.skill.ExperienceSkill;
+import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -60,7 +60,15 @@ public class Experience {
     // Description
     private String description;
 
-    @ManyToMany(mappedBy = "experiences", fetch = FetchType.LAZY)
-    private Set<UserSkill> skills;
+    @OneToMany(
+            mappedBy = "experience",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<ExperienceSkill> skills;
+
+    @ManyToMany(mappedBy = "experienceList")
+    private Set<Story> stories;
 
 }
