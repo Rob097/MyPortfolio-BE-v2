@@ -1,13 +1,12 @@
 package com.myprojects.myportfolio.core.diary;
 
-import com.myprojects.myportfolio.core.skill.UserSkill;
+import com.myprojects.myportfolio.core.education.EducationProjection;
 import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -48,4 +47,10 @@ public class Diary {
             fetch = FetchType.LAZY
     )
     private Set<Story> stories;
+
+    public Diary(DiaryProjection projection) {
+        super();
+        this.id = projection.getId();
+        this.entryDateTime = projection.getEntryDateTime();
+    }
 }

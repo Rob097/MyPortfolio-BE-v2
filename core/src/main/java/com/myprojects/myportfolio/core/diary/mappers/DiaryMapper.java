@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.diary.mappers;
 
 import com.myprojects.myportfolio.clients.diary.DiaryR;
 import com.myprojects.myportfolio.clients.general.Mapper;
+import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.story.mappers.StoryMapper;
 import com.myprojects.myportfolio.core.user.User;
@@ -31,7 +32,9 @@ public class DiaryMapper implements Mapper<Diary, DiaryR> {
         }
 
         output.setId(input.getId());
-        output.setUser(User.builder().id(input.getUserId()).build());
+        if(input.getUser()!=null) {
+            output.setUser(User.builder().id(input.getUser().getId()).build());
+        }
         output.setEntryDateTime(input.getEntryDateTime());
         output.setStories(input.getStories().stream().map(el -> this.storyMapper.map(el)).collect(Collectors.toSet()));
 

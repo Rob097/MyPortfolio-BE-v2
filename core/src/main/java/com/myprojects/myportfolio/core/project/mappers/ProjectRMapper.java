@@ -3,10 +3,18 @@ package com.myprojects.myportfolio.core.project.mappers;
 import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.clients.project.ProjectR;
 import com.myprojects.myportfolio.core.project.Project;
+import com.myprojects.myportfolio.core.user.mappers.SyntheticUserRMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProjectRMapper implements Mapper<ProjectR, Project> {
+
+    @Autowired
+    private SyntheticProjectRMapper syntheticMapper;
+
+    @Autowired
+    private SyntheticUserRMapper userRMapper;
 
     @Override
     public ProjectR map(Project input) {
@@ -15,17 +23,15 @@ public class ProjectRMapper implements Mapper<ProjectR, Project> {
 
     @Override
     public ProjectR map(Project input, ProjectR output) {
-        if(input==null){
+
+        output = this.syntheticMapper.map(input, output);
+
+        if(output==null){
             return null;
         }
-        if(output==null){
-            output = new ProjectR();
-        }
 
-        output.setId(input.getId());
-        output.setName(input.getName());
-        if(input.getOwner()!=null) {
-            output.setOwnerId(input.getOwner().getId());
+        if (input.getUser() != null) {
+            output.setUser(this.userRMapper.map(input.getUser()));
         }
 
         return output;

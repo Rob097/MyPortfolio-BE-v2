@@ -37,6 +37,11 @@ public class Project {
                     name = "user_project_fk"
             )
     )
-    private User owner;
+    private User user;
 
+    public Project(ProjectProjection projection) {
+        super();
+        this.id = projection.getId();
+        this.name = projection.getName();
+    }
 }

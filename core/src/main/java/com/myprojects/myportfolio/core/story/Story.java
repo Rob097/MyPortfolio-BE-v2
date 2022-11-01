@@ -1,5 +1,7 @@
 package com.myprojects.myportfolio.core.story;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.education.Education;
 import com.myprojects.myportfolio.core.experience.Experience;
@@ -61,20 +63,29 @@ public class Story {
             name = "story_educations",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"))
-    private Set<Education> educationList;
+    private Set<Education> educations;
 
     @ManyToMany
     @JoinTable(
             name = "story_experiences",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"))
-    private Set<Experience> experienceList;
+    private Set<Experience> experiences;
 
     @ManyToMany
     @JoinTable(
             name = "story_skills",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
-    private Set<Skill> skillList;
+    private Set<Skill> skills;
 
+    public Story(StoryProjection projection) {
+        this.id = projection.getId();
+        this.entryDateTime = projection.getEntryDateTime();
+        this.title = projection.getTitle();
+        this.description = projection.getDescription();
+        this.fromDate = projection.getFromDate();
+        this.toDate = projection.getToDate();
+        this.isPrimaryStory = projection.getIsPrimaryStory();
+    }
 }

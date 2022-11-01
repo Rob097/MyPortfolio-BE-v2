@@ -4,11 +4,14 @@ import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.education.Education;
 import com.myprojects.myportfolio.core.experience.Experience;
 import com.myprojects.myportfolio.core.project.Project;
-import com.myprojects.myportfolio.core.skill.UserSkill;
+import com.myprojects.myportfolio.core.skill.Skill;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -50,7 +53,7 @@ public class User {
     private Sex sex;
 
     @OneToMany(
-            mappedBy = "owner",
+            mappedBy = "user",
             orphanRemoval = true,
             // PERSIST means that if I create a User entity with some Projects, it also creates the projects
             // REMOVE means that if I delete a User entity with some Projects, it also deletes the projects
@@ -65,7 +68,7 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<Education> educationList;
+    private List<Education> educations;
 
     @OneToMany(
             mappedBy = "user",
@@ -73,15 +76,16 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<Experience> experienceList;
+    private List<Experience> experiences;
 
-    @OneToMany(
-            mappedBy = "user",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<UserSkill> skills;
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST},
+            fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_skills",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
+    private Set<Skill> skills;
 
     @OneToOne(
             mappedBy = "user",
@@ -96,4 +100,32 @@ public class User {
         FEMALE;
     }
 
+    public User(UserProjection projection){
+        super();
+        this.id = projection.getId();
+        this.firstName = projection.getFirstName();
+        this.lastName = projection.getLastName();
+        this.email = projection.getEmail();
+        this.age = projection.getAge();
+        this.nationality = projection.getNationality();
+        this.nation = projection.getNation();
+        this.province = projection.getProvince();
+        this.city = projection.getCity();
+        this.cap = projection.getCap();
+        this.address = projection.getAddress();
+        this.sex = projection.getSex();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

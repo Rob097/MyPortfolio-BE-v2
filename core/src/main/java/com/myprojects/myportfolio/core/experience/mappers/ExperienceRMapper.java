@@ -3,7 +3,8 @@ package com.myprojects.myportfolio.core.experience.mappers;
 import com.myprojects.myportfolio.clients.experience.ExperienceR;
 import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.core.experience.Experience;
-import com.myprojects.myportfolio.core.skill.mappers.ExperienceSkillRMapper;
+import com.myprojects.myportfolio.core.skill.mappers.SkillRMapper;
+import com.myprojects.myportfolio.core.user.mappers.SyntheticUserRMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,13 @@ import java.util.stream.Collectors;
 public class ExperienceRMapper implements Mapper<ExperienceR, Experience> {
 
     @Autowired
-    private ExperienceSkillRMapper experienceSkillRMapper;
+    private SyntheticExperienceRMapper syntheticMapper;
+
+    @Autowired
+    private SyntheticUserRMapper userRMapper;
+
+    @Autowired
+    private SkillRMapper skillRMapper;
 
     @Override
     public ExperienceR map(Experience input) {
@@ -22,30 +29,18 @@ public class ExperienceRMapper implements Mapper<ExperienceR, Experience> {
 
     @Override
     public ExperienceR map(Experience input, ExperienceR output) {
-        if(input==null){
+
+        output = this.syntheticMapper.map(input, output);
+
+        if(output==null){
             return null;
         }
-        if(output==null){
-            output = new ExperienceR();
-        }
 
-        output.setId(input.getId());
         if(input.getUser()!=null) {
-            output.setUserId(input.getUser().getId());
+            output.setUser(userRMapper.map(input.getUser()));
         }
-        output.setTitle(input.getTitle());
-        if(input.getEmploymentType()!=null) {
-            output.setEmploymentType(input.getEmploymentType().name());
-        }
-        output.setCompanyName(input.getCompanyName());
-        output.setLocation(input.getLocation());
-        output.setStartDate(input.getStartDate().toInstant());
-        if(input.getEndDate()!=null) {
-            output.setEndDate(input.getEndDate().toInstant());
-        }
-        output.setDescription(input.getDescription());
         if(input.getSkills()!=null && !input.getSkills().isEmpty()) {
-            output.setSkills(input.getSkills().stream().map(el -> this.experienceSkillRMapper.map(el)).collect(Collectors.toSet()));
+            output.setSkills(input.getSkills().stream().map(el -> this.skillRMapper.map(el)).collect(Collectors.toSet()));
         }
 
         return output;

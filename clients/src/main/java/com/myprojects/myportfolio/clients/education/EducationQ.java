@@ -1,14 +1,17 @@
-package com.myprojects.myportfolio.clients.skill;
+package com.myprojects.myportfolio.clients.education;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class UserSkillR {
+public class EducationQ {
+
     private Integer id;
     private Integer userId;
-    private SkillR skill;
+    private LocalDate referenceDate;
 }

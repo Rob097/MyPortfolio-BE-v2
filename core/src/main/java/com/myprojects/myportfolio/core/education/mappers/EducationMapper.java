@@ -7,9 +7,6 @@ import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.GregorianCalendar;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,24 +26,22 @@ public class EducationMapper implements Mapper<Education, EducationR> {
         }
 
         output.setId(input.getId());
-        if(input.getUserId()!=null) {
-            output.setUser(User.builder().id(input.getUserId()).build());
+        if(input.getUser()!=null) {
+            output.setUser(User.builder().id(input.getUser().getId()).build());
         }
         output.setSchool(input.getSchool());
         output.setDegree(input.getDegree());
         output.setField(input.getField());
         if(input.getStartDate()!=null) {
-            ZonedDateTime zdt = ZonedDateTime.ofInstant(input.getStartDate(), ZoneId.systemDefault());
-            output.setStartDate(GregorianCalendar.from(zdt));
+            output.setStartDate(input.getStartDate());
         }
         if(input.getEndDate()!=null) {
-            ZonedDateTime zdt = ZonedDateTime.ofInstant(input.getEndDate(), ZoneId.systemDefault());
-            output.setStartDate(GregorianCalendar.from(zdt));
+            output.setEndDate(input.getEndDate());
         }
         output.setGrade(input.getGrade());
         output.setDescription(input.getDescription());
-        if(input.getStoriesId()!=null && !input.getStoriesId().isEmpty()){
-            output.setStories(input.getStoriesId().stream().map(el -> Story.builder().id(el).build()).collect(Collectors.toSet()));
+        if(input.getStories()!=null && !input.getStories().isEmpty()){
+            output.setStories(input.getStories().stream().map(el -> Story.builder().id(el.getId()).build()).collect(Collectors.toSet()));
         }
 
         return output;

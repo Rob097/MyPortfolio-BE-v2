@@ -1,27 +1,30 @@
 package com.myprojects.myportfolio.clients.experience;
 
-import com.myprojects.myportfolio.clients.skill.ExperienceSkillR;
+import com.myprojects.myportfolio.clients.skill.SkillR;
+import com.myprojects.myportfolio.clients.user.UserR;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class ExperienceR {
 
     private Integer id;
-    private Integer userId;
+    private UserR user;
     private String title;
     private String employmentType;
     private String companyName;
     private String location;
-    private Instant startDate;
-    private Instant endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String description;
-    private Set<ExperienceSkillR> skills;
+    private Set<SkillR> skills;
 
 }

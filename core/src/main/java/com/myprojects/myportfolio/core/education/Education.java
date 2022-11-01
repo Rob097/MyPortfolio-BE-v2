@@ -5,7 +5,7 @@ import com.myprojects.myportfolio.core.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Setter
@@ -48,11 +48,12 @@ public class Education {
     private String field;
 
     // Start Date
-    @Column(nullable = false)
-    private Calendar startDate;
+    @Column(nullable = false, columnDefinition = "DATE")
+    private LocalDate startDate;
 
     // End Date (If null, still on course)
-    private Calendar endDate;
+    @Column(columnDefinition = "DATE")
+    private LocalDate endDate;
 
     // Grade
     private Double grade;
@@ -60,7 +61,19 @@ public class Education {
     // Description
     private String description;
 
-    @ManyToMany(mappedBy = "educationList")
+    @ManyToMany(mappedBy = "educations")
     private Set<Story> stories;
+
+    public Education(EducationProjection projection){
+        super();
+        this.id = projection.getId();
+        this.school = projection.getSchool();
+        this.degree = projection.getDegree();
+        this.field = projection.getField();
+        this.startDate = projection.getStartDate();
+        this.endDate = projection.getEndDate();
+        this.grade = projection.getGrade();
+        this.description = projection.getDescription();
+    }
 
 }

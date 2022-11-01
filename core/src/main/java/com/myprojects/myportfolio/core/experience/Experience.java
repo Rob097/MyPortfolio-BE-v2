@@ -1,13 +1,13 @@
 package com.myprojects.myportfolio.core.experience;
 
-import com.myprojects.myportfolio.core.skill.ExperienceSkill;
+import com.myprojects.myportfolio.core.education.EducationProjection;
+import com.myprojects.myportfolio.core.skill.Skill;
 import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Calendar;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Setter
@@ -51,24 +51,36 @@ public class Experience {
     private String location;
 
     // Start Date
-    @Column(nullable = false)
-    private Calendar startDate;
+    @Column(nullable = false, columnDefinition = "DATE")
+    private LocalDate startDate;
 
     // End Date (If null, still on course)
-    private Calendar endDate;
+    @Column(columnDefinition = "DATE")
+    private LocalDate endDate;
 
     // Description
     private String description;
 
-    @OneToMany(
-            mappedBy = "experience",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<ExperienceSkill> skills;
+    @ManyToMany
+    @JoinTable(
+            name = "experience_skills",
+            joinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
+    private Set<Skill> skills;
 
-    @ManyToMany(mappedBy = "experienceList")
+    @ManyToMany(mappedBy = "experiences")
     private Set<Story> stories;
+
+    public Experience(ExperienceProjection projection){
+        super();
+        this.id = projection.getId();
+        this.title = projection.getTitle();
+        this.employmentType = projection.getEmploymentType();
+        this.companyName = projection.getCompanyName();
+        this.location = projection.getLocation();
+        this.startDate = projection.getStartDate();
+        this.endDate = projection.getEndDate();
+        this.description = projection.getDescription();
+    }
 
 }

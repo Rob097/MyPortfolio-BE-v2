@@ -3,43 +3,42 @@ package com.myprojects.myportfolio.core.education.mappers;
 import com.myprojects.myportfolio.clients.education.EducationR;
 import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.core.education.Education;
+import com.myprojects.myportfolio.core.story.mappers.SyntheticStoryRMapper;
+import com.myprojects.myportfolio.core.user.mappers.SyntheticUserRMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
 public class EducationRMapper implements Mapper<EducationR, Education> {
-    @Override
-    public EducationR map(Education input) {
-        return this.map(input, new EducationR());
-    }
+
+    @Autowired
+    private SyntheticEducationRMapper syntheticMapper;
+
+    @Autowired
+    private SyntheticUserRMapper userRMapper;
+
+    @Autowired
+    private SyntheticStoryRMapper storyRMapper;
 
     @Override
     public EducationR map(Education input, EducationR output) {
-        if(input==null){
+
+        output = this.syntheticMapper.map(input, output);
+
+        if(output==null){
             return null;
         }
-        if(output==null){
-            output = new EducationR();
-        }
 
-        output.setId(input.getId());
         if(input.getUser()!=null) {
-            output.setUserId(input.getUser().getId());
+            output.setUser(this.userRMapper.map(input.getUser()));
         }
-        output.setSchool(input.getSchool());
-        output.setDegree(input.getDegree());
-        output.setField(input.getField());
-        output.setStartDate(input.getStartDate().toInstant());
-        if(input.getEndDate()!=null) {
-            output.setEndDate(input.getEndDate().toInstant());
-        }
-        output.setGrade(input.getGrade());
-        output.setDescription(input.getDescription());
         if(input.getStories()!=null && !input.getStories().isEmpty()){
-            output.setStoriesId(input.getStories().stream().map(el -> el.getId()).collect(Collectors.toSet()));
+            output.setStories(input.getStories().stream().map(el -> this.storyRMapper.map(el)).collect(Collectors.toSet()));
         }
 
         return output;
     }
+
 }

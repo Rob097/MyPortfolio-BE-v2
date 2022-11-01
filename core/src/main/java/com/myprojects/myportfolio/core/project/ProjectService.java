@@ -14,11 +14,9 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public List<Project> getProjectsByUserId(Integer userId) {
-        List<Project> projects = this.projectRepository.findAllByOwner(
-                User.builder().id(userId).build()
-        );
-        return projects;
-    }
+//    public List<Project> getProjectsByUserId(Integer userId) {
+//        List<ProjectProjection> projects = this.projectRepository.findAllByUserId(userId);
+//        return projects;
+//    }
 
 }

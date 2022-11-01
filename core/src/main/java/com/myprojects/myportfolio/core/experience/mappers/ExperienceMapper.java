@@ -4,21 +4,18 @@ import com.myprojects.myportfolio.clients.experience.ExperienceR;
 import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.core.experience.EmploymentTypeEnum;
 import com.myprojects.myportfolio.core.experience.Experience;
-import com.myprojects.myportfolio.core.skill.mappers.ExperienceSkillMapper;
+import com.myprojects.myportfolio.core.skill.mappers.SkillMapper;
 import com.myprojects.myportfolio.core.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.GregorianCalendar;
 import java.util.stream.Collectors;
 
 @Component
 public class ExperienceMapper implements Mapper<Experience, ExperienceR> {
 
     @Autowired
-    private ExperienceSkillMapper experienceSkillMapper;
+    private SkillMapper skillMapper;
 
     @Override
     public Experience map(ExperienceR input) {
@@ -35,8 +32,8 @@ public class ExperienceMapper implements Mapper<Experience, ExperienceR> {
         }
 
         output.setId(input.getId());
-        if(input.getUserId()!=null) {
-            output.setUser(User.builder().id(input.getUserId()).build());
+        if(input.getUser()!=null) {
+            output.setUser(User.builder().id(input.getUser().getId()).build());
         }
         output.setTitle(input.getTitle());
         if(input.getEmploymentType()!=null) {
@@ -45,16 +42,14 @@ public class ExperienceMapper implements Mapper<Experience, ExperienceR> {
         output.setCompanyName(input.getCompanyName());
         output.setLocation(input.getLocation());
         if(input.getStartDate()!=null) {
-            ZonedDateTime zdt = ZonedDateTime.ofInstant(input.getStartDate(), ZoneId.systemDefault());
-            output.setStartDate(GregorianCalendar.from(zdt));
+            output.setStartDate(input.getStartDate());
         }
         if(input.getEndDate()!=null) {
-            ZonedDateTime zdt = ZonedDateTime.ofInstant(input.getEndDate(), ZoneId.systemDefault());
-            output.setStartDate(GregorianCalendar.from(zdt));
+            output.setEndDate(input.getEndDate());
         }
         output.setDescription(input.getDescription());
         if(input.getSkills()!=null && !input.getSkills().isEmpty()) {
-            output.setSkills(input.getSkills().stream().map(el -> this.experienceSkillMapper.map(el)).collect(Collectors.toList()));
+            output.setSkills(input.getSkills().stream().map(el -> this.skillMapper.map(el)).collect(Collectors.toSet()));
         }
 
         return output;

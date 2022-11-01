@@ -4,6 +4,8 @@ import com.myprojects.myportfolio.clients.general.IController;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
+import com.myprojects.myportfolio.clients.general.views.IView;
+import com.myprojects.myportfolio.clients.general.views.Synthetic;
 import com.myprojects.myportfolio.clients.user.UserQ;
 import com.myprojects.myportfolio.clients.user.UserR;
 import com.myprojects.myportfolio.core.user.mappers.UserMapper;
@@ -37,7 +39,10 @@ public class UserController implements IController<UserR, UserQ> {
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
-    public ResponseEntity<MessageResources<UserR>> find(UserQ parameters) {
+    public ResponseEntity<MessageResources<UserR>> find(
+            UserQ parameters,
+            @RequestParam(name = VIEW, required = false, defaultValue = Synthetic.name) IView view
+    ) {
         List<User> users = this.userService.getAllUsers();
         MessageResources<UserR> result = new MessageResources<>(users.stream().map(user -> userRMapper.map(user)).collect(Collectors.toList()));
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -46,10 +51,28 @@ public class UserController implements IController<UserR, UserQ> {
     @Override
     @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
-    public ResponseEntity<MessageResource<UserR>> get(@PathVariable("id") Integer id, UserQ parameters) throws Exception {
+    public ResponseEntity<MessageResource<UserR>> get(
+            @PathVariable("id") Integer id,
+            UserQ parameters,
+            @RequestParam(name = VIEW, required = false, defaultValue = Synthetic.name) IView view
+    ) throws Exception {
         Validate.notNull(id, "Mandatory parameter is missing: id.");
 
         User user = this.userService.findById(id);
+        MessageResource<UserR> result = new MessageResource<>(userRMapper.map(user));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(path="/projection/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
+    public ResponseEntity<MessageResource<UserR>> getProjection(
+            @PathVariable("id") Integer id,
+            @RequestParam(name = VIEW, required = false, defaultValue = Synthetic.name) IView view
+    ) throws Exception {
+        Validate.notNull(id, "Mandatory parameter is missing: id.");
+
+        User user = this.userService.findFirstById(id, view);
+
         MessageResource<UserR> result = new MessageResource<>(userRMapper.map(user));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

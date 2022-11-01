@@ -4,15 +4,18 @@ import com.myprojects.myportfolio.clients.diary.DiaryR;
 import com.myprojects.myportfolio.clients.education.EducationR;
 import com.myprojects.myportfolio.clients.experience.ExperienceR;
 import com.myprojects.myportfolio.clients.project.ProjectR;
-import com.myprojects.myportfolio.clients.skill.UserSkillR;
+import com.myprojects.myportfolio.clients.skill.SkillR;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class UserR {
 
     private Integer id;
@@ -29,7 +32,7 @@ public class UserR {
     private String sex;
     private DiaryR diary;
     private List<ProjectR> projects;
-    private List<UserSkillR> skills;
+    private List<SkillR> skills;
     private List<EducationR> educationList;
     private List<ExperienceR> experienceList;
 
