@@ -30,10 +30,10 @@ public class UserR {
     private String cap;
     private String address;
     private String sex;
-    private DiaryR diary;
+    private List<DiaryR> diaries;
     private List<ProjectR> projects;
     private List<SkillR> skills;
-    private List<EducationR> educationList;
-    private List<ExperienceR> experienceList;
+    private List<EducationR> educations;
+    private List<ExperienceR> experiences;
 
 }

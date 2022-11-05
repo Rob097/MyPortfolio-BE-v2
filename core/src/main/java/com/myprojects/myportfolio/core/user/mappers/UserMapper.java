@@ -60,8 +60,8 @@ public class UserMapper implements Mapper<User, UserR> {
         if(!Strings.isNullOrEmpty(input.getSex())) {
             output.setSex(input.getSex().equals("MALE") ? User.Sex.MALE : input.getSex().equals("FEMALE") ? User.Sex.FEMALE : null);
         }
-        if(input.getDiary()!=null){
-            output.setDiary(this.diaryMapper.map(input.getDiary()));
+        if (input.getDiaries() != null && !input.getDiaries().isEmpty()) {
+            output.setDiaries(input.getDiaries().stream().map(el -> this.diaryMapper.map(el)).collect(Collectors.toList()));
         }
         if(input.getProjects()!=null && !input.getProjects().isEmpty()) {
             output.setProjects(input.getProjects().stream().map(el -> this.projectMapper.map(el)).collect(Collectors.toList()));
@@ -69,11 +69,11 @@ public class UserMapper implements Mapper<User, UserR> {
         if(input.getSkills()!=null && !input.getSkills().isEmpty()) {
             output.setSkills(input.getSkills().stream().map(el -> this.skillMapper.map(el)).collect(Collectors.toSet()));
         }
-        if(input.getEducationList()!=null && !input.getEducationList().isEmpty()) {
-            output.setEducations(input.getEducationList().stream().map(el -> this.educationMapper.map(el)).collect(Collectors.toList()));
+        if(input.getEducations()!=null && !input.getEducations().isEmpty()) {
+            output.setEducations(input.getEducations().stream().map(el -> this.educationMapper.map(el)).collect(Collectors.toList()));
         }
-        if(input.getExperienceList()!=null && !input.getExperienceList().isEmpty()) {
-            output.setExperiences(input.getExperienceList().stream().map(el -> this.experienceMapper.map(el)).collect(Collectors.toList()));
+        if(input.getExperiences()!=null && !input.getExperiences().isEmpty()) {
+            output.setExperiences(input.getExperiences().stream().map(el -> this.experienceMapper.map(el)).collect(Collectors.toList()));
         }
 
         return output;

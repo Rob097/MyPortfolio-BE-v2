@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.experience;
 
-import com.myprojects.myportfolio.core.education.EducationProjection;
 import com.myprojects.myportfolio.core.skill.Skill;
 import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
@@ -70,17 +69,5 @@ public class Experience {
 
     @ManyToMany(mappedBy = "experiences")
     private Set<Story> stories;
-
-    public Experience(ExperienceProjection projection){
-        super();
-        this.id = projection.getId();
-        this.title = projection.getTitle();
-        this.employmentType = projection.getEmploymentType();
-        this.companyName = projection.getCompanyName();
-        this.location = projection.getLocation();
-        this.startDate = projection.getStartDate();
-        this.endDate = projection.getEndDate();
-        this.description = projection.getDescription();
-    }
 
 }

@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.diary;
 
-import com.myprojects.myportfolio.core.education.EducationProjection;
 import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
 import lombok.*;
@@ -29,7 +28,7 @@ public class Diary {
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime entryDateTime;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = "user_id",
             nullable = false,
@@ -48,9 +47,4 @@ public class Diary {
     )
     private Set<Story> stories;
 
-    public Diary(DiaryProjection projection) {
-        super();
-        this.id = projection.getId();
-        this.entryDateTime = projection.getEntryDateTime();
-    }
 }

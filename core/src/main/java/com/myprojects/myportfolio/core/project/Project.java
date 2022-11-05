@@ -39,9 +39,4 @@ public class Project {
     )
     private User user;
 
-    public Project(ProjectProjection projection) {
-        super();
-        this.id = projection.getId();
-        this.name = projection.getName();
-    }
 }

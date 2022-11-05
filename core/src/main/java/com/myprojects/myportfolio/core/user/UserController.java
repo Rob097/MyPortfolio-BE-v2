@@ -5,27 +5,28 @@ import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
-import com.myprojects.myportfolio.clients.general.views.Synthetic;
-import com.myprojects.myportfolio.clients.user.UserQ;
 import com.myprojects.myportfolio.clients.user.UserR;
 import com.myprojects.myportfolio.core.user.mappers.UserMapper;
 import com.myprojects.myportfolio.core.user.mappers.UserRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/core/users")
 @Slf4j
-public class UserController implements IController<UserR, UserQ> {
+public class UserController implements IController<UserR> {
 
     @Autowired
     private UserService userService;
@@ -36,16 +37,22 @@ public class UserController implements IController<UserR, UserQ> {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
     public ResponseEntity<MessageResources<UserR>> find(
-            UserQ parameters,
-            @RequestParam(name = VIEW, required = false, defaultValue = Synthetic.name) IView view
-    ) {
-        List<User> users = this.userService.getAllUsers();
-        MessageResources<UserR> result = new MessageResources<>(users.stream().map(user -> userRMapper.map(user)).collect(Collectors.toList()));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+            @RequestParam(name = FILTERS, required = false) String filters,
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view,
+            Pageable pageable
+    ) throws Exception {
+        Specification<User> specifications = this.defineFiltersAndStoreView(filters, view, this.httpServletRequest);
+
+        Slice<User> users = userService.findAll(specifications, pageable);
+
+        return this.buildSuccessResponses(users.map(user -> userRMapper.map(user)));
     }
 
     @Override
@@ -53,28 +60,14 @@ public class UserController implements IController<UserR, UserQ> {
     @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
     public ResponseEntity<MessageResource<UserR>> get(
             @PathVariable("id") Integer id,
-            UserQ parameters,
-            @RequestParam(name = VIEW, required = false, defaultValue = Synthetic.name) IView view
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
     ) throws Exception {
         Validate.notNull(id, "Mandatory parameter is missing: id.");
+        this.storeRequestView(view, httpServletRequest);
 
         User user = this.userService.findById(id);
-        MessageResource<UserR> result = new MessageResource<>(userRMapper.map(user));
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
 
-    @GetMapping(path="/projection/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
-    public ResponseEntity<MessageResource<UserR>> getProjection(
-            @PathVariable("id") Integer id,
-            @RequestParam(name = VIEW, required = false, defaultValue = Synthetic.name) IView view
-    ) throws Exception {
-        Validate.notNull(id, "Mandatory parameter is missing: id.");
-
-        User user = this.userService.findFirstById(id, view);
-
-        MessageResource<UserR> result = new MessageResource<>(userRMapper.map(user));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return this.buildSuccessResponse(userRMapper.map(user));
     }
 
     @Override
@@ -83,8 +76,7 @@ public class UserController implements IController<UserR, UserQ> {
         Validate.notNull(user, "No valid resource was provided..");
 
         User newUser = this.userService.save(this.userMapper.map(user));
-        MessageResource<UserR> result = new MessageResource<>(this.userRMapper.map(newUser));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return this.buildSuccessResponse(userRMapper.map(newUser));
     }
 
     @Override
@@ -97,8 +89,7 @@ public class UserController implements IController<UserR, UserQ> {
 
         User userToUpate = this.userService.findById(user.getId());
         User updatedUser = this.userService.update(this.userMapper.map(user, userToUpate));
-        MessageResource<UserR> result = new MessageResource<>(this.userRMapper.map(updatedUser));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return this.buildSuccessResponse(userRMapper.map(updatedUser));
     }
 
     @Override
@@ -111,8 +102,7 @@ public class UserController implements IController<UserR, UserQ> {
         Validate.notNull(userToDelete, "No valid user found with id " + id);
 
         this.userService.delete(userToDelete);
-        MessageResource<UserR> result = new MessageResource<>(this.userRMapper.map(userToDelete));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return this.buildSuccessResponse(userRMapper.map(userToDelete));
     }
 
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)

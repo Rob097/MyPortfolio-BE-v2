@@ -1,6 +1,5 @@
-package com.myprojects.myportfolio.core.user;
+package com.myprojects.myportfolio.clients.general.specifications;
 
-import com.myprojects.myportfolio.clients.user.UserQ;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +13,12 @@ import javax.persistence.criteria.Root;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSpecification implements Specification<User> {
+public class CoreSpecification<T>  implements Specification<T> {
 
-    private UserQ criteria;
+    private QueryDTO criteria;
 
     @Override
-    public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         if (criteria.getOperation().equalsIgnoreCase(">")) {
             return criteriaBuilder.greaterThanOrEqualTo(
                     root.<String> get(criteria.getKey()), criteria.getValue().toString());
@@ -38,5 +37,4 @@ public class UserSpecification implements Specification<User> {
         }
         return null;
     }
-
 }

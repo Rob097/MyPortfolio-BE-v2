@@ -1,10 +1,7 @@
 package com.myprojects.myportfolio.clients.general.messages;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 import org.springframework.util.Assert;
 
@@ -41,6 +38,13 @@ public class MessageResources<T> extends MessageSupport implements Iterable<T> {
 		for (T element : content) {
 			this.content.add(element);
 		}
+
+		if(StreamSupport.stream(this.content.spliterator(), false).count() == 0){
+			Message noResultFound = new Message("No results found with specified criteria.");
+			List<Message> messages = List.of(noResultFound);
+			this.add(messages);
+		}
+
 	}
 	
 	/**

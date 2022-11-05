@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.experience;
 
-import com.myprojects.myportfolio.core.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,7 +10,5 @@ public interface ExperienceRepository extends JpaRepository<Experience, Integer>
 
     @Query("SELECT DISTINCT EX.id FROM Experience EX WHERE EX.user.id = ?1")
     Optional<List<Integer>> findAllIdsByUserId(Integer userId);
-
-    Optional<List<ExperienceProjection>> findAllByUserId(Integer userId);
 
 }

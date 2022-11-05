@@ -87,33 +87,17 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     private Set<Skill> skills;
 
-    @OneToOne(
+    @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private Diary diary;
+    private List<Diary> diaries;
 
     public enum Sex{
         MALE,
         FEMALE;
-    }
-
-    public User(UserProjection projection){
-        super();
-        this.id = projection.getId();
-        this.firstName = projection.getFirstName();
-        this.lastName = projection.getLastName();
-        this.email = projection.getEmail();
-        this.age = projection.getAge();
-        this.nationality = projection.getNationality();
-        this.nation = projection.getNation();
-        this.province = projection.getProvince();
-        this.city = projection.getCity();
-        this.cap = projection.getCap();
-        this.address = projection.getAddress();
-        this.sex = projection.getSex();
     }
 
     @Override

@@ -79,13 +79,4 @@ public class Story {
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     private Set<Skill> skills;
 
-    public Story(StoryProjection projection) {
-        this.id = projection.getId();
-        this.entryDateTime = projection.getEntryDateTime();
-        this.title = projection.getTitle();
-        this.description = projection.getDescription();
-        this.fromDate = projection.getFromDate();
-        this.toDate = projection.getToDate();
-        this.isPrimaryStory = projection.getIsPrimaryStory();
-    }
 }

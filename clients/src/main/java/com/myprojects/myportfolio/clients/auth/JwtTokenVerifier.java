@@ -45,7 +45,7 @@ public class JwtTokenVerifier {
 
         if(!routerValidator.isHttpServletRequestSecured.test(request)) {
 
-            String internalAuthorizationHeader = request.getHeader(jwtConfig.getInternalAuthorizationHeader());
+            String internalAuthorizationHeader =  request.getHeader(jwtConfig.getAuthorizationHeader()); // RIMOSSO TEMPORANEAMENTE PER LAVORARE DIRETTAMENTE SUL CORE: request.getHeader(jwtConfig.getInternalAuthorizationHeader());
             String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
             String message = null;
             List<String> result = new ArrayList<>();

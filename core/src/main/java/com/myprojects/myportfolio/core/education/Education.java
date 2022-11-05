@@ -25,7 +25,7 @@ public class Education {
     )
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",
             nullable = false,
@@ -63,17 +63,5 @@ public class Education {
 
     @ManyToMany(mappedBy = "educations")
     private Set<Story> stories;
-
-    public Education(EducationProjection projection){
-        super();
-        this.id = projection.getId();
-        this.school = projection.getSchool();
-        this.degree = projection.getDegree();
-        this.field = projection.getField();
-        this.startDate = projection.getStartDate();
-        this.endDate = projection.getEndDate();
-        this.grade = projection.getGrade();
-        this.description = projection.getDescription();
-    }
 
 }

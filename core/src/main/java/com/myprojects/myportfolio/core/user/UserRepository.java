@@ -9,6 +9,4 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 
     User findByEmail(String email);
 
-    UserProjection findFirstById(Integer id);
-
 }
