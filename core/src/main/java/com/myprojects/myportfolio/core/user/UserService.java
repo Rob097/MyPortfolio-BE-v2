@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -21,11 +20,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    public List<User> getAllUsers(){
-        List<User> all = this.userRepository.findAll();
-        return all;
-    }
 
     public Slice<User> findAll(Specification specification, Pageable pageable){
 
@@ -71,6 +65,11 @@ public class UserService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = this.userRepository.findByEmail(username);
         return user.getId().equals(id);
+    }
+    public User getCurrentLoggedInUser(){
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = this.userRepository.findByEmail(username);
+        return user;
     }
 
 }

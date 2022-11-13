@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@RestController
-@RequestMapping("api/core/users")
 @Slf4j
+@RestController
+@RequestMapping("${core-module-basic-path}" + "/users")
 public class UserController implements IController<UserR> {
 
     @Autowired
@@ -65,7 +65,7 @@ public class UserController implements IController<UserR> {
         Validate.notNull(id, "Mandatory parameter is missing: id.");
         this.storeRequestView(view, httpServletRequest);
 
-        User user = this.userService.findById(id);
+        User user = userService.findById(id);
 
         return this.buildSuccessResponse(userRMapper.map(user));
     }
@@ -75,7 +75,7 @@ public class UserController implements IController<UserR> {
     public ResponseEntity<MessageResource<UserR>> create(@RequestBody UserR user) {
         Validate.notNull(user, "No valid resource was provided..");
 
-        User newUser = this.userService.save(this.userMapper.map(user));
+        User newUser = userService.save(userMapper.map(user));
         return this.buildSuccessResponse(userRMapper.map(newUser));
     }
 
@@ -87,8 +87,8 @@ public class UserController implements IController<UserR> {
         Validate.notNull(user.getId(), "Mandatory parameter is missing: id user.");
         Validate.isTrue(user.getId().equals(id), "The request's id and the body's id are different.");
 
-        User userToUpate = this.userService.findById(user.getId());
-        User updatedUser = this.userService.update(this.userMapper.map(user, userToUpate));
+        User userToUpate = userService.findById(user.getId());
+        User updatedUser = userService.update(userMapper.map(user, userToUpate));
         return this.buildSuccessResponse(userRMapper.map(updatedUser));
     }
 
@@ -98,10 +98,10 @@ public class UserController implements IController<UserR> {
     public ResponseEntity<MessageResource<UserR>> delete(@PathVariable("id") Integer id) {
         Validate.notNull(id, "No valid parameters were provided.");
 
-        User userToDelete = this.userService.findById(id);
+        User userToDelete = userService.findById(id);
         Validate.notNull(userToDelete, "No valid user found with id " + id);
 
-        this.userService.delete(userToDelete);
+        userService.delete(userToDelete);
         return this.buildSuccessResponse(userRMapper.map(userToDelete));
     }
 

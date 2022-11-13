@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/core/projects")
+@RequestMapping("${core-module-basic-path}" + "/projects")
 @Slf4j
 public class ProjectController {
 

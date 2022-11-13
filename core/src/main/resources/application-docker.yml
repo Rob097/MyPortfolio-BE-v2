@@ -1,6 +1,8 @@
 server:
   port: 8080
 
+core-module-basic-path: "api/core"
+
 spring:
   application:
     name: core

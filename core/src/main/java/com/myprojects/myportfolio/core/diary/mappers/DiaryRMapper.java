@@ -1,13 +1,17 @@
 package com.myprojects.myportfolio.core.diary.mappers;
 
 import com.myprojects.myportfolio.clients.diary.DiaryR;
+import com.myprojects.myportfolio.clients.general.IController;
 import com.myprojects.myportfolio.clients.general.Mapper;
+import com.myprojects.myportfolio.clients.general.views.IView;
+import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.story.mappers.SyntheticStoryRMapper;
 import com.myprojects.myportfolio.core.user.mappers.SyntheticUserRMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,6 +25,9 @@ public class DiaryRMapper implements Mapper<DiaryR, Diary> {
 
     @Autowired
     private SyntheticStoryRMapper storyRMapper;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     @Override
     public DiaryR map(Diary input) {
@@ -36,10 +43,10 @@ public class DiaryRMapper implements Mapper<DiaryR, Diary> {
             return null;
         }
 
-        if(input.getUser()!=null) {
+        IView view = (IView) this.httpServletRequest.getAttribute(IController.VIEW);
+
+        if(view != null && view.isAtLeast(Verbose.value)) {
             output.setUser(this.userRMapper.map(input.getUser()));
-        }
-        if(input.getStories()!=null && !input.getStories().isEmpty()) {
             output.setStories(input.getStories().stream().map(el -> this.storyRMapper.map(el)).collect(Collectors.toSet()));
         }
 

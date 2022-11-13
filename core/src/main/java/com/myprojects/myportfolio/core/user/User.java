@@ -100,6 +100,11 @@ public class User {
         FEMALE;
     }
 
+    public User(Integer id, String email) {
+        this.id = id;
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

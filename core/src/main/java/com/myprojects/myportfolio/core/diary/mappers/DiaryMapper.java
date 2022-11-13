@@ -32,11 +32,13 @@ public class DiaryMapper implements Mapper<Diary, DiaryR> {
         }
 
         output.setId(input.getId());
+        output.setEntryDateTime(input.getEntryDateTime());
         if(input.getUser()!=null) {
             output.setUser(User.builder().id(input.getUser().getId()).build());
         }
-        output.setEntryDateTime(input.getEntryDateTime());
-        output.setStories(input.getStories().stream().map(el -> this.storyMapper.map(el)).collect(Collectors.toSet()));
+        if(input.getStories()!=null && !input.getStories().isEmpty()) {
+            output.setStories(input.getStories().stream().map(el -> this.storyMapper.map(el)).collect(Collectors.toSet()));
+        }
 
         return output;
     }

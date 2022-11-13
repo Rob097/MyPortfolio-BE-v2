@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("${auth-module-basic-path}")
 @Slf4j
 @AllArgsConstructor
 public class AuthenticationUserController {

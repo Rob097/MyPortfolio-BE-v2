@@ -11,7 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * This component is used to intercept the request between microservices via feignClients.
- * We need the method apply to intercept the authentication headers from the caller microservice and pass to the receivere microservice.
+ * We need the method apply to intercept the authentication headers from the caller microservice and pass to the receiver microservice.
  * Sadly, FeignClients doesn't do it for us, so we need to explicit this behaviour.
  * */
 @Component
