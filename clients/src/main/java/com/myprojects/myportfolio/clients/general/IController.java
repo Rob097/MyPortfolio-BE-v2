@@ -11,15 +11,25 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.expression.ParseException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_FORMAT;
+import static com.myprojects.myportfolio.clients.utils.UtilsConstants.TIME_FORMAT;
 
 public interface IController <R>{
 
@@ -29,8 +39,8 @@ public interface IController <R>{
     IView DEFAULT_VIEW = Normal.value;
     String DEFAULT_VIEW_NAME = Normal.name;
     String filterKey = "(\\w+?)";
-    String filterOperation = "(:|<|>)";
-    String filterValue = "(\\w+?)";
+    String filterOperation = "(:|!|<|>)";
+    String filterValue = "(.+)";
     String filtersSeparator = ",";
 
 
@@ -58,10 +68,36 @@ public interface IController <R>{
     default <T> Specification<T> defineFiltersAndStoreView(String filters, IView view, HttpServletRequest request){
         SpecificationsBuilder builder = new SpecificationsBuilder();
         if(Strings.isNotBlank(filters)) {
-            Pattern pattern = Pattern.compile(filterKey + filterOperation + filterValue + filtersSeparator);
-            Matcher matcher = pattern.matcher(filters + filtersSeparator);
-            while (matcher.find()) {
-                builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+            String[] filtersArray = filters.split(filtersSeparator);
+            Pattern pattern = Pattern.compile(filterKey + filterOperation + filterValue);
+
+            for(String filter : filtersArray) {
+                Matcher matcher = pattern.matcher(filter);
+                while (matcher.find()) {
+
+                    String key = matcher.group(1);
+                    String operation = matcher.group(2);
+                    String value = matcher.group(3);
+                    Object valueObj = value;
+
+                    try {
+                        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                .appendPattern(DATE_FORMAT)
+                                .optionalStart()
+                                .appendPattern(" " + TIME_FORMAT)
+                                .optionalEnd()
+                                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                                .toFormatter();
+                        LocalDateTime dateTime = LocalDateTime.parse(value, formatter);
+                        valueObj = dateTime;
+                    } catch (Exception e) {
+                        // Value is not a date
+                    }
+
+                    builder.with(key, operation, valueObj);
+                }
             }
         }
 
