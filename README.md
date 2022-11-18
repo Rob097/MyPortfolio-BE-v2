@@ -6,7 +6,7 @@ MyPortfolio is a place where you can tell your own stories. About your job, tour
 
 MyPortfolio is meant to be a community for those people who want to see beyond just a completed project or simple hiring. For those who wants to know the whole story that is behind these achievements.
 
-#### How its build
+### How its build
 The architectural design used to create this project is based on the Microservices design.
 
 So the technology stack used is the following:
