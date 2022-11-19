@@ -34,15 +34,15 @@ public class StoryService {
         return story.orElseThrow(() -> new NoSuchElementException("Impossible to found any story with id: " + id));
     }
 
-    public Story save(Story u){
-        Validate.notNull(u, "Mandatory parameter is missing: story.");
+    public Story save(Story storyToSave){
+        Validate.notNull(storyToSave, "Mandatory parameter is missing: story.");
 
-        if(u.getId()!=null) {
-            Optional<Story> actual = this.storyRepository.findById(u.getId());
-            Validate.isTrue(!actual.isPresent(), "It already exists a story with id: " + u.getId());
+        if(storyToSave.getId()!=null) {
+            Optional<Story> actual = this.storyRepository.findById(storyToSave.getId());
+            Validate.isTrue(!actual.isPresent(), "It already exists a story with id: " + storyToSave.getId());
         }
 
-        Story story = this.storyRepository.save(u);
+        Story story = this.storyRepository.save(storyToSave);
         return story;
     }
 

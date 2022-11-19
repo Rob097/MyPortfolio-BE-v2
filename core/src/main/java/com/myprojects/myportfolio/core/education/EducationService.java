@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.education;
 
-import com.myprojects.myportfolio.core.user.User;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +46,7 @@ public class EducationService {
 
     public Education update(Education educationToUpdate){
         Validate.notNull(educationToUpdate, "Mandatory parameter is missing: education.");
-        Validate.notNull(educationToUpdate.getId(), "Mandatory parameter is missinge: id education.");
+        Validate.notNull(educationToUpdate.getId(), "Mandatory parameter is missing: id education.");
 
         return educationRepository.save(educationToUpdate);
     }

@@ -35,15 +35,22 @@ public class UserService {
         return user.orElseThrow(() -> new NoSuchElementException("Impossible to found any user with id: " + id));
     }
 
-    public User save(User u){
-        Validate.notNull(u, "Mandatory parameter is missing: user.");
+    public User findByEmail(String email) {
+        Validate.notNull(email, "Mandatory parameter is missing: email.");
 
-        if(u.getId()!=null) {
-            Optional<User> actual = this.userRepository.findById(u.getId());
-            Validate.isTrue(!actual.isPresent(), "It already exists an application user with id: " + u.getId());
+        User user = this.userRepository.findByEmail(email);
+        return user;
+    }
+
+    public User save(User userToSave){
+        Validate.notNull(userToSave, "Mandatory parameter is missing: user.");
+
+        if(userToSave.getId()!=null) {
+            Optional<User> actual = this.userRepository.findById(userToSave.getId());
+            Validate.isTrue(!actual.isPresent(), "It already exists an application user with id: " + userToSave.getId());
         }
 
-        User user = this.userRepository.save(u);
+        User user = this.userRepository.save(userToSave);
         return user;
     }
 
@@ -63,7 +70,7 @@ public class UserService {
     /**Method used to check if an id is the same as the one of the current logged-in user*/
     public boolean hasId(Integer id){
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = this.userRepository.findByEmail(username);
+        User user = this.findByEmail(username);
         return user.getId().equals(id);
     }
     public User getCurrentLoggedInUser(){

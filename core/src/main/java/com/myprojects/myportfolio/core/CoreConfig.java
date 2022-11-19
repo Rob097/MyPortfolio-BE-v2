@@ -29,7 +29,6 @@ public class CoreConfig {
         return new RestTemplate();
     }
 
-
     /**
      * I use this method to save some packages paths in order to use variables into annotations
      */

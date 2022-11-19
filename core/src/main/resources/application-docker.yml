@@ -14,6 +14,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+        ##### START CACHE CONFIGURATIONS #####
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+          factory_class: org.redisson.hibernate.RedissonRegionFactory
+          redisson:
+            fallback: true
+            config: redisson-dev-docker.yaml
+        #####  END CACHE CONFIGURATIONS  #####
     hibernate:
       ddl-auto: none
   zipkin:

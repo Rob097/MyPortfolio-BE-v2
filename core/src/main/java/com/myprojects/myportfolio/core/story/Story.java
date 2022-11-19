@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.education.Education;
 import com.myprojects.myportfolio.core.experience.Experience;
+import com.myprojects.myportfolio.core.project.Project;
 import com.myprojects.myportfolio.core.skill.Skill;
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -20,7 +23,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "stories")
-public class Story {
+@org.hibernate.annotations.Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
+public class Story implements Serializable {
+
+    private static final long serialVersionUID = -6674119427069707283L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +53,7 @@ public class Story {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isPrimaryStory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "diary_id",
             nullable = false,
@@ -56,27 +62,39 @@ public class Story {
                     name = "diary_story_fk"
             )
     )
+    @org.hibernate.annotations.Cache(region = "diaries", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Diary diary;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "story_educations",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"))
+    @org.hibernate.annotations.Cache(region = "educations", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Education> educations;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "story_experiences",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"))
+    @org.hibernate.annotations.Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Experience> experiences;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "story_skills",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
+    @org.hibernate.annotations.Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "story_projects",
+            joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"))
+    @org.hibernate.annotations.Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
+    private Set<Project> projects;
 
 }

@@ -26,14 +26,6 @@ public class DiaryService {
 
     public Slice<Diary> findAll(Specification specification, Pageable pageable){
 
-        /*Specification<Diary> spec = new Specification<Diary>() {
-            @Override
-            public Predicate toPredicate(Root<Diary> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-                Join<Diary, User> user = root.join("user");
-                return builder.equal(user.get("firstName"), "Roberto");
-            };
-        };*/
-
         Slice<Diary> diaries = this.diaryRepository.findAll(specification, pageable);
 
         return diaries;

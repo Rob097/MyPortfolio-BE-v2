@@ -6,9 +6,11 @@ import com.myprojects.myportfolio.core.experience.Experience;
 import com.myprojects.myportfolio.core.project.Project;
 import com.myprojects.myportfolio.core.skill.Skill;
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -20,7 +22,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
+@org.hibernate.annotations.Cache(region = "users", usage = CacheConcurrencyStrategy.READ_WRITE)
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 42L;
 
     @Id
     @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", strategy = "com.myprojects.myportfolio.clients.utils.UseExistingIdOtherwiseGenerateUsingIdentity")
@@ -60,6 +65,7 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
+    @org.hibernate.annotations.Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
     private List<Project> projects;
 
     @OneToMany(
@@ -68,6 +74,7 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
+    @org.hibernate.annotations.Cache(region = "educations", usage=CacheConcurrencyStrategy.READ_ONLY)
     private List<Education> educations;
 
     @OneToMany(
@@ -76,6 +83,7 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
+    @org.hibernate.annotations.Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
     private List<Experience> experiences;
 
     @ManyToMany(
@@ -85,6 +93,7 @@ public class User {
             name = "user_skills",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
+    @org.hibernate.annotations.Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills;
 
     @OneToMany(
@@ -93,6 +102,7 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
+    @org.hibernate.annotations.Cache(region = "diaries", usage=CacheConcurrencyStrategy.READ_ONLY)
     private List<Diary> diaries;
 
     public enum Sex{

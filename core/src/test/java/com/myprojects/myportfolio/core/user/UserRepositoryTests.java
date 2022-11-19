@@ -29,6 +29,8 @@ public class UserRepositoryTests {
 
     @BeforeEach
     public void init() {
+        System.out.println(org.hibernate.Version.getVersionString());
+
         userJohn = new User();
         userJohn.setFirstName("John");
         userJohn.setLastName("Doe");
