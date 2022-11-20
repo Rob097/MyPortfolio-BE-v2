@@ -2,6 +2,9 @@ server:
   port: 8080
 
 core-module-basic-path: "api/core"
+scheduled-cron-expression:
+  cache-eviction: "0 0 0 * * ?" # Every day at midnight
+  #cache-eviction: "0 * * ? * *" # Every minute (Only for tests)
 
 spring:
   application:

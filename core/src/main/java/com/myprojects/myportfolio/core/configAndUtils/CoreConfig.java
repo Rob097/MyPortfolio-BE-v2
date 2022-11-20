@@ -1,4 +1,4 @@
-package com.myprojects.myportfolio.core;
+package com.myprojects.myportfolio.core.configAndUtils;
 
 import lombok.Data;
 import org.aopalliance.intercept.MethodInvocation;
