@@ -40,15 +40,15 @@ public class MessageResource<T> extends MessageSupport{
 
 	public MessageResource(T content, Iterable<? extends IMessage> messages) {
 
-		Assert.notNull(content, "Content must not be null!");
-		Assert.isTrue(!(content instanceof Collection), "Content must not be a collection! Use Resources instead!");
+		//Assert.notNull(content, "Content must not be null!");
+		Assert.isTrue((content==null || !(content instanceof Collection)), "Content must not be a collection! Use Resources instead!");
 		this.content = content;
 		this.add(messages);
 	}
 
     public MessageResource(T content) {
-    	Assert.notNull(content, "Content must not be null!");
-		Assert.isTrue(!(content instanceof Collection), "Content must not be a collection! Use MessageResources instead!");
+//    	Assert.notNull(content, "Content must not be null!");
+		Assert.isTrue((content==null || !(content instanceof Collection)), "Content must not be a collection! Use MessageResources instead!");
 		this.content = content;
     }
     

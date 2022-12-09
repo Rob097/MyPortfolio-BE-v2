@@ -6,7 +6,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -58,19 +57,6 @@ public class JwtTokenValidation extends OncePerRequestFilter {
             response.setStatus(e.getStatus().value());
             response.getWriter().write(e.getMessage());
         }
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-
-        /*for(String pattern : coreConfig.ALLOWED_PATHS){
-            if(antPathMatcher.match(pattern, request.getServletPath())){
-                return true;
-            }
-        }*/
-
-        return false;
     }
 
 }

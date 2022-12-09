@@ -11,6 +11,17 @@ spring:
       discovery:
         locator:
           enabled: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods:
+              - POST
+              - GET
+              - OPTIONS
+              - PUT
+              - DELETE
+            allowed-headers: "*"
 
 eureka:
   client:

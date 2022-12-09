@@ -1,25 +1,37 @@
 package com.myprojects.myportfolio.auth.auth;
 
+import com.myprojects.myportfolio.auth.dto.SignINRequest;
+import com.myprojects.myportfolio.auth.dto.SignINResponse;
 import com.myprojects.myportfolio.auth.dto.SignUPRequest;
 import com.myprojects.myportfolio.auth.dto.mapper.DBUserMapper;
 import com.myprojects.myportfolio.auth.dto.mapper.SignUPMapper;
+import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.user.UserR;
+import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.SecretKey;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -37,7 +49,51 @@ public class AuthenticationUserController {
     @Autowired
     private DBUserMapper dbUserMapper;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtConfig jwtConfig;
+
+    @Autowired
+    private SecretKey secretKey;
+
     private final PasswordEncoder passwordEncoder;
+
+    @PostMapping("/signin")
+    public ResponseEntity<SignINResponse> authenticateUser(@Valid @RequestBody SignINRequest loginRequest) {
+
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        Integer expirationAfterDays = jwtConfig.getTokenExpirationAfterDays();
+        if(loginRequest.getRememberMe()!=null && loginRequest.getRememberMe().booleanValue()){
+            expirationAfterDays = jwtConfig.getTokenExpirationAfterDaysRememberMe();
+        }
+
+        AuthenticationUser applicationUser = (AuthenticationUser) authenticate.getPrincipal();
+        DBUser dbUser = applicationUser.getDBUser();
+
+        String token = Jwts.builder()
+                .setSubject(authenticate.getName())
+                .claim("firstName", dbUser.getFirstName())
+                .claim("lastName", dbUser.getLastName())
+                .claim("roles", applicationUser.getRolesName())
+                .claim("authorities", applicationUser.getAuthoritiesName())
+                .setIssuedAt(new Date())
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(expirationAfterDays)))
+                .signWith(secretKey)
+                .compact();
+
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
+        return ResponseEntity.ok().headers(headers).body(new SignINResponse(token));
+    }
 
     @PostMapping(path="/signup", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource<UserR>> create(@RequestBody @Valid SignUPRequest user) {

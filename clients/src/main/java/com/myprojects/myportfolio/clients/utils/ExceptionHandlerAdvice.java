@@ -1,10 +1,12 @@
 package com.myprojects.myportfolio.clients.utils;
 
+import com.myprojects.myportfolio.clients.general.messages.IMessage;
+import com.myprojects.myportfolio.clients.general.messages.Message;
+import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,33 +21,33 @@ import java.util.stream.Collectors;
 public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleException(Exception e) {
+    public ResponseEntity<MessageResource> handleException(Exception e) {
         log.error(e.getMessage(), e.getStackTrace());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(e.getMessage());
+                .body(new MessageResource(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity handleNoSuchElementException(NoSuchElementException e) {
+    public ResponseEntity<MessageResource> handleNoSuchElementException(NoSuchElementException e) {
         log.error(e.getMessage(), e.getStackTrace());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
+                .body(new MessageResource(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<MessageResource> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         BindingResult result = e.getBindingResult();
-        List<String> errors = new ArrayList<>();
+        List<Message> errors = new ArrayList<>();
         if(result.getAllErrors()!=null && !result.getAllErrors().isEmpty()) {
-            errors = result.getAllErrors().stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
+            errors = result.getAllErrors().stream().map(error -> new Message(error.getDefaultMessage(), IMessage.Level.ERROR)).collect(Collectors.toList());
         }
 
         log.error("Validation Error", errors);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(errors);
+                .body(new MessageResource(null, errors));
     }
 
 }

@@ -2,27 +2,22 @@ package com.myprojects.myportfolio.auth.security;
 
 import com.myprojects.myportfolio.auth.auth.AuthenticationUserService;
 import com.myprojects.myportfolio.auth.jwt.JwtTokenValidation;
-import com.myprojects.myportfolio.auth.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.SecretKey;
-import java.util.List;
 
 
 @Configuration
@@ -52,15 +47,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(corsConfigurationSource()).and()
+//                .cors().configurationSource(corsConfigurationSource()).and() disabled because cors is configured only in API GATEWAY
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(jwtTokenValidation,JwtUsernameAndPasswordAuthenticationFilter.class)
+                //.addFilterAfter(jwtTokenValidation,JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
@@ -82,7 +76,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    CorsConfigurationSource corsConfigurationSource() {
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    /*CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> allowOrigins = jwtConfig.ALLOWED_ORIGINS;
         List<String> allowMethods = jwtConfig.ALLOW_METHODS;
@@ -95,6 +95,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
+    }*/
 
 }

@@ -34,7 +34,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(corsConfigurationSource()).and()
+                //.cors().configurationSource(corsConfigurationSource()).and() disabled because cors is configured only in API GATEWAY
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -52,7 +52,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         ;
     }
 
-    CorsConfigurationSource corsConfigurationSource() {
+    /*CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> allowOrigins = jwtConfig.ALLOWED_ORIGINS;
         List<String> allowMethods = jwtConfig.ALLOW_METHODS;
@@ -65,5 +65,5 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
+    }*/
 }

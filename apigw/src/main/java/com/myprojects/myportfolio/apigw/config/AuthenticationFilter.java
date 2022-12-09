@@ -30,6 +30,7 @@ public class AuthenticationFilter implements GatewayFilter {
             exchange.getRequest().mutate()
                     .header(jwtConfig.getInternalAuthorizationHeader(), authorizationHeader)
                     .build();
+
         }
 
         return chain.filter(exchange);
