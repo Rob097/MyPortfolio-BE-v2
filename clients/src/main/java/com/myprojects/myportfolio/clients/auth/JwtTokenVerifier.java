@@ -5,17 +5,14 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import org.assertj.core.util.Strings;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -33,10 +30,6 @@ public class JwtTokenVerifier {
         this.routerValidator = routerValidator;
     }
 
-    /*
-     * TODO: Aggiungere una cache da 1 minuto (Request Scoped) perché ogni microservizio richiamerà questo metodo.
-     *  Quindi se un ms chiama un altro mc il metodo viene chiamato 2 volte in pochi secondi
-     */
     public List<String> validateToken(HttpServletRequest request) throws ResponseStatusException{
 
         if(request == null){
@@ -45,7 +38,7 @@ public class JwtTokenVerifier {
 
         if(!routerValidator.isHttpServletRequestSecured.test(request)) {
 
-            String internalAuthorizationHeader =  request.getHeader(jwtConfig.getAuthorizationHeader()); // RIMOSSO TEMPORANEAMENTE PER LAVORARE DIRETTAMENTE SUL CORE: request.getHeader(jwtConfig.getInternalAuthorizationHeader());
+            String internalAuthorizationHeader =  request.getHeader(jwtConfig.getInternalAuthorizationHeader());
             String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
             String message = null;
             List<String> result = new ArrayList<>();

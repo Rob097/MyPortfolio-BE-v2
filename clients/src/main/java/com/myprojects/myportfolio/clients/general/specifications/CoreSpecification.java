@@ -62,12 +62,22 @@ public class CoreSpecification<T>  implements Specification<T> {
 
                 // String in like
                 if (root.get(criteria.getKey()).getJavaType() == String.class) {
+
+                    String newValue = ((String) criteria.getValue()).replace("*", "%");
                     return criteriaBuilder.like(
-                            root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                            root.<String>get(criteria.getKey()), newValue);
 
                 // LocalDateTime
                 } else if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
+
+                // Boolean
+                } else if (root.get(criteria.getKey()).getJavaType() == Boolean.class) {
+                    if(criteria.getValue().equals("true")) {
+                        return criteriaBuilder.isTrue(root.get(criteria.getKey()));
+                    } else {
+                        return criteriaBuilder.isFalse(root.get(criteria.getKey()));
+                    }
 
                 // EveryThing else
                 } else {
@@ -80,12 +90,22 @@ public class CoreSpecification<T>  implements Specification<T> {
 
                 // String in like
                 if (root.get(criteria.getKey()).getJavaType() == String.class) {
+
+                    String newValue = ((String) criteria.getValue()).replace("*", "%");
                     return criteriaBuilder.notLike(
-                            root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                            root.<String>get(criteria.getKey()), newValue);
 
                 // LocalDateTime
                 } else if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
+
+                // Boolean
+                } else if (root.get(criteria.getKey()).getJavaType() == Boolean.class) {
+                    if(criteria.getValue().equals("true")) {
+                        return criteriaBuilder.isFalse(root.get(criteria.getKey()));
+                    } else {
+                        return criteriaBuilder.isTrue(root.get(criteria.getKey()));
+                    }
 
                 // EveryThing else
                 } else {
