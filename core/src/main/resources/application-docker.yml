@@ -27,7 +27,7 @@ spring:
             config: redisson-dev-docker.yaml
         #####  END CACHE CONFIGURATIONS  #####
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   zipkin:
     base-url: http://myzipkin:9411
   jackson:
