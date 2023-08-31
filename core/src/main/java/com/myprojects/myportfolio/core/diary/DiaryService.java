@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -48,6 +49,10 @@ public class DiaryService {
 
         if(diary.getUser()==null || diary.getUser().getId()==null){
             diary.setUser(userService.getCurrentLoggedInUser());
+        }
+
+        if(diary.getEntryDateTime()==null) {
+            diary.setEntryDateTime(LocalDateTime.now());
         }
 
         Diary createdDiary = this.diaryRepository.save(diary);

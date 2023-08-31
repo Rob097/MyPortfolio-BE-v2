@@ -6,17 +6,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
-import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_FORMAT;
-import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_TIME_FORMAT;
 
 @Data
 @NoArgsConstructor
@@ -29,17 +22,27 @@ public class CoreSpecification<T>  implements Specification<T> {
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         try {
 
+            Expression<T> rootExpression;
+
+            if(criteria.getKey().contains(".")) {
+                String childTable = criteria.getKey().substring(0, criteria.getKey().indexOf("."));
+                String childField = criteria.getKey().substring(criteria.getKey().indexOf(".") + 1);
+                rootExpression = colJoin(root, childTable).get(childField);
+            } else {
+                rootExpression = root.get(criteria.getKey());
+            }
+
             // greaterThanOrEqualTo
             if (criteria.getOperation().equalsIgnoreCase(">")) {
 
                 // LocalDateTime
-                if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
+                if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
                 // EveryThing else
                 } else {
                     return criteriaBuilder.greaterThanOrEqualTo(
-                            root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                            rootExpression.as(String.class), criteria.getValue().toString());
                 }
             }
 
@@ -47,13 +50,13 @@ public class CoreSpecification<T>  implements Specification<T> {
             else if (criteria.getOperation().equalsIgnoreCase("<")) {
 
                 // LocalDateTime
-                if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
+                if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
                 // EveryThing else
                 } else {
                     return criteriaBuilder.lessThanOrEqualTo(
-                            root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                            rootExpression.as(String.class), criteria.getValue().toString());
                 }
             }
 
@@ -61,27 +64,26 @@ public class CoreSpecification<T>  implements Specification<T> {
             else if (criteria.getOperation().equalsIgnoreCase(":")) {
 
                 // String in like
-                if (root.get(criteria.getKey()).getJavaType() == String.class) {
+                if (rootExpression.getJavaType() == String.class) {
 
                     String newValue = ((String) criteria.getValue()).replace("*", "%");
-                    return criteriaBuilder.like(
-                            root.<String>get(criteria.getKey()), newValue);
+                    return criteriaBuilder.like(rootExpression.as(String.class), newValue);
 
                 // LocalDateTime
-                } else if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
+                } else if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
                 // Boolean
-                } else if (root.get(criteria.getKey()).getJavaType() == Boolean.class) {
+                } else if (rootExpression.getJavaType() == Boolean.class) {
                     if(criteria.getValue().equals("true")) {
-                        return criteriaBuilder.isTrue(root.get(criteria.getKey()));
+                        return criteriaBuilder.isTrue(rootExpression.as(Boolean.class));
                     } else {
-                        return criteriaBuilder.isFalse(root.get(criteria.getKey()));
+                        return criteriaBuilder.isFalse(rootExpression.as(Boolean.class));
                     }
 
                 // EveryThing else
                 } else {
-                    return criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue());
+                    return criteriaBuilder.equal(rootExpression, criteria.getValue());
                 }
             }
 
@@ -89,27 +91,26 @@ public class CoreSpecification<T>  implements Specification<T> {
             else if (criteria.getOperation().equalsIgnoreCase("!")) {
 
                 // String in like
-                if (root.get(criteria.getKey()).getJavaType() == String.class) {
+                if (rootExpression.getJavaType() == String.class) {
 
                     String newValue = ((String) criteria.getValue()).replace("*", "%");
-                    return criteriaBuilder.notLike(
-                            root.<String>get(criteria.getKey()), newValue);
+                    return criteriaBuilder.notLike(rootExpression.as(String.class), newValue);
 
                 // LocalDateTime
-                } else if (root.get(criteria.getKey()).getJavaType() == LocalDateTime.class) {
+                } else if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
                 // Boolean
-                } else if (root.get(criteria.getKey()).getJavaType() == Boolean.class) {
+                } else if (rootExpression.getJavaType() == Boolean.class) {
                     if(criteria.getValue().equals("true")) {
-                        return criteriaBuilder.isFalse(root.get(criteria.getKey()));
+                        return criteriaBuilder.isFalse(rootExpression.as(Boolean.class));
                     } else {
-                        return criteriaBuilder.isTrue(root.get(criteria.getKey()));
+                        return criteriaBuilder.isTrue(rootExpression.as(Boolean.class));
                     }
 
                 // EveryThing else
                 } else {
-                    return criteriaBuilder.notEqual(root.get(criteria.getKey()), criteria.getValue());
+                    return criteriaBuilder.notEqual(rootExpression, criteria.getValue());
                 }
             }
 
@@ -120,7 +121,7 @@ public class CoreSpecification<T>  implements Specification<T> {
         }
     }
 
-    private Predicate checkDates(Root<T> root, CriteriaBuilder criteriaBuilder, String operation) throws ParseException {
+    private Predicate checkDates(Expression<?> rootExpression, CriteriaBuilder criteriaBuilder, String operation) throws ParseException {
         LocalDateTime localDateTime = (LocalDateTime) criteria.getValue();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Expression<Date> dateExpr;
@@ -128,28 +129,24 @@ public class CoreSpecification<T>  implements Specification<T> {
 
         // Check if we need to compare truncated dates
         if(localDateTime.getHour()==0 && localDateTime.getMinute()==0 && localDateTime.getSecond()==0){
-            dateExpr = criteriaBuilder.function("DATE", Date.class, root.get(criteria.getKey())).as(Date.class);
+            dateExpr = criteriaBuilder.function("DATE", Date.class, rootExpression).as(Date.class);
         } else {
-            dateExpr = criteriaBuilder.function("", Date.class, root.get(criteria.getKey())).as(Date.class);
+            dateExpr = criteriaBuilder.function("", Date.class, rootExpression).as(Date.class);
         }
 
-        switch (operation){
-            case ">":
-                predicate = criteriaBuilder.greaterThanOrEqualTo(dateExpr, date);
-                break;
-            case "<":
-                predicate = criteriaBuilder.lessThanOrEqualTo(dateExpr, date);
-                break;
-            case ":":
-                predicate = criteriaBuilder.equal(dateExpr, date);
-                break;
-            case "!":
-                predicate = criteriaBuilder.notEqual(dateExpr, date);
-                break;
+        switch (operation) {
+            case ">" -> predicate = criteriaBuilder.greaterThanOrEqualTo(dateExpr, date);
+            case "<" -> predicate = criteriaBuilder.lessThanOrEqualTo(dateExpr, date);
+            case ":" -> predicate = criteriaBuilder.equal(dateExpr, date);
+            case "!" -> predicate = criteriaBuilder.notEqual(dateExpr, date);
         }
 
         return predicate;
 
+    }
+
+    private <R> Join<T,R> colJoin(Root<T> root, String child){
+        return root.join(child);
     }
 
 }

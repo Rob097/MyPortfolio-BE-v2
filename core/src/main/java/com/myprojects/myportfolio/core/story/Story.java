@@ -42,6 +42,7 @@ public class Story implements Serializable {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String description;
 
     @Column(columnDefinition = "DATE")

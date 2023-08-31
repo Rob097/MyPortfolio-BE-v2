@@ -65,6 +65,7 @@ public class Education implements Serializable {
     private Double grade;
 
     // Description
+    @Column(nullable = false)
     private String description;
 
     @ManyToMany(

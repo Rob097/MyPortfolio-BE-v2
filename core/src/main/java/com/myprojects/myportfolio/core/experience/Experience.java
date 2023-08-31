@@ -64,6 +64,7 @@ public class Experience implements Serializable {
     private LocalDate endDate;
 
     // Description
+    @Column(nullable = false)
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)

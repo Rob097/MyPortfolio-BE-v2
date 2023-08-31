@@ -36,6 +36,12 @@ public class Project implements Serializable {
     )
     private String name;
 
+    @Column(
+            name = "description",
+            nullable = false
+    )
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",

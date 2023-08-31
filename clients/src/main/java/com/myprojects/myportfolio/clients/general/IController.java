@@ -11,18 +11,15 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.expression.ParseException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -38,8 +35,8 @@ public interface IController <R>{
     String VIEW = "view";
     IView DEFAULT_VIEW = Normal.value;
     String DEFAULT_VIEW_NAME = Normal.name;
-    String filterKey = "(\\w+?)";
-    String filterOperation = "(:|!|<|>)";
+    String filterKey = "(\\w.+?)";
+    String filterOperation = "([:!<>])";
     String filterValue = "(.+)";
     String filtersSeparator = ",";
 
@@ -66,7 +63,7 @@ public interface IController <R>{
         }
     }
     default <T> Specification<T> defineFiltersAndStoreView(String filters, IView view, HttpServletRequest request){
-        SpecificationsBuilder builder = new SpecificationsBuilder();
+        SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();
         if(Strings.isNotBlank(filters)) {
             String[] filtersArray = filters.split(filtersSeparator);
             Pattern pattern = Pattern.compile(filterKey + filterOperation + filterValue);
@@ -90,8 +87,7 @@ public interface IController <R>{
                                 .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                                 .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
                                 .toFormatter();
-                        LocalDateTime dateTime = LocalDateTime.parse(value, formatter);
-                        valueObj = dateTime;
+                        valueObj = LocalDateTime.parse(value, formatter);
                     } catch (Exception e) {
                         // Value is not a date
                     }
