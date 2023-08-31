@@ -8,6 +8,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Setter
@@ -38,9 +39,13 @@ public class Project implements Serializable {
 
     @Column(
             name = "description",
-            nullable = false
+            nullable = false,
+            columnDefinition = "TEXT"
     )
     private String description;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime entryDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

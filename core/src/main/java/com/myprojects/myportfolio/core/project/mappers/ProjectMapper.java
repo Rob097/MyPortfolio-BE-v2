@@ -23,6 +23,10 @@ public class ProjectMapper implements Mapper<Project, ProjectR> {
 
         output.setId(input.getId());
         output.setName(input.getName());
+        output.setDescription(input.getDescription());
+        if(input.getEntryDateTime()!=null) {
+            output.setEntryDateTime(input.getEntryDateTime());
+        }
         if(input.getUser()!=null) {
             output.setUser(User.builder().id(input.getUser().getId()).build());
         }

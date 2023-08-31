@@ -81,7 +81,7 @@ public class UserController implements IController<UserR> {
 
     @Override
     @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_WRITE.getName()) && @userService.hasId(#id)")
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).ADMIN.getName()) || @userService.hasId(#id)")
     public ResponseEntity<MessageResource<UserR>> update(@PathVariable("id") Integer id, @RequestBody UserR user) {
         Validate.notNull(user, "No valid resource to update was provided.");
         Validate.notNull(user.getId(), "Mandatory parameter is missing: id user.");

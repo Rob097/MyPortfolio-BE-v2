@@ -42,7 +42,7 @@ public class Story implements Serializable {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(columnDefinition = "DATE")
@@ -53,6 +53,12 @@ public class Story implements Serializable {
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isPrimaryStory;
+
+    @Column(columnDefinition = "TEXT")
+    private String firstRelevantSection;
+
+    @Column(columnDefinition = "TEXT")
+    private String secondRelevantSection;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
