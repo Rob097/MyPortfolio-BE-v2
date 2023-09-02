@@ -17,7 +17,7 @@ public class SyntheticProjectRMapper implements Mapper<ProjectR, Project> {
         }
 
         output.setId(input.getId());
-        output.setName(input.getName());
+        output.setTitle(input.getTitle());
         output.setDescription(input.getDescription());
         output.setEntryDateTime(input.getEntryDateTime());
 

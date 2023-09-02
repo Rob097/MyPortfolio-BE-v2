@@ -19,6 +19,7 @@ import java.util.List;
 public class UserR {
 
     private Integer id;
+    private String slug;
     private String firstName;
     private String lastName;
     private String email;

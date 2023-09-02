@@ -18,7 +18,7 @@ import java.util.Set;
 public class ProjectR {
 
     private Integer id;
-    private String name;
+    private String title;
     private String description;
     private LocalDateTime entryDateTime;
     private UserR user;

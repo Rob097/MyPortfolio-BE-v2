@@ -32,10 +32,10 @@ public class Project implements Serializable {
     private Integer id;
 
     @Column(
-            name = "name",
+            name = "title",
             nullable = false
     )
-    private String name;
+    private String title;
 
     @Column(
             name = "description",

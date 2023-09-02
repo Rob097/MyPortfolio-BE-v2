@@ -131,4 +131,18 @@ public interface IController <R>{
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
+    /* Build Success Response for List of object */
+    default <T> ResponseEntity<MessageResources<T>> buildSuccessResponses(List<T> list){
+        return this.buildSuccessResponses(list, new ArrayList<>());
+    }
+    default <T> ResponseEntity<MessageResources<T>> buildSuccessResponses(@NotNull List<T> list, List<Message> messages){
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("IS-EMPTY", List.of("" + list.isEmpty()));
+        headers.put("IS-LAST", List.of("" + true));
+        headers.put("NUMBER", List.of("" + list.size()));
+
+        MessageResources<T> result = new MessageResources<>(list, messages);
+        return new ResponseEntity<>(result, headers, HttpStatus.OK);
+    }
+
 }

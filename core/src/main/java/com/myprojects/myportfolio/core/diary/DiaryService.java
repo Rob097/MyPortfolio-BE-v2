@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.diary;
 
-import com.myprojects.myportfolio.core.user.UserService;
+import com.myprojects.myportfolio.core.user.UserServiceI;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class DiaryService {
     private DiaryRepository diaryRepository;
 
     @Autowired
-    private UserService userService;
+    private UserServiceI userService;
 
     public Slice<Diary> findAll(Specification specification, Pageable pageable){
 

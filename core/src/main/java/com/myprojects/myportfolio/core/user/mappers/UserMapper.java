@@ -57,6 +57,9 @@ public class UserMapper implements Mapper<User, UserR> {
         output.setCity(input.getCity());
         output.setCap(input.getCap());
         output.setAddress(input.getAddress());
+        if(input.getSlug()!=null) {
+            output.setSlug(input.getSlug());
+        }
         if(!Strings.isNullOrEmpty(input.getSex())) {
             output.setSex(input.getSex().equals("MALE") ? User.Sex.MALE : input.getSex().equals("FEMALE") ? User.Sex.FEMALE : null);
         }

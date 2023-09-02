@@ -22,7 +22,7 @@ public class ProjectMapper implements Mapper<Project, ProjectR> {
         }
 
         output.setId(input.getId());
-        output.setName(input.getName());
+        output.setTitle(input.getTitle());
         output.setDescription(input.getDescription());
         if(input.getEntryDateTime()!=null) {
             output.setEntryDateTime(input.getEntryDateTime());

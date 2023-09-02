@@ -1,7 +1,6 @@
 package com.myprojects.myportfolio.clients.auth;
 
 import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,17 +15,24 @@ public class RouterValidator {
     public static final Map<String, List<HttpMethod>> openApiEndpoints = Map.of(
             "/api/auth/signin", List.of(HttpMethod.POST),
             "/api/auth/signup", List.of(HttpMethod.POST),
-            "/api/core/users", List.of(HttpMethod.POST)
+            "/api/core/users", List.of(HttpMethod.POST, HttpMethod.GET)
     );
 
     public Predicate<HttpServletRequest> isHttpServletRequestSecured = (request) -> {
         boolean isMatch = false;
-        boolean isUri = openApiEndpoints.containsKey(request.getRequestURI());
-        if(isUri){
-            isMatch = openApiEndpoints.get(request.getRequestURI()).stream()
-                    .map(el -> el.name())
-                    .filter(el -> el.equals(request.getMethod()))
-                    .findAny().isPresent();
+        String route = null;
+
+        for (String key : openApiEndpoints.keySet()) {
+            if (request.getRequestURI().contains(key)) {
+                route = key;
+                break;
+            }
+        }
+
+        if(route!=null){
+            isMatch = openApiEndpoints.get(route).stream()
+                    .map(Enum::name)
+                    .anyMatch(el -> el.equals(request.getMethod()));
         }
         return isMatch;
     };

@@ -17,6 +17,7 @@ public class SyntheticUserRMapper implements Mapper<UserR, User> {
         }
 
         output.setId(input.getId());
+        output.setSlug(input.getSlug());
         output.setFirstName(input.getFirstName());
         output.setLastName(input.getLastName());
         output.setEmail(input.getEmail());

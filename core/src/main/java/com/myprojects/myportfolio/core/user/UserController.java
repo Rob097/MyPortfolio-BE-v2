@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -29,7 +30,7 @@ import java.util.List;
 public class UserController implements IController<UserR> {
 
     @Autowired
-    private UserService userService;
+    private UserServiceI userService;
 
     @Autowired
     private UserRMapper userRMapper;
@@ -40,9 +41,11 @@ public class UserController implements IController<UserR> {
     @Autowired
     private HttpServletRequest httpServletRequest;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
     public ResponseEntity<MessageResources<UserR>> find(
             @RequestParam(name = FILTERS, required = false) String filters,
             @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view,
@@ -57,7 +60,6 @@ public class UserController implements IController<UserR> {
 
     @Override
     @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_READ.getName())")
     public ResponseEntity<MessageResource<UserR>> get(
             @PathVariable("id") Integer id,
             @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
@@ -68,6 +70,26 @@ public class UserController implements IController<UserR> {
         User user = userService.findById(id);
 
         return this.buildSuccessResponse(userRMapper.map(user));
+    }
+
+    @GetMapping(path="/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource<UserR>> get(
+            @PathVariable("slug") String slug,
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
+    ) throws Exception {
+        Validate.notNull(slug, "Mandatory parameter is missing: slug.");
+        this.storeRequestView(view, httpServletRequest);
+
+        User user = userService.findBySlug(slug);
+
+        return this.buildSuccessResponse(userRMapper.map(user));
+    }
+
+    @GetMapping(path="/slugs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResources<String>> getAllSlugs() throws Exception {
+
+        List<String> slugs = userRepository.findAllSlugs();
+        return this.buildSuccessResponses(slugs);
     }
 
     @Override

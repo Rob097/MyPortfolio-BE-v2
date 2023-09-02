@@ -100,7 +100,7 @@ VALUES
     (2, 4);
 
 -- Insert mock data into the 'projects' table
-INSERT INTO projects (name, user_id, description)
+INSERT INTO projects (title, user_id, description)
 VALUES
     ('E-commerce Platform', 1, 'Developed a scalable e-commerce platform'),
     ('Personal Portfolio', 2, 'Created a portfolio website showcasing frontend skills');

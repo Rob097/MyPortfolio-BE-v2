@@ -33,6 +33,9 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false)
     protected Integer id;
 
+    @Column(unique = true, nullable = false)
+    private String slug;
+
     private String firstName;
 
     private String lastName;
@@ -113,7 +116,15 @@ public class User implements Serializable {
     public User(Integer id, String email) {
         this.id = id;
         this.email = email;
+        this.slug = "";
     }
+
+    public User(Integer id, String email, String slug) {
+        this.id = id;
+        this.email = email;
+        this.slug = slug;
+    }
+
 
     @Override
     public boolean equals(Object o) {
