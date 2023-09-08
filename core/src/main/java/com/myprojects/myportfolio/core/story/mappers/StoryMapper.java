@@ -29,6 +29,9 @@ public class StoryMapper implements Mapper<Story, StoryR> {
         }
 
         output.setId(input.getId());
+        if(input.getSlug()!=null) {
+            output.setSlug(input.getSlug());
+        }
         output.setTitle(input.getTitle());
         output.setDescription(input.getDescription());
         output.setEntryDateTime(input.getEntryDateTime());

@@ -3,10 +3,12 @@ package com.myprojects.myportfolio.core.skill;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myprojects.myportfolio.core.story.Story;
 import com.myprojects.myportfolio.core.user.User;
+import com.myprojects.myportfolio.core.user.UserSkill;
 import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +23,7 @@ import java.util.Set;
 @org.hibernate.annotations.Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Skill implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4898256361830275290L;
 
     @Id
@@ -33,8 +36,20 @@ public class Skill implements Serializable {
 
     private String name;
 
-    @ManyToMany(mappedBy = "skills")
-    @org.hibernate.annotations.Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
-    private Set<User> users;
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @org.hibernate.annotations.Cache(region = "userSkills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    private Set<UserSkill> users;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "category_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "skill_category_fk"
+            )
+    )
+    @org.hibernate.annotations.Cache(region = "skillsCategory", usage=CacheConcurrencyStrategy.READ_ONLY)
+    private SkillsCategory category;
 
 }

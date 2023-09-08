@@ -10,7 +10,6 @@ import com.myprojects.myportfolio.core.user.mappers.UserMapper;
 import com.myprojects.myportfolio.core.user.mappers.UserRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,27 +21,29 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("${core-module-basic-path}" + "/users")
 public class UserController implements IController<UserR> {
 
-    @Autowired
-    private UserServiceI userService;
+    private final UserServiceI userService;
 
-    @Autowired
-    private UserRMapper userRMapper;
+    private final UserRMapper userRMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserController(UserServiceI userService, UserRMapper userRMapper, UserMapper userMapper, HttpServletRequest httpServletRequest, UserRepository userRepository) {
+        this.userService = userService;
+        this.userRMapper = userRMapper;
+        this.userMapper = userMapper;
+        this.httpServletRequest = httpServletRequest;
+        this.userRepository = userRepository;
+    }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +56,7 @@ public class UserController implements IController<UserR> {
 
         Slice<User> users = userService.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(users.map(user -> userRMapper.map(user)));
+        return this.buildSuccessResponses(users.map(userRMapper::map));
     }
 
     @Override
@@ -104,13 +105,16 @@ public class UserController implements IController<UserR> {
     @Override
     @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole(T(ApplicationUserRole).ADMIN.getName()) || @userService.hasId(#id)")
-    public ResponseEntity<MessageResource<UserR>> update(@PathVariable("id") Integer id, @RequestBody UserR user) {
+    public ResponseEntity<MessageResource<UserR>> update(
+            @PathVariable("id") Integer id,
+            @RequestBody UserR user
+    ) {
         Validate.notNull(user, "No valid resource to update was provided.");
         Validate.notNull(user.getId(), "Mandatory parameter is missing: id user.");
         Validate.isTrue(user.getId().equals(id), "The request's id and the body's id are different.");
 
-        User userToUpate = userService.findById(user.getId());
-        User updatedUser = userService.update(userMapper.map(user, userToUpate));
+        User userToUpdate = userService.findById(user.getId());
+        User updatedUser = userService.update(userMapper.map(user, userToUpdate));
         return this.buildSuccessResponse(userRMapper.map(updatedUser));
     }
 
@@ -129,7 +133,10 @@ public class UserController implements IController<UserR> {
 
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority(T(ApplicationUserPermission).USERS_WRITE.getName()) && @userService.hasId(#id)")
-    public ResponseEntity<MessageResource<UserR>> patch(@PathVariable("id") Integer id, @RequestBody List<PatchOperation> operations) throws Exception {
+    public ResponseEntity<MessageResource<UserR>> patch(
+            @PathVariable("id") Integer id,
+            @RequestBody List<PatchOperation> operations
+    ) throws Exception {
         Validate.notEmpty(operations, "No valid operation was provided.");
 
         boolean isToUpdate = false;

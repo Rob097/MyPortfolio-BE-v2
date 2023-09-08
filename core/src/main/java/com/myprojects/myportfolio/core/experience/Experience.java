@@ -32,6 +32,9 @@ public class Experience implements Serializable {
     )
     private Integer id;
 
+    @Column(unique = true, nullable = false)
+    private String slug;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",

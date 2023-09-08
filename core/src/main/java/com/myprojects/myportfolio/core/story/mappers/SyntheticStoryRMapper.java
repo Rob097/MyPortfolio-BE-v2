@@ -18,6 +18,9 @@ public class SyntheticStoryRMapper implements Mapper<StoryR, Story> {
         }
 
         output.setId(input.getId());
+        if(input.getSlug()!=null) {
+            output.setSlug(input.getSlug());
+        }
         output.setTitle(input.getTitle());
         output.setDescription(input.getDescription());
         output.setEntryDateTime(input.getEntryDateTime());

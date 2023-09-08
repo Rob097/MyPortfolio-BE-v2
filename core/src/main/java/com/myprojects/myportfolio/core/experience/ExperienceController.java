@@ -9,7 +9,6 @@ import com.myprojects.myportfolio.core.experience.mappers.ExperienceMapper;
 import com.myprojects.myportfolio.core.experience.mappers.ExperienceRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,17 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("${core-module-basic-path}" + "/experiences")
 public class ExperienceController implements IController<ExperienceR> {
 
-    @Autowired
-    private ExperienceService experienceService;
+    private final ExperienceServiceI experienceService;
 
-    @Autowired
-    private ExperienceRMapper experienceRMapper;
+    private final ExperienceRMapper experienceRMapper;
 
-    @Autowired
-    private ExperienceMapper experienceMapper;
+    private final ExperienceMapper experienceMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
+
+    public ExperienceController(ExperienceServiceI experienceService, ExperienceRMapper experienceRMapper, ExperienceMapper experienceMapper, HttpServletRequest httpServletRequest) {
+        this.experienceService = experienceService;
+        this.experienceRMapper = experienceRMapper;
+        this.experienceMapper = experienceMapper;
+        this.httpServletRequest = httpServletRequest;
+    }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +49,7 @@ public class ExperienceController implements IController<ExperienceR> {
 
         Slice<Experience> experiences = experienceService.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(experiences.map(experience -> experienceRMapper.map(experience)));
+        return this.buildSuccessResponses(experiences.map(experienceRMapper::map));
     }
 
     @Override
@@ -60,6 +62,19 @@ public class ExperienceController implements IController<ExperienceR> {
         this.storeRequestView(view, httpServletRequest);
 
         Experience experience = experienceService.findById(id);
+
+        return this.buildSuccessResponse(experienceRMapper.map(experience));
+    }
+
+    @GetMapping(path="/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource<ExperienceR>> get(
+            @PathVariable("slug") String slug,
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
+    ) throws Exception {
+        Validate.notNull(slug, "Mandatory parameter is missing: slug.");
+        this.storeRequestView(view, httpServletRequest);
+
+        Experience experience = experienceService.findBySlug(slug);
 
         return this.buildSuccessResponse(experienceRMapper.map(experience));
     }

@@ -15,7 +15,8 @@ public class RouterValidator {
     public static final Map<String, List<HttpMethod>> openApiEndpoints = Map.of(
             "/api/auth/signin", List.of(HttpMethod.POST),
             "/api/auth/signup", List.of(HttpMethod.POST),
-            "/api/core/users", List.of(HttpMethod.POST, HttpMethod.GET)
+            "/api/core/users", List.of(HttpMethod.POST),
+            "/api/core", List.of(HttpMethod.GET)
     );
 
     public Predicate<HttpServletRequest> isHttpServletRequestSecured = (request) -> {

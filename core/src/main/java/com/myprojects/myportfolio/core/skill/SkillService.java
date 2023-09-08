@@ -2,7 +2,6 @@ package com.myprojects.myportfolio.core.skill;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,14 +16,15 @@ import java.util.Optional;
 @Slf4j
 public class SkillService {
 
-    @Autowired
-    private SkillRepository skillRepository;
+    private final SkillRepository skillRepository;
 
-    public Slice<Skill> findAll(Specification specification, Pageable pageable){
+    public SkillService(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
+    }
 
-        Slice<Skill> skills = this.skillRepository.findAll(specification, pageable);
+    public Slice<Skill> findAll(Specification<Skill> specification, Pageable pageable){
 
-        return skills;
+        return this.skillRepository.findAll(specification, pageable);
     }
 
     public Skill findById(Integer id) {
@@ -39,11 +39,10 @@ public class SkillService {
 
         if(skill.getId()!=null) {
             Optional<Skill> actual = this.skillRepository.findById(skill.getId());
-            Validate.isTrue(!actual.isPresent(), "It already exists a skill with id: " + skill.getId());
+            Validate.isTrue(actual.isEmpty(), "It already exists a skill with id: " + skill.getId());
         }
 
-        Skill createdSkill = this.skillRepository.save(skill);
-        return createdSkill;
+        return this.skillRepository.save(skill);
     }
 
     public void delete(Skill skillToDelete){

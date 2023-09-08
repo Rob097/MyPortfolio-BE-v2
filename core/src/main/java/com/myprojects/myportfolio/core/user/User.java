@@ -4,12 +4,13 @@ import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.education.Education;
 import com.myprojects.myportfolio.core.experience.Experience;
 import com.myprojects.myportfolio.core.project.Project;
-import com.myprojects.myportfolio.core.skill.Skill;
 import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,7 @@ import java.util.Set;
 @org.hibernate.annotations.Cache(region = "users", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 42L;
 
     @Id
@@ -43,6 +45,8 @@ public class User implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
 
+    private String phone;
+
     private Integer age;
 
     private String nationality;
@@ -59,6 +63,10 @@ public class User implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private Sex sex;
+
+    private String title;
+
+    private String description;
 
     @OneToMany(
             mappedBy = "user",
@@ -89,15 +97,9 @@ public class User implements Serializable {
     @org.hibernate.annotations.Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
     private List<Experience> experiences;
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST},
-            fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_skills",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
-    @org.hibernate.annotations.Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
-    private Set<Skill> skills;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @org.hibernate.annotations.Cache(region = "userSkills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    private Set<UserSkill> skills;
 
     @OneToMany(
             mappedBy = "user",

@@ -26,6 +26,9 @@ public class EducationMapper implements Mapper<Education, EducationR> {
         }
 
         output.setId(input.getId());
+        if(input.getSlug()!=null) {
+            output.setSlug(input.getSlug());
+        }
         if(input.getUser()!=null) {
             output.setUser(User.builder().id(input.getUser().getId()).build());
         }

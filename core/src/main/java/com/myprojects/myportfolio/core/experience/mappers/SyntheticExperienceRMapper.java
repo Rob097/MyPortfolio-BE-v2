@@ -17,6 +17,9 @@ public class SyntheticExperienceRMapper implements Mapper<ExperienceR, Experienc
         }
 
         output.setId(input.getId());
+        if(input.getSlug()!=null) {
+            output.setSlug(input.getSlug());
+        }
         output.setTitle(input.getTitle());
         if(input.getEmploymentType()!=null) {
             output.setEmploymentType(input.getEmploymentType().name());

@@ -4,11 +4,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
-
 public interface UserServiceI {
 
-    Slice<User> findAll(Specification<?> specification, Pageable pageable);
+    Slice<User> findAll(Specification<User> specification, Pageable pageable);
 
     User findById(Integer id);
 

@@ -18,6 +18,7 @@ import java.util.Set;
 public class ProjectR {
 
     private Integer id;
+    private String slug;
     private String title;
     private String description;
     private LocalDateTime entryDateTime;

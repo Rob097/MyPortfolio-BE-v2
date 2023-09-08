@@ -11,6 +11,7 @@ import com.myprojects.myportfolio.core.experience.mappers.SyntheticExperienceRMa
 import com.myprojects.myportfolio.core.project.mappers.SyntheticProjectRMapper;
 import com.myprojects.myportfolio.core.skill.mappers.SkillRMapper;
 import com.myprojects.myportfolio.core.user.User;
+import com.myprojects.myportfolio.core.user.UserSkill;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,13 +33,13 @@ public class UserRMapper implements Mapper<UserR, User> {
     private SyntheticProjectRMapper projectRMapper;
 
     @Autowired
-    private SkillRMapper skillRMapper;
-
-    @Autowired
     private SyntheticEducationRMapper educationRMapper;
 
     @Autowired
     private SyntheticExperienceRMapper experienceRMapper;
+
+    @Autowired
+    private SkillRMapper skillRMapper;
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -67,7 +68,7 @@ public class UserRMapper implements Mapper<UserR, User> {
                 output.setProjects(input.getProjects().stream().map(el -> this.projectRMapper.map(el)).collect(Collectors.toList()));
             }
             if (input.getSkills() != null && !input.getSkills().isEmpty()) {
-                output.setSkills(input.getSkills().stream().map(el -> this.skillRMapper.map(el)).collect(Collectors.toList()));
+                output.setSkills(input.getSkills().stream().map(this::userSkillMap).collect(Collectors.toList()));
             }
             if (input.getEducations() != null && !input.getEducations().isEmpty()) {
                 output.setEducations(input.getEducations().stream().map(el -> this.educationRMapper.map(el)).collect(Collectors.toList()));
@@ -79,6 +80,17 @@ public class UserRMapper implements Mapper<UserR, User> {
 
         return output;
 
+    }
+
+    private UserR.UserSkillR userSkillMap(UserSkill userSkill) {
+        UserR.UserSkillR userSkillR = new UserR.UserSkillR();
+
+        userSkillR.setUserId(userSkill.getUser().getId());
+        userSkillR.setSkill(skillRMapper.map(userSkill.getSkill()));
+        userSkillR.setIsMain(userSkill.isMain());
+        userSkillR.setOrderId(userSkill.getOrderId());
+
+        return userSkillR;
     }
 
 }

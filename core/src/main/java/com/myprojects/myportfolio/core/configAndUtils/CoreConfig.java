@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class CoreConfig {
 
-    public static List<String> ALLOWED_PATHS = Arrays.asList("/api/core/users/**");
+    public static List<String> ALLOWED_PATHS = List.of("/api/core/users/**");
 
     public CoreConfig(){}
 

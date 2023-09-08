@@ -36,6 +36,9 @@ public class Story implements Serializable {
     )
     private Integer id;
 
+    @Column(unique = true, nullable = false)
+    private String slug;
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime entryDateTime;
 

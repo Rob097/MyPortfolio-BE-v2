@@ -24,17 +24,20 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("${core-module-basic-path}" + "/stories")
 public class StoryController implements IController<StoryR> {
 
-    @Autowired
-    private StoryService storyService;
+    private final StoryServiceI storyService;
 
-    @Autowired
-    private StoryRMapper storyRMapper;
+    private final StoryRMapper storyRMapper;
 
-    @Autowired
-    private StoryMapper storyMapper;
+    private final StoryMapper storyMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
+
+    public StoryController(StoryServiceI storyService, StoryRMapper storyRMapper, StoryMapper storyMapper, HttpServletRequest httpServletRequest) {
+        this.storyService = storyService;
+        this.storyRMapper = storyRMapper;
+        this.storyMapper = storyMapper;
+        this.httpServletRequest = httpServletRequest;
+    }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +50,7 @@ public class StoryController implements IController<StoryR> {
 
         Slice<Story> stories = storyService.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(stories.map(story -> storyRMapper.map(story)));
+        return this.buildSuccessResponses(stories.map(storyRMapper::map));
     }
 
     @Override
@@ -60,6 +63,19 @@ public class StoryController implements IController<StoryR> {
         this.storeRequestView(view, httpServletRequest);
 
         Story story = storyService.findById(id);
+
+        return this.buildSuccessResponse(storyRMapper.map(story));
+    }
+
+    @GetMapping(path="/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource<StoryR>> get(
+            @PathVariable("slug") String slug,
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
+    ) throws Exception {
+        Validate.notNull(slug, "Mandatory parameter is missing: slug.");
+        this.storeRequestView(view, httpServletRequest);
+
+        Story story = storyService.findBySlug(slug);
 
         return this.buildSuccessResponse(storyRMapper.map(story));
     }

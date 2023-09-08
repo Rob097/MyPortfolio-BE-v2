@@ -17,6 +17,7 @@ import java.util.Set;
 public class ExperienceR {
 
     private Integer id;
+    private String slug;
     private UserR user;
     private String title;
     private String employmentType;

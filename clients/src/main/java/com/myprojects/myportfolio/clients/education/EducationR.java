@@ -17,6 +17,7 @@ import java.util.Set;
 public class EducationR {
 
     private Integer id;
+    private String slug;
     private UserR user;
     private String school;
     private String degree;

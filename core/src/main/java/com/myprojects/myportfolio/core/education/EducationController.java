@@ -9,7 +9,6 @@ import com.myprojects.myportfolio.core.education.mappers.EducationMapper;
 import com.myprojects.myportfolio.core.education.mappers.EducationRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,17 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class EducationController implements IController<EducationR> {
 
-    @Autowired
-    private EducationService educationService;
+    private final EducationServiceI educationService;
 
-    @Autowired
-    private EducationRMapper educationRMapper;
+    private final EducationRMapper educationRMapper;
 
-    @Autowired
-    private EducationMapper educationMapper;
+    private final EducationMapper educationMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
+
+    public EducationController(EducationServiceI educationService, EducationRMapper educationRMapper, EducationMapper educationMapper, HttpServletRequest httpServletRequest) {
+        this.educationService = educationService;
+        this.educationRMapper = educationRMapper;
+        this.educationMapper = educationMapper;
+        this.httpServletRequest = httpServletRequest;
+    }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +49,7 @@ public class EducationController implements IController<EducationR> {
 
         Slice<Education> educations = educationService.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(educations.map(education -> educationRMapper.map(education)));
+        return this.buildSuccessResponses(educations.map(educationRMapper::map));
     }
 
     @Override
@@ -64,6 +66,19 @@ public class EducationController implements IController<EducationR> {
         return this.buildSuccessResponse(educationRMapper.map(education));
     }
 
+    @GetMapping(path="/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource<EducationR>> get(
+            @PathVariable("slug") String slug,
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
+    ) throws Exception {
+        Validate.notNull(slug, "Mandatory parameter is missing: slug.");
+        this.storeRequestView(view, httpServletRequest);
+
+        Education education = educationService.findBySlug(slug);
+
+        return this.buildSuccessResponse(educationRMapper.map(education));
+    }
+
     @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource<EducationR>> create(@RequestBody EducationR education) throws Exception {
@@ -75,19 +90,22 @@ public class EducationController implements IController<EducationR> {
 
     @Override
     @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource<EducationR>> update(Integer id, EducationR education) throws Exception {
+    public ResponseEntity<MessageResource<EducationR>> update(
+            @PathVariable("id") Integer id,
+            @RequestBody EducationR education
+    ) throws Exception {
         Validate.notNull(education, "No valid resource to update was provided.");
         Validate.notNull(education.getId(), "Mandatory parameter is missing: id education.");
         Validate.isTrue(education.getId().equals(id), "The request's id and the body's id are different.");
 
-        Education educationToUpate = educationService.findById(education.getId());
-        Education updatedEducation = educationService.update(educationMapper.map(education, educationToUpate));
+        Education educationToUpdate = educationService.findById(education.getId());
+        Education updatedEducation = educationService.update(educationMapper.map(education, educationToUpdate));
         return this.buildSuccessResponse(educationRMapper.map(updatedEducation));
     }
 
     @Override
     @DeleteMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource<EducationR>> delete(Integer id) throws Exception {
+    public ResponseEntity<MessageResource<EducationR>> delete(@PathVariable("id") Integer id) throws Exception {
         Validate.notNull(id, "No valid parameters were provided.");
 
         Education educationToDelete = educationService.findById(id);

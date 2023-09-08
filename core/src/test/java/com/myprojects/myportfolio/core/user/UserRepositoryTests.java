@@ -34,6 +34,7 @@ public class UserRepositoryTests {
         userJohn = new User();
         userJohn.setFirstName("John");
         userJohn.setLastName("Doe");
+        userJohn.setSlug("john-doe");
         userJohn.setEmail("john@doe.com");
         userJohn.setAge(22);
         userRepository.save(userJohn);

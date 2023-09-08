@@ -9,7 +9,6 @@ import com.myprojects.myportfolio.core.project.mappers.ProjectMapper;
 import com.myprojects.myportfolio.core.project.mappers.ProjectRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,17 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class ProjectController implements IController<ProjectR> {
 
-    @Autowired
-    private ProjectService projectService;
+    private final ProjectServiceI projectService;
 
-    @Autowired
-    private ProjectRMapper projectRMapper;
+    private final ProjectRMapper projectRMapper;
 
-    @Autowired
-    private ProjectMapper projectMapper;
+    private final ProjectMapper projectMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
+
+    public ProjectController(ProjectServiceI projectService, ProjectRMapper projectRMapper, ProjectMapper projectMapper, HttpServletRequest httpServletRequest) {
+        this.projectService = projectService;
+        this.projectRMapper = projectRMapper;
+        this.projectMapper = projectMapper;
+        this.httpServletRequest = httpServletRequest;
+    }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +49,7 @@ public class ProjectController implements IController<ProjectR> {
 
         Slice<Project> projects = projectService.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(projects.map(experience -> projectRMapper.map(experience)));
+        return this.buildSuccessResponses(projects.map(projectRMapper::map));
     }
 
     @Override
@@ -60,6 +62,19 @@ public class ProjectController implements IController<ProjectR> {
         this.storeRequestView(view, httpServletRequest);
 
         Project project = projectService.findById(id);
+
+        return this.buildSuccessResponse(projectRMapper.map(project));
+    }
+
+    @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource<ProjectR>> get(
+            @PathVariable("slug") String slug,
+            @RequestParam(name = VIEW, required = false, defaultValue = DEFAULT_VIEW_NAME) IView view
+    ) throws Exception {
+        Validate.notNull(slug, "Mandatory parameter is missing: slug.");
+        this.storeRequestView(view, httpServletRequest);
+
+        Project project = projectService.findBySlug(slug);
 
         return this.buildSuccessResponse(projectRMapper.map(project));
     }

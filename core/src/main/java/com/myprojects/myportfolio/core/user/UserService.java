@@ -3,7 +3,6 @@ package com.myprojects.myportfolio.core.user;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -20,18 +18,19 @@ import java.util.Optional;
 @Slf4j
 public class UserService implements UserServiceI{
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UtilsServiceI utilsService;
+    private final UtilsServiceI utilsService;
+
+    public UserService(UserRepository userRepository, UtilsServiceI utilsService) {
+        this.userRepository = userRepository;
+        this.utilsService = utilsService;
+    }
 
     @Override
-    public Slice<User> findAll(Specification specification, Pageable pageable){
+    public Slice<User> findAll(Specification<User> specification, Pageable pageable){
 
-        Slice<User> users = this.userRepository.findAll(specification, pageable);
-
-        return users;
+        return this.userRepository.findAll(specification, pageable);
     }
 
     @Override
@@ -54,8 +53,7 @@ public class UserService implements UserServiceI{
     public User findByEmail(String email) {
         Validate.notNull(email, "Mandatory parameter is missing: email.");
 
-        User user = this.userRepository.findByEmail(email);
-        return user;
+        return this.userRepository.findByEmail(email);
     }
 
     @Override
@@ -69,8 +67,7 @@ public class UserService implements UserServiceI{
 
         userToSave.setSlug(generateSlug(userToSave));
 
-        User user = this.userRepository.save(userToSave);
-        return user;
+        return this.userRepository.save(userToSave);
     }
 
     @Override
@@ -103,14 +100,13 @@ public class UserService implements UserServiceI{
     @Override
     public User getCurrentLoggedInUser(){
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = this.userRepository.findByEmail(username);
-        return user;
+        return this.userRepository.findByEmail(username);
     }
 
     private String generateSlug(User user) {
         boolean isDone = false;
         int index = 0;
-        String slug = "";
+        String slug;
 
         do {
             String appendix = index == 0 ? "" : ("-"+index);

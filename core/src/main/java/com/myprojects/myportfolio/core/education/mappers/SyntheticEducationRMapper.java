@@ -18,6 +18,9 @@ public class SyntheticEducationRMapper implements Mapper<EducationR, Education>{
         }
 
         output.setId(input.getId());
+        if(input.getSlug()!=null) {
+            output.setSlug(input.getSlug());
+        }
         output.setSchool(input.getSchool());
         output.setDegree(input.getDegree());
         output.setField(input.getField());

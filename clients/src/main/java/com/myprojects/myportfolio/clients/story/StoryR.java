@@ -20,6 +20,7 @@ import java.util.Set;
 public class StoryR {
 
     private Integer id;
+    private String slug;
     private LocalDateTime entryDateTime;
     private String title;
     private String description;

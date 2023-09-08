@@ -9,7 +9,6 @@ import com.myprojects.myportfolio.core.diary.mappers.DiaryMapper;
 import com.myprojects.myportfolio.core.diary.mappers.DiaryRMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,17 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("${core-module-basic-path}" + "/diaries")
 public class DiaryController implements IController<DiaryR> {
 
-    @Autowired
-    private DiaryService diaryService;
+    private final DiaryService diaryService;
 
-    @Autowired
-    private DiaryRMapper diaryRMapper;
+    private final DiaryRMapper diaryRMapper;
 
-    @Autowired
-    private DiaryMapper diaryMapper;
+    private final DiaryMapper diaryMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
+
+    public DiaryController(DiaryService diaryService, DiaryRMapper diaryRMapper, DiaryMapper diaryMapper, HttpServletRequest httpServletRequest) {
+        this.diaryService = diaryService;
+        this.diaryRMapper = diaryRMapper;
+        this.diaryMapper = diaryMapper;
+        this.httpServletRequest = httpServletRequest;
+    }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +49,7 @@ public class DiaryController implements IController<DiaryR> {
 
         Slice<Diary> diaries = diaryService.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(diaries.map(diary -> diaryRMapper.map(diary)));
+        return this.buildSuccessResponses(diaries.map(diaryRMapper::map));
     }
 
     @Override
@@ -75,7 +77,10 @@ public class DiaryController implements IController<DiaryR> {
 
     @Override
     @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource<DiaryR>> update(@PathVariable("id") Integer id, @RequestBody DiaryR diary) {
+    public ResponseEntity<MessageResource<DiaryR>> update(
+            @PathVariable("id") Integer id,
+            @RequestBody DiaryR diary
+    ) {
         Validate.notNull(diary, "No valid resource to update was provided.");
         Validate.notNull(diary.getId(), "Mandatory parameter is missing: id diary.");
         Validate.isTrue(diary.getId().equals(id), "The request's id and the body's id are different.");
