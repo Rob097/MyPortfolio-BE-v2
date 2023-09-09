@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthenticationFilter implements GatewayFilter {
 
-    private JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig;
 
     public AuthenticationFilter(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
@@ -22,16 +22,13 @@ public class AuthenticationFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
-        if(request!=null && request.getHeaders()!=null) {
+        request.getHeaders();
+        String authorizationHeader = request.getHeaders().getFirst(jwtConfig.getAuthorizationHeader());
 
-            String authorizationHeader = request.getHeaders().getFirst(jwtConfig.getAuthorizationHeader());
-
-            // Set internal authorization header in order to make sure that every request pass through the api gateway (load balancer)
-            exchange.getRequest().mutate()
-                    .header(jwtConfig.getInternalAuthorizationHeader(), authorizationHeader)
-                    .build();
-
-        }
+        // Set internal authorization header in order to make sure that every request pass through the api gateway (load balancer)
+        exchange.getRequest().mutate()
+                .header(jwtConfig.getInternalAuthorizationHeader(), authorizationHeader)
+                .build();
 
         return chain.filter(exchange);
 

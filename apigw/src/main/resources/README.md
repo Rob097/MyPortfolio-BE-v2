@@ -21,7 +21,9 @@ In order to create a new valid ssl certificate the things to do are:
 		- keytool -importkeystore -deststorepass password -destkeystore springboot.jks -srckeystore springboot.p12 -srcstoretype PKCS12
 	- **import intermediate certificate**
 		- keytool -import -alias bundle -trustcacerts -file ca_bundle.crt -keystore springboot.jks
+- Copy the springboot.jks into the resources folder of myapigw and push to the docker hub. Pull the new image and docker compose up.
 
-**Thigs to make sure of:**
+
+**Things to make sure of:**
  - myportfolio-backend.it domain has to point to the public IP address of our personal PC
  - modem configuration of port forwarding to forward requests from myportfolio-backend.it from port 80 to 443 to internal port 8443
