@@ -1,7 +1,5 @@
 package com.myprojects.myportfolio.core.story;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.diary.Diary;
 import com.myprojects.myportfolio.core.education.Education;
 import com.myprojects.myportfolio.core.experience.Experience;
@@ -11,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +25,7 @@ import java.util.Set;
 @org.hibernate.annotations.Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Story implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6674119427069707283L;
 
     @Id

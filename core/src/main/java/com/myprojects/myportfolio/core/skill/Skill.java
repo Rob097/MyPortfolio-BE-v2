@@ -1,8 +1,5 @@
 package com.myprojects.myportfolio.core.skill;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.myprojects.myportfolio.core.story.Story;
-import com.myprojects.myportfolio.core.user.User;
 import com.myprojects.myportfolio.core.user.UserSkill;
 import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -10,7 +7,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Setter

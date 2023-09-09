@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -21,6 +22,7 @@ import java.util.Set;
 @org.hibernate.annotations.Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Project implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6617276718118739643L;
 
     @Id
