@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -17,6 +18,7 @@ import java.util.Set;
 public class EducationR {
 
     private Integer id;
+    private LocalDateTime entryDateTime;
     private String slug;
     private UserR user;
     private String school;

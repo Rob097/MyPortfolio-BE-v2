@@ -56,4 +56,14 @@ public class Diary implements Serializable {
     @org.hibernate.annotations.Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories;
 
+    public void addStory(Story story) {
+        stories.add(story);
+        story.setDiary(this);
+    }
+
+    public void removeStory(Story story) {
+        stories.remove(story);
+        story.setDiary(null);
+    }
+
 }

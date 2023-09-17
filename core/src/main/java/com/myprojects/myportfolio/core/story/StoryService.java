@@ -1,6 +1,8 @@
 package com.myprojects.myportfolio.core.story;
 
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
+import com.myprojects.myportfolio.core.diary.Diary;
+import com.myprojects.myportfolio.core.diary.DiaryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -21,9 +24,12 @@ public class StoryService implements StoryServiceI {
 
     private final UtilsServiceI utilsService;
 
-    public StoryService(StoryRepository storyRepository, UtilsServiceI utilsService) {
+    private final DiaryRepository diaryRepository;
+
+    public StoryService(StoryRepository storyRepository, UtilsServiceI utilsService, DiaryRepository diaryRepository) {
         this.storyRepository = storyRepository;
         this.utilsService = utilsService;
+        this.diaryRepository = diaryRepository;
     }
 
     @Override
@@ -51,13 +57,24 @@ public class StoryService implements StoryServiceI {
     @Override
     public Story save(Story storyToSave){
         Validate.notNull(storyToSave, "Mandatory parameter is missing: story.");
+        Validate.notNull(storyToSave.getDiary(), "Mandatory parameter is missing: diary.");
 
         if(storyToSave.getId()!=null) {
             Optional<Story> actual = this.storyRepository.findById(storyToSave.getId());
             Validate.isTrue(actual.isEmpty(), "It already exists a story with id: " + storyToSave.getId());
         }
 
+        if(storyToSave.getEntryDateTime()==null) {
+            storyToSave.setEntryDateTime(LocalDateTime.now());
+        }
+
         storyToSave.setSlug(generateSlug(storyToSave));
+
+        // TODO: Important, we need to check that the diary_id passed is actually a diary of the current user.
+        // Otherwise, potentially anyone could add a story to the diary of other users.
+        Diary diary = diaryRepository.findById(storyToSave.getDiary().getId()).orElse(null);
+        if(diary != null)
+            diary.addStory(storyToSave);
 
         return this.storyRepository.save(storyToSave);
     }
@@ -77,6 +94,12 @@ public class StoryService implements StoryServiceI {
     @Override
     public void delete(Story storyToDelete){
         Validate.notNull(storyToDelete, "Mandatory parameter is missing: story.");
+
+        // TODO: Important, we need to check that the diary_id passed is actually a diary of the current user.
+        // Otherwise, potentially anyone could add a story to the diary of other users.
+        Diary diary = diaryRepository.findById(storyToDelete.getDiary().getId()).orElse(null);
+        if(diary != null)
+            diary.removeStory(storyToDelete);
 
         this.storyRepository.delete(storyToDelete);
     }

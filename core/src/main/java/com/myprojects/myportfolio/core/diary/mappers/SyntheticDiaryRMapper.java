@@ -19,7 +19,9 @@ public class SyntheticDiaryRMapper implements Mapper<DiaryR, Diary> {
 
         output.setId(input.getId());
         output.setEntryDateTime(input.getEntryDateTime());
-        output.setUser(UserR.builder().id(input.getUser().getId()).build());
+        if(input.getUser()!=null) {
+            output.setUser(UserR.builder().id(input.getUser().getId()).build());
+        }
 
         return output;
     }

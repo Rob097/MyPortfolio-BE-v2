@@ -105,6 +105,7 @@ public class StoryController implements IController<StoryR> {
     @DeleteMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource<StoryR>> delete(@PathVariable("id") Integer id) throws Exception {
         Validate.notNull(id, "No valid parameters were provided.");
+        this.storeRequestView(null, httpServletRequest);
 
         Story storyToDelete = storyService.findById(id);
         Validate.notNull(storyToDelete, "No valid story found with id " + id);

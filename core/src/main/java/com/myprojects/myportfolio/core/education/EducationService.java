@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -53,6 +54,10 @@ public class EducationService implements EducationServiceI {
         if(education.getId()!=null) {
             Optional<Education> actual = educationRepository.findById(education.getId());
             Validate.isTrue(actual.isEmpty(), "It already exists an education with id: " + education.getId());
+        }
+
+        if(education.getEntryDateTime()==null) {
+            education.setEntryDateTime(LocalDateTime.now());
         }
 
         education.setSlug(generateSlug(education));

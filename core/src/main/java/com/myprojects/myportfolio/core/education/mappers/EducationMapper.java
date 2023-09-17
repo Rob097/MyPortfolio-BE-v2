@@ -26,6 +26,7 @@ public class EducationMapper implements Mapper<Education, EducationR> {
         }
 
         output.setId(input.getId());
+        output.setEntryDateTime(input.getEntryDateTime());
         if(input.getSlug()!=null) {
             output.setSlug(input.getSlug());
         }
