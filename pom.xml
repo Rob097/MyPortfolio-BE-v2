@@ -11,8 +11,8 @@
   <modules>
     <module>apigw</module>
     <module>eureka-server</module>
-    <module>core</module>
     <module>clients</module>
+    <module>core</module>
     <module>auth-service</module>
   </modules>
   <name>myportfolio</name>

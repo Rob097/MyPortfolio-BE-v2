@@ -1,0 +1,2 @@
+singleServerConfig:
+  address: "redis://ourlists.ddns.net:6379"
