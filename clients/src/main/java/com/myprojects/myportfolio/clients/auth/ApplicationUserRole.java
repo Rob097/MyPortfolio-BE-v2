@@ -1,7 +1,9 @@
 package com.myprojects.myportfolio.clients.auth;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public enum ApplicationUserRole {
     ADMIN(1, "ROLE_ADMIN"),
@@ -10,11 +12,4 @@ public enum ApplicationUserRole {
     private final Integer id;
     private final String name;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

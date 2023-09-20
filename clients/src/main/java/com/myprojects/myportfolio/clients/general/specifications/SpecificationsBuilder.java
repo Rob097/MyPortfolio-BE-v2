@@ -10,24 +10,24 @@ public class SpecificationsBuilder<T> {
     private final List<QueryDTO> params;
 
     public SpecificationsBuilder() {
-        params = new ArrayList<QueryDTO>();
+        params = new ArrayList<>();
     }
 
-    public SpecificationsBuilder with(String key, String operation, Object value) {
+    public SpecificationsBuilder<T> with(String key, String operation, Object value) {
         params.add(new QueryDTO(key, operation, value));
         return this;
     }
 
     public Specification<T> build() {
-        if (params.size() == 0) {
+        if (params.isEmpty()) {
             return null;
         }
 
-        List<Specification> specs = params.stream()
-                .map(CoreSpecification::new)
+        List<Specification<T>> specs = params.stream()
+                .map(CoreSpecification<T>::new)
                 .collect(Collectors.toList());
 
-        Specification result = specs.get(0);
+        Specification<T> result = specs.get(0);
 
         for (int i = 1; i < params.size(); i++) {
             result = Specification.where(result).and(specs.get(i));

@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.clients.general.specifications;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -121,6 +122,13 @@ public class CoreSpecification<T>  implements Specification<T> {
         }
     }
 
+    /*public Specification<T> equalsToSpecification(@NonNull String field, @NonNull String value) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(field), value);
+    }*/
+
+    /**********************/
+    /*** Private Methods **/
+    /**********************/
     private Predicate checkDates(Expression<?> rootExpression, CriteriaBuilder criteriaBuilder, String operation) throws ParseException {
         LocalDateTime localDateTime = (LocalDateTime) criteria.getValue();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());

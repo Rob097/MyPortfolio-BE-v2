@@ -20,7 +20,7 @@ public class JwtTokenVerifier {
 
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
-    private RouterValidator routerValidator;
+    private final RouterValidator routerValidator;
 
     public JwtTokenVerifier(SecretKey secretKey,
                             JwtConfig jwtConfig,
@@ -30,23 +30,25 @@ public class JwtTokenVerifier {
         this.routerValidator = routerValidator;
     }
 
-    public List<String> validateToken(HttpServletRequest request) throws ResponseStatusException{
+    public List<String> validateToken(HttpServletRequest request) throws ResponseStatusException {
 
-        if(request == null){
+        if (request == null) {
             throw new IllegalStateException("Request cannot be null.");
         }
 
-        if(!routerValidator.isHttpServletRequestSecured.test(request)) {
+        String internalAuthorizationHeader = request.getHeader(jwtConfig.getInternalAuthorizationHeader());
+        /*if (Strings.isNullOrEmpty(internalAuthorizationHeader) || !internalAuthorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You're trying to access this microservice without passing through the load balancer.");
+        }*/
 
-            String internalAuthorizationHeader =  request.getHeader(jwtConfig.getInternalAuthorizationHeader());
+        if (!routerValidator.isHttpServletRequestSecured.test(request)) {
+
             String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
             String message = null;
             List<String> result = new ArrayList<>();
 
             if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
                 message = "You need to be authenticated to access this resource.";
-            } else if (Strings.isNullOrEmpty(internalAuthorizationHeader) || !internalAuthorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
-                message = "You're trying to access this microservice without passing through the load balancer.";
             } else {
 
                 String token = internalAuthorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
