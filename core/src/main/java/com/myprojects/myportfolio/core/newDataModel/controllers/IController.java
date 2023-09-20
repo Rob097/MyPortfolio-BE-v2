@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_FORMAT;
 import static com.myprojects.myportfolio.clients.utils.UtilsConstants.TIME_FORMAT;
 
-public interface NewIController<R> {
+public interface IController<R> {
 
     /* CONSTANTS */
     String FILTERS = "filters";

@@ -21,12 +21,6 @@ public class NewUser extends AuditableDao {
     @Serial
     private static final long serialVersionUID = -7807186737167318556L;
 
-    /*@Id
-    @Expose
-    @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", strategy = "com.myprojects.myportfolio.clients.utils.UseExistingIdOtherwiseGenerateUsingIdentity")
-    @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
-    protected Integer id;*/
-
     @Expose
     @Column(unique = true, nullable = false)
     private String slug;

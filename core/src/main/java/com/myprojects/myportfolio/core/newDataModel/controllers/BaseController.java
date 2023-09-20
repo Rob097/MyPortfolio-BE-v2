@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-public abstract class NewBaseController<A extends BaseDao, T extends BaseDto> implements NewIController<T> {
+public abstract class BaseController<A extends BaseDao, T extends BaseDto> implements IController<T> {
 
     protected BaseServiceI<A> service;
 

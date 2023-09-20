@@ -11,20 +11,23 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController
+@RestController("newUserController")
 @RequestMapping("${core-module-basic-path}" + "/new/users")
-public class NewUserController extends NewBaseController<NewUser, NewUserDto> {
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
+public class UserController extends BaseController<NewUser, NewUserDto> {
 
     private final UserService userService;
 
     private final UserMapper userMapper;
 
-    public NewUserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.service = userService;
         this.mapper = userMapper;
     }
+
+    /** Methods, if not overridden above, are implemented in super class. */
 
     /***********************/
     /*** Override Methods **/

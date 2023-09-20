@@ -37,6 +37,7 @@ public class JwtTokenVerifier {
         }
 
         String internalAuthorizationHeader = request.getHeader(jwtConfig.getInternalAuthorizationHeader());
+        // TODO: Uncomment the following check when the load balancer will be necessary
         /*if (Strings.isNullOrEmpty(internalAuthorizationHeader) || !internalAuthorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You're trying to access this microservice without passing through the load balancer.");
         }*/
@@ -49,6 +50,9 @@ public class JwtTokenVerifier {
 
             if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
                 message = "You need to be authenticated to access this resource.";
+                // TODO: Remove the following "else if" case when uncomment the previous check about the internalAuthorizationHeader
+            } else if (Strings.isNullOrEmpty(internalAuthorizationHeader) || !internalAuthorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You're trying to access this microservice without passing through the load balancer.");
             } else {
 
                 String token = internalAuthorizationHeader.replace(jwtConfig.getTokenPrefix(), "");

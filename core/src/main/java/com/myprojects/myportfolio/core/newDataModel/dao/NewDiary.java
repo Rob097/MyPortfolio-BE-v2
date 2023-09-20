@@ -18,10 +18,14 @@ public class NewDiary extends AuditableDao {
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
 
-    /*@Id
     @Expose
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;*/
+    private String title;
+
+    @Expose
+    private String description;
+
+    @Expose
+    private Boolean isMain;
 
     @Expose
     @ManyToOne(fetch = FetchType.LAZY)
