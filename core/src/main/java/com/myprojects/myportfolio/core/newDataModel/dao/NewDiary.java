@@ -1,17 +1,18 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
 import com.google.gson.annotations.Expose;
+import com.myprojects.myportfolio.core.story.Story;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serial;
+import java.util.Set;
 
 @Setter
 @Getter
-@Builder
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "new_diaries")
 public class NewDiary extends AuditableDao {
 
@@ -38,4 +39,14 @@ public class NewDiary extends AuditableDao {
             )
     )
     private NewUser user;
+
+    @Expose
+    @OneToMany(
+            mappedBy = "diary",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private Set<NewStory> stories;
+
 }

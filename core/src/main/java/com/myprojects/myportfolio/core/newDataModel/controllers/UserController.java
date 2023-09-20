@@ -6,6 +6,8 @@ import com.myprojects.myportfolio.core.newDataModel.dto.NewUserDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.UserMapper;
 import com.myprojects.myportfolio.core.newDataModel.services.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.Validate;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +23,11 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
     private final UserMapper userMapper;
 
     public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
         this.service = userService;
         this.mapper = userMapper;
+
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     /** Methods, if not overridden above, are implemented in super class. */
@@ -32,6 +35,18 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
     /***********************/
     /*** Override Methods **/
     /***********************/
+
+    @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource<NewUserDto>> get(
+            @PathVariable("slug") String slug
+    ) throws Exception {
+        Validate.notNull(slug, fieldMissing("slug"));
+
+        NewUser user = userService.findBy(findByEquals(NewUser.FIELDS.SLUG.name(), slug));
+
+        return this.buildSuccessResponse(userMapper.mapToDto(user));
+    }
+
     @Override
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole(T(ApplicationUserRole).ADMIN.getName()) || @newUserService.hasId(#id)")

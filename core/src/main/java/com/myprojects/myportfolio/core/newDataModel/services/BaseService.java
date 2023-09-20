@@ -2,7 +2,7 @@ package com.myprojects.myportfolio.core.newDataModel.services;
 
 import com.myprojects.myportfolio.clients.general.specifications.CoreSpecification;
 import com.myprojects.myportfolio.core.newDataModel.dao.BaseDao;
-import com.myprojects.myportfolio.core.newDataModel.repositories.BaseRepositoryI;
+import com.myprojects.myportfolio.core.newDataModel.repositories.BaseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import javax.persistence.EntityNotFoundException;
 @Slf4j
 public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> {
 
-    protected BaseRepositoryI<T, Integer> repository;
+    protected BaseRepository<T, Integer> repository;
 
     protected CoreSpecification<T> specification;
 

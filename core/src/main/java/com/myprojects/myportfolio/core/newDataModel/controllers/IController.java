@@ -88,7 +88,11 @@ public interface IController<R> {
         return builder.build();
     }
 
-
+    default <T> Specification<T> findByEquals(String key, Object value) {
+        SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();
+        builder.with(key, ":", value);
+        return builder.build();
+    }
 
 
     /* RESPONSES */

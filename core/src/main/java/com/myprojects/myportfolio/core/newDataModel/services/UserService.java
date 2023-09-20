@@ -24,9 +24,10 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
 
     public UserService(UserRepository userRepository, UtilsServiceI utilsService) {
         super();
+        this.repository = userRepository;
+
         this.userRepository = userRepository;
         this.utilsService = utilsService;
-        this.repository = userRepository;
     }
 
     @Override

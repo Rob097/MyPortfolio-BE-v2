@@ -26,7 +26,6 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> imple
             @RequestParam(name = FILTERS, required = false) String filters,
             Pageable pageable
     ) throws Exception {
-        log.info("Base Controller - find users");
         Specification<A> specifications = this.defineFilters(filters);
 
         Slice<A> users = service.findAll(specifications, pageable);
@@ -39,7 +38,6 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> imple
     public ResponseEntity<MessageResource<T>> get(
             @PathVariable("id") Integer id
     ) throws Exception {
-        log.info("Base Controller - get user");
         Validate.notNull(id, fieldMissing("id"));
         A user = service.findById(id);
 

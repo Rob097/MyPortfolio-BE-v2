@@ -11,15 +11,39 @@ import java.util.Objects;
 
 @Setter
 @Getter
-@Builder
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "new_users")
 public class NewUser extends AuditableDao {
 
     @Serial
     private static final long serialVersionUID = -7807186737167318556L;
+
+    public enum FIELDS {
+        ID("id"),
+        CREATEDAT("createdAt"),
+        UPDATEDAT("updatedAt"),
+        SLUG("slug"),
+        FIRSTNAME("firstName"),
+        LASTNAME("lastName"),
+        EMAIL("email"),
+        PHONE("phone"),
+        AGE("age"),
+        NATIONALITY("nationality"),
+        NATION("nation"),
+        PROVINCE("province"),
+        CITY("city"),
+        CAP("cap"),
+        ADDRESS("address"),
+        SEX("sex"),
+        TITLE("title"),
+        DESCRIPTION("description")
+        ;
+
+        FIELDS(String name) {
+        }
+    }
 
     @Expose
     @Column(unique = true, nullable = false)

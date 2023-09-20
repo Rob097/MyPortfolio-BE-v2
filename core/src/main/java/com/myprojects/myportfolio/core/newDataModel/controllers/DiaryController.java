@@ -19,10 +19,11 @@ public class DiaryController extends BaseController<NewDiary, NewDiaryDto> {
     private final DiaryMapper diaryMapper;
 
     public DiaryController(DiaryServiceI diaryService, DiaryMapper diaryMapper) {
-        this.diaryService = diaryService;
-        this.diaryMapper = diaryMapper;
         this.service = diaryService;
         this.mapper = diaryMapper;
+
+        this.diaryService = diaryService;
+        this.diaryMapper = diaryMapper;
     }
 
     /** Methods, if not overridden above, are implemented in super class. */

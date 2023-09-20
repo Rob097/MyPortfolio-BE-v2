@@ -19,9 +19,10 @@ public class DiaryService extends BaseService<NewDiary> implements DiaryServiceI
 
     public DiaryService(DiaryRepository diaryRepository, UserServiceI userService) {
         super();
+        this.repository = diaryRepository;
+
         this.diaryRepository = diaryRepository;
         this.userService = userService;
-        this.repository = diaryRepository;
     }
 
     @Override

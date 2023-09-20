@@ -1,13 +1,14 @@
 package com.myprojects.myportfolio.core.newDataModel.dto;
 
-import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.util.Set;
 
-@Value
-@Builder
+@Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class NewDiaryDto extends AuditableDto {
 
@@ -17,5 +18,6 @@ public class NewDiaryDto extends AuditableDto {
     String title;
     String description;
     Boolean isMain;
+    Set<NewStoryDto> stories;
 
 }
