@@ -1,5 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.myprojects.myportfolio.clients.general.views.Verbose;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,8 @@ public class NewDiaryDto extends AuditableDto {
     String title;
     String description;
     Boolean isMain;
+
+    @JsonView(Verbose.class)
     Set<NewStoryDto> stories;
 
 }

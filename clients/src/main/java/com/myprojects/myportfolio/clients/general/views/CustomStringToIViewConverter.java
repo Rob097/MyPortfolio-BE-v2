@@ -6,20 +6,15 @@ import org.springframework.core.convert.converter.Converter;
 public class CustomStringToIViewConverter implements Converter<String, IView> {
     @Override
     public IView convert(String view) {
-        if(Strings.isBlank(view)){
-            return Synthetic.value;
+        if (Strings.isBlank(view)) {
+            return Normal.value;
         }
 
-        switch (view){
-            case UltraSynthetic.name:
-                return UltraSynthetic.value;
-            case Synthetic.name:
-            default:
-                return Synthetic.value;
-            case Normal.name:
-                return Normal.value;
-            case Verbose.name:
-                return Verbose.value;
+        if (view.equals(Verbose.name)) {
+            return Verbose.value;
+        } else {
+            return Normal.value;
         }
+
     }
 }

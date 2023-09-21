@@ -2,6 +2,8 @@ package com.myprojects.myportfolio.core.newDataModel.controllers;
 
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
+import com.myprojects.myportfolio.clients.general.views.IView;
+import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.newDataModel.dao.BaseDao;
 import com.myprojects.myportfolio.core.newDataModel.dto.BaseDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.BaseMapper;
@@ -15,33 +17,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-public abstract class BaseController<A extends BaseDao, T extends BaseDto> implements IController<T> {
+public abstract class BaseController<A extends BaseDao, T extends BaseDto> extends IController<T> {
 
     protected BaseServiceI<A> service;
 
     protected BaseMapper<A, T> mapper;
 
+    @Override
     @GetMapping()
     public ResponseEntity<MessageResources<T>> find(
             @RequestParam(name = FILTERS, required = false) String filters,
+            @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view,
             Pageable pageable
     ) throws Exception {
         Specification<A> specifications = this.defineFilters(filters);
 
         Slice<A> users = service.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(users.map(mapper::mapToDto));
+        return this.buildSuccessResponses(users.map(mapper::mapToDto), view);
     }
 
     @Override
     @GetMapping(value = "/{id}")
     public ResponseEntity<MessageResource<T>> get(
-            @PathVariable("id") Integer id
+            @PathVariable("id") Integer id,
+            @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view
     ) throws Exception {
         Validate.notNull(id, fieldMissing("id"));
         A user = service.findById(id);
 
-        return this.buildSuccessResponse(mapper.mapToDto(user));
+        return this.buildSuccessResponse(mapper.mapToDto(user), view);
     }
 
     @Override

@@ -1,10 +1,17 @@
 package com.myprojects.myportfolio.core.newDataModel.controllers;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.specifications.SpecificationsBuilder;
+import com.myprojects.myportfolio.clients.general.views.IView;
+import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.sun.istack.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,6 +20,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -25,32 +34,33 @@ import java.util.regex.Pattern;
 import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_FORMAT;
 import static com.myprojects.myportfolio.clients.utils.UtilsConstants.TIME_FORMAT;
 
-public interface IController<R> {
+@Slf4j
+public abstract class IController<R> {
 
     /* CONSTANTS */
-    String FILTERS = "filters";
-    String filterKey = "(\\w.+?)";
-    String filterOperation = "([:!<>])";
-    String filterValue = "(.+)";
-    String filtersSeparator = ",";
+    public final String FILTERS = "filters";
+    public final String filterKey = "(\\w.+?)";
+    public final String filterOperation = "([:!<>])";
+    public final String filterValue = "(.+)";
+    public final String filtersSeparator = ",";
 
 
     /* METHODS */
-    ResponseEntity<MessageResources<R>> find(String filters, Pageable pageable) throws Exception;
+    abstract ResponseEntity<MessageResources<R>> find(String filters, IView view, Pageable pageable) throws Exception;
 
-    ResponseEntity<MessageResource<R>> get(Integer id) throws Exception;
+    abstract ResponseEntity<MessageResource<R>> get(Integer id, IView view) throws Exception;
 
-    ResponseEntity<MessageResource<R>> create(R resource) throws Exception;
+    abstract ResponseEntity<MessageResource<R>> create(R resource) throws Exception;
 
-    ResponseEntity<MessageResource<R>> update(Integer id, R resource) throws Exception;
+    abstract ResponseEntity<MessageResource<R>> update(Integer id, R resource) throws Exception;
 
-    ResponseEntity<MessageResource<R>> delete(Integer id) throws Exception;
+    abstract ResponseEntity<MessageResource<R>> delete(Integer id) throws Exception;
 
 
     /* FILTERS AND VIEW */
     /* ATTENTION: Setting the view as a request attribute is useful to retrieve it wherever you need without passing it throughout every method,
      *             BUT, It works only in the same thread! */
-    default <T> Specification<T> defineFilters(String filters) {
+    public <T> Specification<T> defineFilters(String filters) {
         SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();
         if (Strings.isNotBlank(filters)) {
             String[] filtersArray = filters.split(filtersSeparator);
@@ -88,66 +98,98 @@ public interface IController<R> {
         return builder.build();
     }
 
-    default <T> Specification<T> findByEquals(String key, Object value) {
+    public <T> Specification<T> findByEquals(String key, Object value) {
         SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();
         builder.with(key, ":", value);
         return builder.build();
     }
 
 
-    /* RESPONSES */
-
+    /* RESPONSE */
     /* Build Success Response for single Entity */
-    default ResponseEntity<MessageResource<R>> buildSuccessResponse(R element) {
-        return this.buildSuccessResponse(element, new ArrayList<>());
+    public ResponseEntity<MessageResource<R>> buildSuccessResponse(R element) {
+        return this.buildSuccessResponse(element, Normal.value);
     }
 
-    default ResponseEntity<MessageResource<R>> buildSuccessResponse(@NotNull R element, List<Message> messages) {
-        MessageResource<R> result = new MessageResource<>(element, messages);
+    public ResponseEntity<MessageResource<R>> buildSuccessResponse(R element, IView view) {
+        return this.buildSuccessResponse(element, view, new ArrayList<>());
+    }
+
+    public ResponseEntity<MessageResource<R>> buildSuccessResponse(@NotNull R element, IView view, List<Message> messages) {
+        MessageResource<R> result = new MessageResource<>(serializeElement(element, view), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    /* Build Success Response for Slice of Entities */
-    default ResponseEntity<MessageResources<R>> buildSuccessResponses(Slice<R> slice) {
-        return this.buildSuccessResponses(slice, new ArrayList<>());
+    /* RESPONSES */
+    /* Build Success Response for Iterables of Entities */
+    public ResponseEntity<MessageResources<R>> buildSuccessResponses(Iterable<R> slice) {
+        return this.buildSuccessResponses(slice, Normal.value);
     }
 
-    default ResponseEntity<MessageResources<R>> buildSuccessResponses(@NotNull Slice<R> slice, List<Message> messages) {
+    public ResponseEntity<MessageResources<R>> buildSuccessResponses(Iterable<R> slice, IView view) {
+        return this.buildSuccessResponses(slice, view, new ArrayList<>());
+    }
+
+    public ResponseEntity<MessageResources<R>> buildSuccessResponses(@NotNull Iterable<R> iterable, IView view, List<Message> messages) {
+        boolean isLast = true;
+        if (iterable instanceof Slice) {
+            isLast = ((Slice<R>) iterable).isLast();
+        }
+
+        int count = 0;
+        List<R> content = new ArrayList<>();
+        for (R r : iterable) {
+            count++;
+            content.add(serializeElement(r, view));
+        }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.put("IS-EMPTY", List.of("" + slice.isEmpty()));
-        headers.put("IS-LAST", List.of("" + slice.isLast()));
-        headers.put("NUMBER", List.of("" + slice.getNumberOfElements()));
+        headers.put("IS-EMPTY", List.of("" + !iterable.iterator().hasNext()));
+        headers.put("IS-LAST", List.of("" + isLast));
+        headers.put("NUMBER", List.of("" + count));
 
-        MessageResources<R> result = new MessageResources<>(slice.getContent(), messages);
+        MessageResources<R> result = new MessageResources<>(content, messages);
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
-    /* Build Success Response for List of object */
-    default <T> ResponseEntity<MessageResources<T>> buildSuccessResponses(List<T> list) {
-        return this.buildSuccessResponses(list, new ArrayList<>());
-    }
-
-    default <T> ResponseEntity<MessageResources<T>> buildSuccessResponses(@NotNull List<T> list, List<Message> messages) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.put("IS-EMPTY", List.of("" + list.isEmpty()));
-        headers.put("IS-LAST", List.of("" + true));
-        headers.put("NUMBER", List.of("" + list.size()));
-
-        MessageResources<T> result = new MessageResources<>(list, messages);
-        return new ResponseEntity<>(result, headers, HttpStatus.OK);
-    }
-
-    default String fieldMissing(String field) {
+    public String fieldMissing(String field) {
         return "Mandatory parameter is missing: " + field;
     }
 
-    default String resourceMissing() {
+    public String resourceMissing() {
         return "No valid resource was provided.";
     }
 
-    default String noEntityFound(Integer id) {
+    public String noEntityFound(Integer id) {
         return "No valid entity found with id: " + id;
+    }
+
+    private ObjectMapper createObjectMapper() {
+        JsonMapper jsonMapper = JsonMapper.builder()/*.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)*/.build();
+        jsonMapper.registerModule(new JavaTimeModule());
+
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .setConfig(jsonMapper.getSerializationConfig())
+                .setConfig(jsonMapper.getDeserializationConfig());
+    }
+
+    @SuppressWarnings("unchecked")
+    private R serializeElement(R element, IView view) {
+
+        Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
+        Class<R> clazz = (Class<R>) actualTypeArguments[actualTypeArguments.length - 1];
+
+        R newElement = null;
+        try {
+            ObjectMapper mapper = createObjectMapper();
+            if(view == null) view = Normal.value;
+            String json = mapper.writerWithView(view.getClass()).writeValueAsString(element);
+            newElement = mapper.readValue(json, clazz);
+        } catch (Exception e) {
+            log.error("Error in serializeElement: " + e.getMessage(), e);
+        }
+        return newElement;
     }
 
 }

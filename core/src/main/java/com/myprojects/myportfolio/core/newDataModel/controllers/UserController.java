@@ -1,6 +1,8 @@
 package com.myprojects.myportfolio.core.newDataModel.controllers;
 
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
+import com.myprojects.myportfolio.clients.general.views.IView;
+import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewUserDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.UserMapper;
@@ -38,13 +40,14 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
 
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource<NewUserDto>> get(
-            @PathVariable("slug") String slug
+            @PathVariable("slug") String slug,
+            @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
         NewUser user = userService.findBy(findByEquals(NewUser.FIELDS.SLUG.name(), slug));
 
-        return this.buildSuccessResponse(userMapper.mapToDto(user));
+        return this.buildSuccessResponse(userMapper.mapToDto(user), view);
     }
 
     @Override

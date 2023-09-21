@@ -17,22 +17,6 @@ public interface IView {
         String name() default "";
     }
 
-    default boolean isExactly(IView view) {
-        if (view == null) {
-            throw new IllegalArgumentException("View argument cannot be null");
-        }
-
-        return isExactly(view.getClass());
-    }
-
-    default boolean isExactly(Class<? extends IView> view) {
-        if (view == null) {
-            throw new IllegalArgumentException("View argument cannot be null");
-        }
-
-        return view.equals(this.getClass());
-    }
-
     default boolean isAtLeast(IView view) {
         if (view == null) {
             throw new IllegalArgumentException("View argument cannot be null");
@@ -49,19 +33,4 @@ public interface IView {
         return view.isInstance(this);
     }
 
-    default boolean isAtMost(IView view) {
-        if (view == null) {
-            throw new IllegalArgumentException("View argument cannot be null");
-        }
-
-        return isAtMost(view.getClass());
-    }
-
-    default boolean isAtMost(Class<? extends IView> view) {
-        if (view == null) {
-            throw new IllegalArgumentException("View argument cannot be null");
-        }
-
-        return this.getClass().isAssignableFrom(view);
-    }
 }
