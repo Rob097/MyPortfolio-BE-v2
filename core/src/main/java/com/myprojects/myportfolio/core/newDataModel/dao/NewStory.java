@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -81,5 +82,8 @@ public class NewStory extends AuditableDao {
             )
     )
     private NewDiary diary;
+
+    @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    private Set<NewProject> projects;
 
 }

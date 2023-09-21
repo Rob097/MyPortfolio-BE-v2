@@ -46,4 +46,14 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
         return this.buildSuccessResponse(storyMapper.mapToDto(story));
     }
 
+    // TODO:
+    // What we could do is implement a generic flow that allow us to:
+    // - Add a new Project to an existing story
+    // - Add a new Story to an existing Project
+    // For all the entities that are related to a Story.
+    // Right now, the owners of the relationship with story are the entities like project.
+    // So, when we create/update a project we can also create a story but not the other way around.
+    // And also when we update a project we have to pass the whole object plus the new story.
+    // It would be nice to have a way to just pass the story that we want to add to the project.
+
 }

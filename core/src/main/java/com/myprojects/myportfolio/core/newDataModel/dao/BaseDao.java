@@ -3,6 +3,8 @@ package com.myprojects.myportfolio.core.newDataModel.dao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @MappedSuperclass
+@AllArgsConstructor
 public class BaseDao implements Serializable {
 
     @Id
@@ -24,6 +27,10 @@ public class BaseDao implements Serializable {
     @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
     @Column(name = "id", updatable = false)
     protected Integer id;
+
+    public BaseDao() {
+        super();
+    }
 
     public String toString() {
         return toJson();

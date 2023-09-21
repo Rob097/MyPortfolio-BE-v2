@@ -16,7 +16,7 @@ public class RouterValidator {
             "/api/auth/signin", List.of(HttpMethod.POST),
             "/api/auth/signup", List.of(HttpMethod.POST),
             "/api/core/users", List.of(HttpMethod.POST, HttpMethod.GET),
-            "/api/core/new/users", List.of(HttpMethod.POST, HttpMethod.GET),
+            "/api/core/new", List.of(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT),
             "/api/core", List.of(HttpMethod.GET)
     );
 
@@ -26,8 +26,10 @@ public class RouterValidator {
 
         for (String key : openApiEndpoints.keySet()) {
             if (request.getRequestURI().contains(key)) {
+                if(route != null && route.length() > key.length()){
+                    continue;
+                }
                 route = key;
-                break;
             }
         }
 
