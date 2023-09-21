@@ -1,8 +1,10 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
 import com.google.gson.annotations.Expose;
-import com.myprojects.myportfolio.core.story.Story;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -20,6 +22,10 @@ public class NewDiary extends AuditableDao {
     private static final long serialVersionUID = -9073812554333350801L;
 
     @Expose
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
+
+    @Expose
     private String title;
 
     @Expose
@@ -33,6 +39,8 @@ public class NewDiary extends AuditableDao {
     @JoinColumn(
             name = "user_id",
             nullable = false,
+            insertable = false,
+            updatable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
                     name = "new_user_diary_fk"

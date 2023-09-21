@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,15 +21,11 @@ public class NewUserDto extends AuditableDto {
     String email;
     String phone;
     Integer age;
-    String nationality;
-    String nation;
-    String province;
-    String city;
-    String cap;
-    String address;
+    AddressDto address;
     SexDto sex;
     String title;
     String description;
+    List<NewDiaryDto> diaries;
 
     public enum SexDto {
         MALE,

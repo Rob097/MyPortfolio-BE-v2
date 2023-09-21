@@ -71,10 +71,8 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         super.delete(story);
     }
 
-    /**********************/
-    /*** Private Methods **/
-    /**********************/
-    private String generateSlug(NewStory story) {
+    @Override
+    public String generateSlug(NewStory story) {
         boolean isDone = false;
         int index = 0;
         String slug;
@@ -95,6 +93,10 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         return slug;
 
     }
+
+    /**********************/
+    /*** Private Methods **/
+    /**********************/
 
     private void isDiaryOfCurrentUser(NewStory story) {
         NewDiary diary = diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id: " + story.getDiary().getId()));

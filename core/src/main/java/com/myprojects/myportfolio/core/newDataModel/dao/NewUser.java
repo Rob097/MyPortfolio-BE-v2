@@ -1,8 +1,10 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
 import com.google.gson.annotations.Expose;
-import com.myprojects.myportfolio.core.diary.Diary;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -38,8 +40,7 @@ public class NewUser extends AuditableDao {
         ADDRESS("address"),
         SEX("sex"),
         TITLE("title"),
-        DESCRIPTION("description")
-        ;
+        DESCRIPTION("description");
 
         FIELDS(String name) {
         }
@@ -93,13 +94,14 @@ public class NewUser extends AuditableDao {
     @Expose
     private String description;
 
+    @Expose
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<Diary> diaries;
+    private List<NewDiary> diaries;
 
     public enum Sex {
         MALE,

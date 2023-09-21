@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController("newStoryController")
 @RequestMapping("${core-module-basic-path}" + "/new/stories")
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class StoryController extends BaseController<NewStory, NewStoryDto> {
 
     private final StoryServiceI storyService;

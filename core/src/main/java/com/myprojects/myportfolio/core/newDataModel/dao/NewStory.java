@@ -1,7 +1,10 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
 import com.google.gson.annotations.Expose;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -35,10 +38,6 @@ public class NewStory extends AuditableDao {
         FIELDS(String name) {
         }
     }
-
-    @Expose
-    @Column(name = "diary_id", nullable = false)
-    private Integer diaryId;
 
     @Expose
     @Column(unique = true, nullable = false)
@@ -76,12 +75,11 @@ public class NewStory extends AuditableDao {
     @JoinColumn(
             name = "diary_id",
             nullable = false,
-            insertable = false,
-            updatable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
                     name = "new_diary_story_fk"
             )
     )
     private NewDiary diary;
+
 }

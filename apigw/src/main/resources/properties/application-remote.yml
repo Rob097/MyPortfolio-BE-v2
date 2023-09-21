@@ -1,0 +1,15 @@
+server:
+  port: 8083
+
+spring:
+  config:
+    import: classpath:common.yml
+  zipkin:
+    base-url: http://ourlists.ddns.net:9411
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ourlists.ddns.net:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true

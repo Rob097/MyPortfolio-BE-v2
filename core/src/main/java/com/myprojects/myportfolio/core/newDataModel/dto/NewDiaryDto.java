@@ -15,6 +15,7 @@ public class NewDiaryDto extends AuditableDto {
     @Serial
     private static final long serialVersionUID = -8754716684648310747L;
 
+    Integer userId;
     String title;
     String description;
     Boolean isMain;

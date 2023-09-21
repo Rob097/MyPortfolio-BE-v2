@@ -9,26 +9,10 @@ server:
   port: 8443
 
 spring:
-  application:
-    name: api-gateway
+  config:
+    import: classpath:common.yml
   zipkin:
     base-url: http://myzipkin:9411
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods:
-              - POST
-              - GET
-              - OPTIONS
-              - PUT
-              - DELETE
-            allowed-headers: "*"
 
 eureka:
   client:

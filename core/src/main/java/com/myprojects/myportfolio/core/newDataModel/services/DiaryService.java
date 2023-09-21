@@ -17,8 +17,11 @@ public class DiaryService extends BaseService<NewDiary> implements DiaryServiceI
 
     private final UserServiceI userService;
 
-    public DiaryService(DiaryRepository diaryRepository, UserServiceI userService) {
+    private final StoryServiceI storyService;
+
+    public DiaryService(DiaryRepository diaryRepository, UserServiceI userService, StoryServiceI storyService) {
         super();
+        this.storyService = storyService;
         this.repository = diaryRepository;
 
         this.diaryRepository = diaryRepository;
@@ -29,6 +32,13 @@ public class DiaryService extends BaseService<NewDiary> implements DiaryServiceI
     public NewDiary save(NewDiary diary) {
         if (diary.getUser() == null || diary.getUser().getId() == null) {
             diary.setUser(userService.getCurrentLoggedInUser());
+        }
+
+        if (diary.getStories() != null) {
+            diary.getStories().forEach(story -> {
+                story.setDiary(diary);
+                story.setSlug(storyService.generateSlug(story));
+            });
         }
 
         return super.save(diary);
