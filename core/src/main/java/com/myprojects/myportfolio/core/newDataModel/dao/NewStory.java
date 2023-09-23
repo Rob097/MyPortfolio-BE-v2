@@ -1,20 +1,22 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "new_stories")
 public class NewStory extends AuditableDao {
@@ -40,35 +42,27 @@ public class NewStory extends AuditableDao {
         }
     }
 
-    @Expose
     @Column(unique = true, nullable = false)
     private String slug;
 
-    @Expose
     @Column(nullable = false)
     private String title;
 
-    @Expose
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Expose
     @Column(columnDefinition = "DATE")
     private LocalDate fromDate;
 
-    @Expose
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
 
-    @Expose
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isPrimaryStory;
 
-    @Expose
     @Column(columnDefinition = "TEXT")
     private String firstRelevantSection;
 
-    @Expose
     @Column(columnDefinition = "TEXT")
     private String secondRelevantSection;
 
@@ -84,6 +78,17 @@ public class NewStory extends AuditableDao {
     private NewDiary diary;
 
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
-    private Set<NewProject> projects;
+    private Set<NewProject> projects = new HashSet<>();
 
+    @Override
+    public void completeRelationships() {
+        this.getProjects().forEach(project ->
+                project.getStories().add(this)
+        );
+        if (this.getDiary() != null) {
+            if (this.getDiary().getStories() == null)
+                this.getDiary().setStories(new HashSet<>());
+            this.getDiary().getStories().add(this);
+        }
+    }
 }

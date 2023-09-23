@@ -6,8 +6,9 @@ import com.myprojects.myportfolio.core.newDataModel.dto.NewStoryDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.NullValueMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface StoryMapper extends BaseMapper<NewStory, NewStoryDto> {
 
     @Override
@@ -22,7 +23,7 @@ public interface StoryMapper extends BaseMapper<NewStory, NewStoryDto> {
 
     @Named(value = "idToProject")
     static NewProject idToProject(Integer id) {
-        NewProject project = new NewProject();
+        NewProject project = NewProject.builder().build();
         project.setId(id);
         return project;
     }

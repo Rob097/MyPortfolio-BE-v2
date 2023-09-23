@@ -4,8 +4,9 @@ import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewUserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValueMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {DiaryMapper.class, ProjectMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface UserMapper extends BaseMapper<NewUser, NewUserDto> {
 
     @Override

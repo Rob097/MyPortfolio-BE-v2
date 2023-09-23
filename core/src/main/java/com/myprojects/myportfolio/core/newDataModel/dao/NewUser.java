@@ -1,20 +1,21 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.io.Serial;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "new_users")
 public class NewUser extends AuditableDao {
@@ -46,62 +47,64 @@ public class NewUser extends AuditableDao {
         }
     }
 
-    @Expose
     @Column(unique = true, nullable = false)
     private String slug;
 
-    @Expose
     private String firstName;
 
-    @Expose
     private String lastName;
 
-    @Expose
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Expose
     private String phone;
 
-    @Expose
     private Integer age;
 
-    @Expose
     private String nationality;
 
-    @Expose
     private String nation;
 
-    @Expose
     private String province;
 
-    @Expose
     private String city;
 
-    @Expose
     private String cap;
 
-    @Expose
     private String address;
 
-    @Expose
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    @Expose
     private String title;
 
-    @Expose
     private String description;
 
-    @Expose
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private List<NewDiary> diaries;
+    private Set<NewDiary> diaries = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    private Set<NewProject> projects = new HashSet<>();
+
+    @Override
+    public void completeRelationships() {
+        if (this.getDiaries() != null) {
+            this.getDiaries().forEach(diary -> diary.setUser(this));
+        }
+        if (this.getProjects() != null) {
+            this.getProjects().forEach(project -> project.setUser(this));
+        }
+    }
 
     public enum Sex {
         MALE,
@@ -120,16 +123,4 @@ public class NewUser extends AuditableDao {
         this.slug = slug;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NewUser user = (NewUser) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

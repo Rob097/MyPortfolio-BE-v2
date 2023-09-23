@@ -76,12 +76,12 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
         String slug;
 
         do {
-            String appendix = index == 0 ? "" : ("-"+index);
+            String appendix = index == 0 ? "" : ("-" + index);
             slug = utilsService.toSlug(project.getTitle() + appendix);
 
             Optional<NewProject> existingUser = projectRepository.findBySlug(slug);
 
-            if(existingUser.isPresent()) {
+            if (existingUser.isPresent()) {
                 index++;
             } else {
                 isDone = true;

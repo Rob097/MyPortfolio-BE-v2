@@ -45,6 +45,8 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
             throw new IllegalArgumentException("Entity already exists with id: " + t.getId());
         }
 
+        t.completeRelationships();
+
         return repository.save(t);
 
     }
@@ -53,6 +55,8 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
     public T update(T t) {
         Validate.notNull(t, fieldMissing("entity"));
         Validate.notNull(t.getId(), fieldMissing("id"));
+
+        t.completeRelationships();
 
         return repository.save(t);
     }

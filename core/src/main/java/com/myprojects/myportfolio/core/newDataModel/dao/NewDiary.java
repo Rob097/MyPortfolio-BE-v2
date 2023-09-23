@@ -1,19 +1,21 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.io.Serial;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "new_diaries")
 public class NewDiary extends AuditableDao {
@@ -21,26 +23,16 @@ public class NewDiary extends AuditableDao {
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
 
-    @Expose
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
-
-    @Expose
     private String title;
 
-    @Expose
     private String description;
 
-    @Expose
     private Boolean isMain;
 
-    @Expose
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",
             nullable = false,
-            insertable = false,
-            updatable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
                     name = "new_user_diary_fk"
@@ -48,13 +40,23 @@ public class NewDiary extends AuditableDao {
     )
     private NewUser user;
 
-    @Expose
     @OneToMany(
             mappedBy = "diary",
             orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            cascade = {CascadeType.ALL},
             fetch = FetchType.LAZY
     )
-    private Set<NewStory> stories;
+    private Set<NewStory> stories = new HashSet<>();
 
+    @Override
+    public void completeRelationships() {
+        if (this.getStories() != null) {
+            this.getStories().forEach(story -> story.setDiary(this));
+        }
+        if (this.getUser() != null) {
+            if (this.getUser().getDiaries() == null)
+                this.getUser().setDiaries(new HashSet<>());
+            this.getUser().getDiaries().add(this);
+        }
+    }
 }

@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +29,10 @@ public class NewUserDto extends AuditableDto {
     String description;
 
     @JsonView(Verbose.class)
-    List<NewDiaryDto> diaries;
+    Set<NewDiaryDto> diaries;
+
+    @JsonView(Verbose.class)
+    Set<NewProjectDto> projects;
 
     public enum SexDto {
         MALE,

@@ -36,7 +36,6 @@ public class DiaryService extends BaseService<NewDiary> implements DiaryServiceI
 
         if (diary.getStories() != null) {
             diary.getStories().forEach(story -> {
-                story.setDiary(diary);
                 story.setSlug(storyService.generateSlug(story));
             });
         }
