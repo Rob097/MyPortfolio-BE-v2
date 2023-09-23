@@ -43,7 +43,7 @@ public class NewDiary extends AuditableDao {
     @OneToMany(
             mappedBy = "diary",
             orphanRemoval = true,
-            cascade = {CascadeType.ALL},
+            cascade = {CascadeType.ALL}, // Diary can create, update, delete stories
             fetch = FetchType.LAZY
     )
     private Set<NewStory> stories = new HashSet<>();

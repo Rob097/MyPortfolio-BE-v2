@@ -47,7 +47,7 @@ public class NewProject extends AuditableDao {
     // This means that when we create a new project, the stories will be created automatically.
     // But, if we create a new story, the project will not be created automatically.
     // And this is the right way to do it.
-    @ManyToMany(fetch = FetchType.LAZY/*, cascade = {CascadeType.MERGE}*/)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "new_project_stories",
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
