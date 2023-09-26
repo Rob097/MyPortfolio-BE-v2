@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Transactional
@@ -48,11 +47,6 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
     public NewProject save(NewProject project) {
         Validate.notNull(project, super.fieldMissing("project"));
 
-        project.setSlug(generateSlug(project));
-        if (project.getStories() != null) {
-            project.getStories().forEach(story -> story.setSlug(storyService.generateSlug(story)));
-        }
-
         return super.save(project);
     }
 
@@ -60,37 +54,12 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
     public NewProject update(NewProject project) {
         Validate.notNull(project, super.fieldMissing("project"));
 
-        if (project.getStories() != null) {
-            project.getStories().forEach(story -> story.setSlug(storyService.generateSlug(story)));
-        }
-
         return super.update(project);
     }
 
     /**********************/
     /*** Private Methods **/
     /**********************/
-    private String generateSlug(NewProject project) {
-        boolean isDone = false;
-        int index = 0;
-        String slug;
-
-        do {
-            String appendix = index == 0 ? "" : ("-" + index);
-            slug = utilsService.toSlug(project.getTitle() + appendix);
-
-            Optional<NewProject> existingUser = projectRepository.findBySlug(slug);
-
-            if (existingUser.isPresent()) {
-                index++;
-            } else {
-                isDone = true;
-            }
-        } while (!isDone);
-
-        return slug;
-
-    }
 
 
 }

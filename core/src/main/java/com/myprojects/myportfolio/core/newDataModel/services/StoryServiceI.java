@@ -7,5 +7,4 @@ public interface StoryServiceI extends BaseServiceI<NewStory> {
 
     NewStory findBy(Specification<NewStory> specification);
 
-    String generateSlug(NewStory story);
 }

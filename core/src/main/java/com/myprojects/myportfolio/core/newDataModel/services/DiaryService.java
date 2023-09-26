@@ -34,12 +34,6 @@ public class DiaryService extends BaseService<NewDiary> implements DiaryServiceI
             diary.setUser(userService.getCurrentLoggedInUser());
         }
 
-        if (diary.getStories() != null) {
-            diary.getStories().forEach(story -> {
-                story.setSlug(storyService.generateSlug(story));
-            });
-        }
-
         return super.save(diary);
     }
 }

@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository(value="newUserRepository")
+@Repository(value = "newUserRepository")
 public interface UserRepository extends BaseRepository<NewUser, Integer> {
 
     Optional<NewUser> findByEmail(String email);
 
+    @Override
     Optional<NewUser> findBySlug(String slug);
 
     @Query("SELECT slug from NewUser")

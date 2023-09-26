@@ -1,9 +1,6 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -46,6 +43,7 @@ public class NewDiary extends AuditableDao {
             cascade = {CascadeType.ALL}, // Diary can create, update, delete stories
             fetch = FetchType.LAZY
     )
+    @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
     @Override

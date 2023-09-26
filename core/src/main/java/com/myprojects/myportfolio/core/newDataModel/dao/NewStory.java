@@ -1,9 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.myprojects.myportfolio.core.newDataModel.utils.SlugSource;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -19,7 +17,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "new_stories")
-public class NewStory extends AuditableDao {
+public class NewStory extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = 3219080188292925051L;
@@ -42,9 +40,7 @@ public class NewStory extends AuditableDao {
         }
     }
 
-    @Column(unique = true, nullable = false)
-    private String slug;
-
+    @SlugSource
     @Column(nullable = false)
     private String title;
 
@@ -78,6 +74,7 @@ public class NewStory extends AuditableDao {
     private NewDiary diary;
 
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
     @Override

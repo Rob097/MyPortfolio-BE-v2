@@ -1,9 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.myprojects.myportfolio.core.newDataModel.utils.SlugSource;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -18,14 +16,12 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "new_projects")
-public class NewProject extends AuditableDao {
+public class NewProject extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
 
-    @Column(unique = true, nullable = false)
-    private String slug;
-
+    @SlugSource
     @Column(nullable = false)
     private String title;
 
@@ -52,6 +48,7 @@ public class NewProject extends AuditableDao {
             name = "new_project_stories",
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
+    @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
     @Override

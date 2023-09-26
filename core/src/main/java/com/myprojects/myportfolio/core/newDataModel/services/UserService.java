@@ -22,12 +22,15 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
 
     private final UtilsServiceI utilsService;
 
-    public UserService(UserRepository userRepository, UtilsServiceI utilsService) {
+    private final StoryServiceI storyService;
+
+    public UserService(UserRepository userRepository, UtilsServiceI utilsService, StoryServiceI storyService) {
         super();
         this.repository = userRepository;
 
         this.userRepository = userRepository;
         this.utilsService = utilsService;
+        this.storyService = storyService;
     }
 
     @Override
@@ -45,8 +48,18 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
     public NewUser save(NewUser user) {
         Validate.notNull(user, super.fieldMissing("user"));
 
-        user.setSlug(generateSlug(user));
+        this.userRepository.findByEmail(user.getEmail()).ifPresent(existingUser -> {
+            throw new IllegalArgumentException("User with email " + user.getEmail() + " already exists");
+        });
+
         return super.save(user);
+    }
+
+    @Override
+    public NewUser update(NewUser user) {
+        Validate.notNull(user, super.fieldMissing("user"));
+
+        return super.update(user);
     }
 
     /**
@@ -69,25 +82,5 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
     /**********************/
     /*** Private Methods **/
     /**********************/
-    private String generateSlug(NewUser user) {
-        boolean isDone = false;
-        int index = 0;
-        String slug;
 
-        do {
-            String appendix = index == 0 ? "" : ("-" + index);
-            slug = utilsService.toSlug(user.getFirstName() + " " + user.getLastName() + appendix);
-
-            Optional<NewUser> existingUser = userRepository.findBySlug(slug);
-
-            if (existingUser.isPresent()) {
-                index++;
-            } else {
-                isDone = true;
-            }
-        } while (!isDone);
-
-        return slug;
-
-    }
 }

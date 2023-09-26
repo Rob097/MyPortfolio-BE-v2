@@ -1,9 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.myprojects.myportfolio.core.newDataModel.utils.SlugSource;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -18,7 +16,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "new_users")
-public class NewUser extends AuditableDao {
+public class NewUser extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = -7807186737167318556L;
@@ -47,11 +45,10 @@ public class NewUser extends AuditableDao {
         }
     }
 
-    @Column(unique = true, nullable = false)
-    private String slug;
-
+    @SlugSource
     private String firstName;
 
+    @SlugSource
     private String lastName;
 
     @Column(nullable = false, unique = true)
@@ -86,6 +83,7 @@ public class NewUser extends AuditableDao {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
+    @Builder.Default
     private Set<NewDiary> diaries = new HashSet<>();
 
     @OneToMany(
@@ -94,15 +92,22 @@ public class NewUser extends AuditableDao {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
+    @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
     @Override
     public void completeRelationships() {
         if (this.getDiaries() != null) {
-            this.getDiaries().forEach(diary -> diary.setUser(this));
+            this.getDiaries().forEach(diary -> {
+                diary.setUser(this);
+                diary.completeRelationships();
+            });
         }
         if (this.getProjects() != null) {
-            this.getProjects().forEach(project -> project.setUser(this));
+            this.getProjects().forEach(project -> {
+                project.setUser(this);
+                project.completeRelationships();
+            });
         }
     }
 
@@ -114,13 +119,13 @@ public class NewUser extends AuditableDao {
     public NewUser(Integer id, String email) {
         this.id = id;
         this.email = email;
-        this.slug = "";
+        this.setSlug("");
     }
 
     public NewUser(Integer id, String email, String slug) {
         this.id = id;
         this.email = email;
-        this.slug = slug;
+        this.setSlug(slug);
     }
 
 }

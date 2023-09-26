@@ -5,9 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository(value="newProjectRepository")
+@Repository(value = "newProjectRepository")
 public interface ProjectRepository extends BaseRepository<NewProject, Integer> {
 
+    @Override
     Optional<NewProject> findBySlug(String slug);
 
 }
