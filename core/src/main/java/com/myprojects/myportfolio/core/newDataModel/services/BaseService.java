@@ -40,10 +40,7 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
     @Override
     public T save(T t) {
         Validate.notNull(t, fieldMissing("entity"));
-
-        if (t.getId() != null && repository.findById(t.getId()).isPresent()) {
-            throw new IllegalArgumentException("Entity already exists with id: " + t.getId());
-        }
+        checkIfEntityAlreadyExists(t.getId());
 
         t.completeRelationships();
 
@@ -55,8 +52,7 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
     public T update(T t) {
         Validate.notNull(t, fieldMissing("entity"));
         Validate.notNull(t.getId(), fieldMissing("id"));
-
-        t.completeRelationships();
+        checkIfEntityDoesNotExist(t.getId());
 
         return repository.save(t);
     }
@@ -67,6 +63,18 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         Validate.notNull(t.getId(), fieldMissing("id"));
 
         repository.delete(t);
+    }
+
+    protected void checkIfEntityAlreadyExists(Integer id) {
+        if (id != null && repository.findById(id).isPresent()) {
+            throw new IllegalArgumentException("Entity already exists with id: " + id);
+        }
+    }
+
+    protected void checkIfEntityDoesNotExist(Integer id) {
+        if (id == null || repository.findById(id).isEmpty()) {
+            throw new IllegalArgumentException("Entity does not exist" + (id != null ? (" with id: " + id) : "."));
+        }
     }
 
     protected String fieldMissing(String field) {
