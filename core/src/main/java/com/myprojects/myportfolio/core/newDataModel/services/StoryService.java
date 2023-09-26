@@ -1,13 +1,15 @@
 package com.myprojects.myportfolio.core.newDataModel.services;
 
-import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
+import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
+import com.myprojects.myportfolio.core.newDataModel.repositories.DiaryRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -18,14 +20,17 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
 
     private final StoryRepository storyRepository;
 
-    private final UtilsServiceI utilsService;
+    private final DiaryRepository diaryRepository;
 
-    public StoryService(StoryRepository storyRepository, UtilsServiceI utilsService) {
+    private final UserServiceI userService;
+
+    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, UserServiceI userService) {
         super();
         this.repository = storyRepository;
 
         this.storyRepository = storyRepository;
-        this.utilsService = utilsService;
+        this.diaryRepository = diaryRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -43,6 +48,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     public NewStory save(NewStory story) {
         Validate.notNull(story, super.fieldMissing("story"));
 
+        // TODO: Reactivate once tests are finished.
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
         // isDiaryOfCurrentUser(story);
 
@@ -50,11 +56,22 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     }
 
     @Override
+    public NewStory update(NewStory story) {
+        Validate.notNull(story, super.fieldMissing("story"));
+
+        // TODO: Reactivate once tests are finished.
+        // Important, we need to check that the diary_id passed is actually a diary of the current user.
+        // isDiaryOfCurrentUser(story);
+
+        return super.update(story);
+    }
+
+    @Override
     public void delete(NewStory story) {
         Validate.notNull(story, super.fieldMissing("story"));
 
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
-        // isDiaryOfCurrentUser(story);
+        isDiaryOfCurrentUser(story);
 
         super.delete(story);
     }
@@ -63,11 +80,10 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     /*** Private Methods **/
     /**********************/
 
-    // TODO: This check is probably more appropriate in the controller.
-    /*private void isDiaryOfCurrentUser(NewStory story) {
+    private void isDiaryOfCurrentUser(NewStory story) {
         NewDiary diary = diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id: " + story.getDiary().getId()));
         if (!userService.hasId(diary.getUser().getId()))
             throw new IllegalArgumentException("You are not allowed to edit someone else's diary's stories.");
-    }*/
+    }
 
 }

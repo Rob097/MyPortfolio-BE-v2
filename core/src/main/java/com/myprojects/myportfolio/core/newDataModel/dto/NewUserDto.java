@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.util.Set;
 
@@ -18,8 +19,14 @@ public class NewUserDto extends AuditableDto {
     private static final long serialVersionUID = 9184690121318354645L;
 
     String slug;
+
+    @NotNull( message = "First name cannot be null")
     String firstName;
+
+    @NotNull( message = "Last name cannot be null")
     String lastName;
+
+    @NotNull( message = "Email cannot be null")
     String email;
     String phone;
     Integer age;

@@ -41,7 +41,7 @@ public class NewDiary extends AuditableDao {
             mappedBy = "diary",
             orphanRemoval = true,
             cascade = {CascadeType.ALL}, // Diary can create, update, delete stories
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();

@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.newDataModel.services;
 
-import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
 import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +19,11 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
 
     private final UserRepository userRepository;
 
-    private final UtilsServiceI utilsService;
-
-    private final StoryServiceI storyService;
-
-    public UserService(UserRepository userRepository, UtilsServiceI utilsService, StoryServiceI storyService) {
+    public UserService(UserRepository userRepository) {
         super();
         this.repository = userRepository;
 
         this.userRepository = userRepository;
-        this.utilsService = utilsService;
-        this.storyService = storyService;
     }
 
     @Override

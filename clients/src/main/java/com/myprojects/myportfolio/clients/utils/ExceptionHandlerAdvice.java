@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,33 +22,34 @@ import java.util.stream.Collectors;
 public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MessageResource> handleException(Exception e) {
-        log.error(e.getMessage(), e.getStackTrace());
+    public ResponseEntity<MessageResource<?>> handleException(Exception e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new MessageResource(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<MessageResource> handleNoSuchElementException(NoSuchElementException e) {
-        log.error(e.getMessage(), e.getStackTrace());
+    public ResponseEntity<MessageResource<?>> handleNoSuchElementException(NoSuchElementException e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new MessageResource(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageResource> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<MessageResource<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         BindingResult result = e.getBindingResult();
         List<Message> errors = new ArrayList<>();
-        if(result.getAllErrors()!=null && !result.getAllErrors().isEmpty()) {
+        result.getAllErrors();
+        if (!result.getAllErrors().isEmpty()) {
             errors = result.getAllErrors().stream().map(error -> new Message(error.getDefaultMessage(), IMessage.Level.ERROR)).collect(Collectors.toList());
         }
 
-        log.error("Validation Error", errors);
+        log.error("Validation Error {}", errors);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResource(null, errors));
+                .body(new MessageResource<>(null, errors));
     }
 
 }

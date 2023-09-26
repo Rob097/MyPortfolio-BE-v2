@@ -16,6 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 public abstract class BaseController<A extends BaseDao, T extends BaseDto> extends IController<T> {
 
@@ -52,7 +54,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     @Override
     @PostMapping()
     public ResponseEntity<MessageResource<T>> create(
-            @RequestBody T user
+            @Valid @RequestBody T user
     ) throws Exception {
         Validate.notNull(user, resourceMissing());
 
@@ -64,7 +66,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     @PutMapping(value = "/{id}")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
-            @RequestBody T user
+            @Valid @RequestBody T user
     ) throws Exception {
         Validate.notNull(user, resourceMissing());
         Validate.notNull(user.getId(), fieldMissing("id"));
