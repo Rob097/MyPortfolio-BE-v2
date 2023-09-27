@@ -1,9 +1,6 @@
 package com.myprojects.myportfolio.core.newDataModel.aspects;
 
-import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
-import com.myprojects.myportfolio.core.newDataModel.dao.SlugDao;
+import com.myprojects.myportfolio.core.newDataModel.dao.*;
 import com.myprojects.myportfolio.core.newDataModel.repositories.BaseRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
@@ -46,7 +43,7 @@ public class UserSlugGenerationAspect {
      * @param entity the entity to save
      */
     @Before("execution(* org.springframework.data.repository.CrudRepository+.save(*)) && args(entity)")
-    public void generateSlug(SlugDao entity) {
+    public void generateSlug(BaseDao entity) {
 
         if (entity instanceof NewUser user) {
             generateUserSlug(user);
@@ -72,6 +69,11 @@ public class UserSlugGenerationAspect {
 
         } else if (entity instanceof NewStory story) {
             generateStorySlug(story);
+
+        } else if (entity instanceof NewDiary diary) {
+            if (diary.getStories() != null) {
+                diary.getStories().forEach(this::generateStorySlug);
+            }
         }
 
     }
@@ -99,7 +101,7 @@ public class UserSlugGenerationAspect {
     private void calculateSlug(Object entity) {
         if (entity instanceof SlugDao slugEntity) {
             if (Strings.isBlank(slugEntity.getSlug())) {
-                log.info("calculateSlug: {} - BEGIN", slugEntity);
+                log.info("calculateSlug - BEGIN");
 
                 boolean isDone = false;
                 int index = 0;

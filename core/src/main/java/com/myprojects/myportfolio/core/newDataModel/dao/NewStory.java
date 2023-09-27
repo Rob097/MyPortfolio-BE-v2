@@ -62,6 +62,9 @@ public class NewStory extends SlugDao {
     @Column(columnDefinition = "TEXT")
     private String secondRelevantSection;
 
+    // When creating a story, we have to specify an already existing diaryId
+    // When updating a story, we can also update the diaryId
+    // When deleting a story, the relation with the diary is deleted
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "diary_id",
@@ -73,6 +76,10 @@ public class NewStory extends SlugDao {
     )
     private NewDiary diary;
 
+    // NewProject is the owner of the relationship.
+    // When creating a story, we have to specify an already existing projectId
+    // When updating a story, nothing happens to the relationship (no add, no delete)
+    // When deleting a story, the relation with the project is deleted
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
@@ -86,6 +93,16 @@ public class NewStory extends SlugDao {
             if (this.getDiary().getStories() == null)
                 this.getDiary().setStories(new HashSet<>());
             this.getDiary().getStories().add(this);
+        }
+    }
+
+    @Override
+    public void removeRelationships() {
+        this.getProjects().forEach(project ->
+                project.getStories().remove(this)
+        );
+        if (this.getDiary() != null) {
+            this.getDiary().getStories().remove(this);
         }
     }
 }

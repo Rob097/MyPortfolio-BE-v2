@@ -42,7 +42,7 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         Validate.notNull(t, fieldMissing("entity"));
         checkIfEntityAlreadyExists(t.getId());
 
-        t.completeRelationships();
+        // We connect all relationships with BaseDao completeRelationships method in PrePersist
 
         return repository.save(t);
 
@@ -61,6 +61,8 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
     public void delete(T t) {
         Validate.notNull(t, fieldMissing("entity"));
         Validate.notNull(t.getId(), fieldMissing("id"));
+
+        // We disconnect all relationships with BaseDao removeRelationships method in PreRemove
 
         repository.delete(t);
     }

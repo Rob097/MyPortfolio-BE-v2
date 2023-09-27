@@ -78,8 +78,7 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
                 isToUpdate = true;
 
                 NewDiary oldDiary = story.getDiary();
-                oldDiary.getStories().remove(story);
-                diaryService.update(oldDiary);
+                diaryService.removeStoriesFromDiary(oldDiary.getId(), new Integer[]{story.getId()});
             }
             if (operation.getPath().matches("^/project")) {
                 NewProject project = projectService.findById(Integer.parseInt(operation.getValue()));
@@ -89,7 +88,7 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
                     story.getProjects().add(project);
                 } else if (operation.getOp() == PatchOperation.Op.remove) {
                     project.getStories().remove(story);
-                    story.getProjects   ().remove(project);
+                    story.getProjects().remove(project);
                 }
 
                 isToUpdate = true;

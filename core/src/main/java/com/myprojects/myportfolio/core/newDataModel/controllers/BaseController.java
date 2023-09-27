@@ -83,10 +83,10 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     ) throws Exception {
         Validate.notNull(id, fieldMissing("id"));
 
-        A userToDelete = service.findById(id);
-        Validate.notNull(userToDelete, noEntityFound(id));
+        A entityToDelete = service.findById(id);
+        Validate.notNull(entityToDelete, noEntityFound(id));
 
-        service.delete(userToDelete);
-        return this.buildSuccessResponse(mapper.mapToDto(userToDelete));
+        service.delete(entityToDelete);
+        return this.buildSuccessResponse(mapper.mapToDto(entityToDelete));
     }
 }

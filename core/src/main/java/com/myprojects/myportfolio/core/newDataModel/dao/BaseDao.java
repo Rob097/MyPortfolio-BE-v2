@@ -10,10 +10,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.proxy.HibernateProxy;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -48,7 +45,12 @@ public class BaseDao implements Serializable {
     }
 
     /** Method overridden by all subClasses to populate its relations before persisting them into DB */
+    @PrePersist
     public void completeRelationships() {/*Method gets overridden.*/ }
+
+    /** Method overridden by all subClasses to remove its relations before deleting them from DB */
+    @PreRemove
+    public void removeRelationships() {/*Method gets overridden.*/ }
 
     @Override
     public final boolean equals(Object o) {
