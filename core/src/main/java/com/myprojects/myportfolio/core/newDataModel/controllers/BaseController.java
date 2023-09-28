@@ -4,16 +4,19 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
+import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.newDataModel.dao.BaseDao;
 import com.myprojects.myportfolio.core.newDataModel.dto.BaseDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.BaseMapper;
 import com.myprojects.myportfolio.core.newDataModel.services.BaseServiceI;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,6 +28,9 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     protected BaseMapper<A, T> mapper;
 
+    @Autowired
+    protected UtilsServiceI utilsService;
+
     @Override
     @GetMapping()
     public ResponseEntity<MessageResources<T>> find(
@@ -34,9 +40,9 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     ) throws Exception {
         Specification<A> specifications = this.defineFilters(filters);
 
-        Slice<A> users = service.findAll(specifications, pageable);
+        Slice<A> entities = service.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(users.map(mapper::mapToDto), view);
+        return this.buildSuccessResponses(entities.map(mapper::mapToDto), view);
     }
 
     @Override
@@ -46,34 +52,36 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
             @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view
     ) throws Exception {
         Validate.notNull(id, fieldMissing("id"));
-        A user = service.findById(id);
+        A entity = service.findById(id);
 
-        return this.buildSuccessResponse(mapper.mapToDto(user), view);
+        return this.buildSuccessResponse(mapper.mapToDto(entity), view);
     }
 
     @Override
     @PostMapping()
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
-            @Valid @RequestBody T user
+            @Valid @RequestBody T entity
     ) throws Exception {
-        Validate.notNull(user, resourceMissing());
+        Validate.notNull(entity, resourceMissing());
 
-        A newUser = service.save(mapper.mapToDao(user));
-        return this.buildSuccessResponse(mapper.mapToDto(newUser));
+        A newEntity = service.save(mapper.mapToDao(entity));
+        return this.buildSuccessResponse(mapper.mapToDto(newEntity));
     }
 
     @Override
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
-            @Valid @RequestBody T user
+            @Valid @RequestBody T entity
     ) throws Exception {
-        Validate.notNull(user, resourceMissing());
-        Validate.notNull(user.getId(), fieldMissing("id"));
-        Validate.isTrue(user.getId().equals(id), "The request's id and the body's id are different.");
+        Validate.notNull(entity, resourceMissing());
+        Validate.notNull(entity.getId(), fieldMissing("id"));
+        Validate.isTrue(entity.getId().equals(id), "The request's id and the body's id are different.");
 
-        A updatedUser = service.update(mapper.mapToDao(user));
-        return this.buildSuccessResponse(mapper.mapToDto(updatedUser));
+        A updatedEntity = service.update(mapper.mapToDao(entity));
+        return this.buildSuccessResponse(mapper.mapToDto(updatedEntity));
     }
 
     @Override
@@ -85,6 +93,10 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
         A entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
+
+        if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete), false)) {
+            throw new Exception("You can't delete it because is not yours.");
+        }
 
         service.delete(entityToDelete);
         return this.buildSuccessResponse(mapper.mapToDto(entityToDelete));

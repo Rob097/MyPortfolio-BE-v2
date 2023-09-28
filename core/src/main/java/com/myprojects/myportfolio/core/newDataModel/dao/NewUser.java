@@ -21,6 +21,8 @@ public class NewUser extends SlugDao {
     @Serial
     private static final long serialVersionUID = -7807186737167318556L;
 
+    @Getter
+    @AllArgsConstructor
     public enum FIELDS {
         ID("id"),
         CREATEDAT("createdAt"),
@@ -41,8 +43,7 @@ public class NewUser extends SlugDao {
         TITLE("title"),
         DESCRIPTION("description");
 
-        FIELDS(String name) {
-        }
+        private final String name;
     }
 
     @SlugSource
@@ -113,7 +114,7 @@ public class NewUser extends SlugDao {
 
     public enum Sex {
         MALE,
-        FEMALE;
+        FEMALE
     }
 
     public NewUser(Integer id, String email) {

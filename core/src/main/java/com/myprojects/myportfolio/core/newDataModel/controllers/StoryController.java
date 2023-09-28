@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -69,6 +70,9 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
         boolean isToUpdate = false;
 
         NewStory story = storyService.findById(id);
+        if (!utilsService.isOfCurrentUser(mapper.mapToDto(story), false)) {
+            throw new Exception("You can't edit this story because is not yours.");
+        }
 
         for (PatchOperation operation : operations) {
             if (operation.getPath().matches("^/diary") && operation.getOp() == PatchOperation.Op.replace) {

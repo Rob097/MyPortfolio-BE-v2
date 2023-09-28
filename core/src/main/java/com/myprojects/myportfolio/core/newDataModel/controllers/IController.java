@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.newDataModel.controllers;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -183,7 +182,7 @@ public abstract class IController<R> {
         R newElement = null;
         try {
             ObjectMapper mapper = createObjectMapper();
-            if(view == null) view = Normal.value;
+            if (view == null) view = Normal.value;
             String json = mapper.writerWithView(view.getClass()).writeValueAsString(element);
             newElement = mapper.readValue(json, clazz);
         } catch (Exception e) {

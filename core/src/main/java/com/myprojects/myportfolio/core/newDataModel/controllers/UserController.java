@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -50,22 +49,4 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
         return this.buildSuccessResponse(userMapper.mapToDto(user), view);
     }
 
-    @Override
-    @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).ADMIN.getName()) || @newUserService.hasId(#id)")
-    public ResponseEntity<MessageResource<NewUserDto>> update(
-            @PathVariable("id") Integer id,
-            @RequestBody NewUserDto user
-    ) throws Exception {
-        return super.update(id, user);
-    }
-
-    @Override
-    @DeleteMapping(value = "/{id}")
-    @PreAuthorize("@userService.hasId(#id)")
-    public ResponseEntity<MessageResource<NewUserDto>> delete(
-            @PathVariable("id") Integer id
-    ) throws Exception {
-        return super.delete(id);
-    }
 }

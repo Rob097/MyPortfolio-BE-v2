@@ -22,6 +22,8 @@ public class NewStory extends SlugDao {
     @Serial
     private static final long serialVersionUID = 3219080188292925051L;
 
+    @Getter
+    @AllArgsConstructor
     public enum FIELDS {
         ID("id"),
         CREATEDAT("createdAt"),
@@ -36,8 +38,7 @@ public class NewStory extends SlugDao {
         FIRSTRELEVANTSECTION("firstRelevantSection"),
         SECONDRELEVANTSECTION("secondRelevantSection");
 
-        FIELDS(String name) {
-        }
+        private final String name;
     }
 
     @SlugSource

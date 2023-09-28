@@ -71,7 +71,6 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
         return this.userRepository.findByEmail(username).orElse(null);
     }
 
-
     /**********************/
     /*** Private Methods **/
     /**********************/
