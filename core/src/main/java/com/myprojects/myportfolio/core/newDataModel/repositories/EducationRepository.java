@@ -15,6 +15,6 @@ public interface EducationRepository extends BaseRepository<NewEducation, Intege
 
     @Override
     @Query("SELECT 1 FROM NewEducation e WHERE e.slug = :#{#slug} AND e.user.id = :#{#education.user.id}")
-    Optional<NewEducation> findBySlugConstraint(@Param("education") Object education, @Param("slug") String slug);
+    Optional<NewEducation> findBySlugConstraint(@Param("slug") String slug, @Param("education") Object education);
 
 }

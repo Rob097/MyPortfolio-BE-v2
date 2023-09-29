@@ -15,6 +15,6 @@ public interface StoryRepository extends BaseRepository<NewStory, Integer> {
 
     @Override
     @Query("SELECT 1 FROM NewStory s WHERE s.slug = :#{#slug} AND s.diary.id = :#{#story.diary.id}")
-    Optional<NewStory> findBySlugConstraint(@Param("story") Object story, @Param("slug") String slug);
+    Optional<NewStory> findBySlugConstraint(@Param("slug") String slug, @Param("story") Object story);
 
 }

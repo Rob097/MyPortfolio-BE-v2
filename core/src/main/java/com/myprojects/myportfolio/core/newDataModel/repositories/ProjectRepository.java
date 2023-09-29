@@ -15,6 +15,6 @@ public interface ProjectRepository extends BaseRepository<NewProject, Integer> {
 
     @Override
     @Query("SELECT 1 FROM NewProject p WHERE p.slug = :#{#slug} AND p.user.id = :#{#project.user.id}")
-    Optional<NewProject> findBySlugConstraint(@Param("project") Object project, @Param("slug") String slug);
+    Optional<NewProject> findBySlugConstraint(@Param("slug") String slug, @Param("project") Object project);
 
 }

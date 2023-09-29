@@ -113,6 +113,9 @@ public class NewStory extends SlugDao {
         this.getProjects().forEach(project ->
                 project.getStories().remove(this)
         );
+        this.getEducations().forEach(education ->
+                education.getStories().remove(this)
+        );
         if (this.getDiary() != null) {
             this.getDiary().getStories().remove(this);
         }

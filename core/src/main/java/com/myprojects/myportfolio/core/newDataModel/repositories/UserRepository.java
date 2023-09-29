@@ -20,7 +20,7 @@ public interface UserRepository extends BaseRepository<NewUser, Integer> {
     Optional<List<String>> findAllSlugs();
 
     @Override
-    @Query("SELECT 1 FROM NewUser u WHERE u.slug = :#{#slug}")
-    Optional<NewUser> findBySlugConstraint(@Param("user") Object user, @Param("slug") String slug);
+    @Query("SELECT 1 FROM NewUser u WHERE u.slug= ?1 ")
+    Optional<NewUser> findBySlugConstraint(String slug, Object user);
 
 }
