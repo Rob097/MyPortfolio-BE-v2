@@ -13,4 +13,9 @@ public interface BaseRepository<T extends BaseDao, Integer> extends JpaRepositor
         return Optional.empty();
     }
 
+    default Optional<T> findBySlugConstraint(Object entity, String slug) {
+        // If an entity needs this method, it should override it
+        return Optional.empty();
+    }
+
 }

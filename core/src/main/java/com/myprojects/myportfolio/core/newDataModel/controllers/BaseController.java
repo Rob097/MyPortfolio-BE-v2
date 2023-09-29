@@ -9,6 +9,7 @@ import com.myprojects.myportfolio.core.newDataModel.dao.BaseDao;
 import com.myprojects.myportfolio.core.newDataModel.dto.BaseDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.BaseMapper;
 import com.myprojects.myportfolio.core.newDataModel.services.BaseServiceI;
+import com.sun.xml.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PostMapping()
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
+    // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
             @Valid @RequestBody T entity
     ) throws Exception {
@@ -71,7 +72,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
+    // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
             @Valid @RequestBody T entity
@@ -94,9 +95,10 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         A entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
 
+        /* TODO reactivate PreAuthorize
         if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete), false)) {
             throw new Exception("You can't delete it because is not yours.");
-        }
+        }*/
 
         service.delete(entityToDelete);
         return this.buildSuccessResponse(mapper.mapToDto(entityToDelete));

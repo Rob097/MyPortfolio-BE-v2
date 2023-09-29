@@ -123,7 +123,7 @@ public class SlugGenerationAspect {
                     String appendix = index == 0 ? "" : ("-" + index);
                     slug = slugEntity.generateSlug(sources, appendix);
 
-                    Optional<? extends SlugDao> existingUser = repository.findBySlug(slug);
+                    Optional<? extends SlugDao> existingUser = repository.findBySlugConstraint(slugEntity, slug);
 
                     if (existingUser.isPresent()) {
                         index++;

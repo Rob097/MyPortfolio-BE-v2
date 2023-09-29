@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.newDataModel.repositories;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,5 +18,9 @@ public interface UserRepository extends BaseRepository<NewUser, Integer> {
 
     @Query("SELECT slug from NewUser")
     Optional<List<String>> findAllSlugs();
+
+    @Override
+    @Query("SELECT 1 FROM NewUser u WHERE u.slug = :#{#slug}")
+    Optional<NewUser> findBySlugConstraint(@Param("user") Object user, @Param("slug") String slug);
 
 }

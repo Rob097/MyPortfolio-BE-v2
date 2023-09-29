@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
 @MappedSuperclass
 public class SlugDao extends AuditableDao {
 
-    @Column(unique = true, nullable = false)
+    // It's not Unique because every implementation has its own constraint
+    @Column(nullable = false)
     private String slug;
 
     private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");

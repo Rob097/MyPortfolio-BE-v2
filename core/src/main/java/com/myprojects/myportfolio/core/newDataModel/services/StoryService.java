@@ -1,8 +1,11 @@
 package com.myprojects.myportfolio.core.newDataModel.services;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
+import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
 import com.myprojects.myportfolio.core.newDataModel.repositories.DiaryRepository;
+import com.myprojects.myportfolio.core.newDataModel.repositories.EducationRepository;
+import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -22,14 +26,20 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
 
     private final DiaryRepository diaryRepository;
 
+    private final ProjectRepository projectRepository;
+
+    private final EducationRepository educationRepository;
+
     private final UserServiceI userService;
 
-    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, UserServiceI userService) {
+    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, UserServiceI userService) {
         super();
         this.repository = storyRepository;
 
         this.storyRepository = storyRepository;
         this.diaryRepository = diaryRepository;
+        this.projectRepository = projectRepository;
+        this.educationRepository = educationRepository;
         this.userService = userService;
     }
 
@@ -51,6 +61,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         // TODO: Reactivate once tests are finished.
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
         // isDiaryOfCurrentUser(story);
+        loadStoryRelations(story);
 
         return super.save(story);
     }
@@ -84,6 +95,22 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         NewDiary diary = diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id: " + story.getDiary().getId()));
         if (!userService.hasId(diary.getUser().getId()))
             throw new IllegalArgumentException("You are not allowed to edit someone else's diary's stories.");
+    }
+
+    private void loadStoryRelations(NewStory story) {
+        story.setDiary(
+                diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id."))
+        );
+        story.setProjects(
+                story.getProjects().stream()
+                        .map(project -> projectRepository.findById(project.getId()).orElseThrow(() -> new EntityNotFoundException("No project found with id.")))
+                        .collect(Collectors.toSet())
+        );
+        story.setEducations(
+                story.getEducations().stream()
+                        .map(education -> educationRepository.findById(education.getId()).orElseThrow(() -> new EntityNotFoundException("No education found with id.")))
+                        .collect(Collectors.toSet())
+        );
     }
 
 }

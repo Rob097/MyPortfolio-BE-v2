@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_users")
+@Table(name = "new_users", uniqueConstraints = { @UniqueConstraint(columnNames = { "slug" }) })
 public class NewUser extends SlugDao {
 
     @Serial
