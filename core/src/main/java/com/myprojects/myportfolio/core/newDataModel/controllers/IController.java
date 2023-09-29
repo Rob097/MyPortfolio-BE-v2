@@ -34,6 +34,7 @@ import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_FORMA
 import static com.myprojects.myportfolio.clients.utils.UtilsConstants.TIME_FORMAT;
 
 @Slf4j
+@SuppressWarnings({"unused", "unchecked"})
 public abstract class IController<R> {
 
     /* CONSTANTS */
@@ -57,8 +58,6 @@ public abstract class IController<R> {
 
 
     /* FILTERS AND VIEW */
-    /* ATTENTION: Setting the view as a request attribute is useful to retrieve it wherever you need without passing it throughout every method,
-     *             BUT, It works only in the same thread! */
     public <T> Specification<T> defineFilters(String filters) {
         SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();
         if (Strings.isNotBlank(filters)) {
@@ -86,7 +85,7 @@ public abstract class IController<R> {
                                 .toFormatter();
                         valueObj = LocalDateTime.parse(value, formatter);
                     } catch (Exception e) {
-                        // Value is not a date
+                        log.warn("Value is not a date: " + value);
                     }
 
                     builder.with(key, operation, valueObj);
@@ -97,6 +96,13 @@ public abstract class IController<R> {
         return builder.build();
     }
 
+    /**
+     * Creates a Specification for a given key and value with the equals operation
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the specification
+     */
     public <T> Specification<T> findByEquals(String key, Object value) {
         SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();
         builder.with(key, ":", value);
@@ -163,8 +169,13 @@ public abstract class IController<R> {
         return "No valid entity found with id: " + id;
     }
 
+    /**
+     * Create a new ObjectMapper with the given view
+     *
+     * @return the new ObjectMapper
+     */
     private ObjectMapper createObjectMapper() {
-        JsonMapper jsonMapper = JsonMapper.builder()/*.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)*/.build();
+        JsonMapper jsonMapper = JsonMapper.builder().build();
         jsonMapper.registerModule(new JavaTimeModule());
 
         return new ObjectMapper()
@@ -173,7 +184,13 @@ public abstract class IController<R> {
                 .setConfig(jsonMapper.getDeserializationConfig());
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Serialize a complete DTO to a new DTO with the given view
+     *
+     * @param element the element to serialize
+     * @param view    the view to use
+     * @return the serialized element
+     */
     private R serializeElement(R element, IView view) {
 
         Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();

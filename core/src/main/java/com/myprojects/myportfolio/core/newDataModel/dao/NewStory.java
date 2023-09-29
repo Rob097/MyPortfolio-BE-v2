@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import com.myprojects.myportfolio.core.newDataModel.utils.SlugSource;
+import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

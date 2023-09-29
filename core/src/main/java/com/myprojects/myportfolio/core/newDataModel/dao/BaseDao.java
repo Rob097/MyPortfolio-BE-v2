@@ -1,7 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,16 +32,13 @@ public class BaseDao implements Serializable {
         return toJson();
     }
 
-    public String toJsonPretty() {
-        // NOTE: use excludeFieldsWithoutExposeAnnotation() so in the DAO we need to use @Expose
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
-        return gson.toJson(this);
-    }
-
     public String toJson() {
-        // NOTE: use excludeFieldsWithoutExposeAnnotation() so in the DAO we need to use @Expose
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        return gson.toJson(this);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return "Error converting object to JSON: " + e.getMessage();
+        }
     }
 
     /** Method overridden by all subClasses to populate its relations before persisting them into DB */

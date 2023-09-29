@@ -52,7 +52,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 //.addFilterAfter(jwtTokenValidation,JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()

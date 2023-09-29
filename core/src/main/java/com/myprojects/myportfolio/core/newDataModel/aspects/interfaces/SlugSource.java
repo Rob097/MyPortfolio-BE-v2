@@ -1,4 +1,4 @@
-package com.myprojects.myportfolio.core.newDataModel.utils;
+package com.myprojects.myportfolio.core.newDataModel.aspects.interfaces;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

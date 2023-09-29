@@ -5,7 +5,7 @@ import com.myprojects.myportfolio.core.newDataModel.repositories.BaseRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
-import com.myprojects.myportfolio.core.newDataModel.utils.SlugSource;
+import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,8 +20,7 @@ import java.util.Optional;
 @Slf4j
 @Aspect
 @Component
-@SuppressWarnings("unused")
-public class UserSlugGenerationAspect {
+public class SlugGenerationAspect {
 
     private final UserRepository userRepository;
 
@@ -31,7 +30,7 @@ public class UserSlugGenerationAspect {
 
     protected BaseRepository<? extends SlugDao, Integer> repository;
 
-    public UserSlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository) {
+    public SlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.storyRepository = storyRepository;

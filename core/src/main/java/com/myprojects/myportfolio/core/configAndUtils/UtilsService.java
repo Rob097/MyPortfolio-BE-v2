@@ -45,6 +45,13 @@ public class UtilsService implements UtilsServiceI {
         return slug.toLowerCase(Locale.ENGLISH);
     }
 
+    /**
+     * Method used in PreAuthorize annotation to check if current user is owner of entity
+     * @param entity: entity to check
+     * @param isCreate: true if the check is to perform on an entity that is being created
+     * @return true if current user is owner of entity
+     * @param <T>: type of dto
+     */
     @Override
     public <T extends BaseDto> boolean isOfCurrentUser(T entity, boolean isCreate) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
