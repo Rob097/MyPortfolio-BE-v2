@@ -14,28 +14,33 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class NewStoryDto extends AuditableDto {
+public class NewEducationDto extends AuditableDto {
 
     @Serial
-    private static final long serialVersionUID = -5591758414212539206L;
+    private static final long serialVersionUID = -1216538670421106118L;
 
-    @NotNull(message = "Diary id cannot be null")
-    Integer diaryId;
+    @NotNull( message = "User Id cannot be null")
+    Integer userId;
+
     String slug;
 
-    @NotNull(message = "Title cannot be null")
-    String title;
+    @NotNull( message = "Field cannot be null")
+    String field;
+
+    @NotNull( message = "School cannot be null")
+    String school;
+
+    @NotNull( message = "Degree cannot be null")
+    String degree;
+
+    Double grade;
+
+    @NotNull( message = "Description cannot be null")
     String description;
+
     LocalDate fromDate;
     LocalDate toDate;
-    Boolean isPrimaryStory;
-    String firstRelevantSection;
-    String secondRelevantSection;
 
     @JsonView(Verbose.class)
-    Set<Integer> projectsIds;
-
-    @JsonView(Verbose.class)
-    Set<Integer> educationsIds;
-
+    Set<NewStoryDto> stories;
 }

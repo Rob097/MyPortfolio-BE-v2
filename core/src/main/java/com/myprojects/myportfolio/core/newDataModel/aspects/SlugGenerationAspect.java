@@ -1,11 +1,8 @@
 package com.myprojects.myportfolio.core.newDataModel.aspects;
 
-import com.myprojects.myportfolio.core.newDataModel.dao.*;
-import com.myprojects.myportfolio.core.newDataModel.repositories.BaseRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
+import com.myprojects.myportfolio.core.newDataModel.dao.*;
+import com.myprojects.myportfolio.core.newDataModel.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,12 +25,15 @@ public class SlugGenerationAspect {
 
     private final StoryRepository storyRepository;
 
+    private final EducationRepository educationRepository;
+
     protected BaseRepository<? extends SlugDao, Integer> repository;
 
-    public SlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository) {
+    public SlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository, EducationRepository educationRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.storyRepository = storyRepository;
+        this.educationRepository = educationRepository;
     }
 
     /**
@@ -66,6 +66,13 @@ public class SlugGenerationAspect {
                 project.getStories().forEach(this::generateStorySlug);
             }
 
+        } else if (entity instanceof NewEducation education) {
+            generateEducationSlug(education);
+
+            if (education.getStories() != null) {
+                education.getStories().forEach(this::generateStorySlug);
+            }
+
         } else if (entity instanceof NewStory story) {
             generateStorySlug(story);
 
@@ -84,6 +91,11 @@ public class SlugGenerationAspect {
 
     private void generateProjectSlug(NewProject entity) {
         this.repository = this.projectRepository;
+        this.calculateSlug(entity);
+    }
+
+    private void generateEducationSlug(NewEducation entity) {
+        this.repository = this.educationRepository;
         this.calculateSlug(entity);
     }
 

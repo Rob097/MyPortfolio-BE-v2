@@ -85,10 +85,21 @@ public class NewStory extends SlugDao {
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
+    // NewEducation is the owner of the relationship.
+    // When creating a story, we have to specify an already existing educationId
+    // When updating a story, nothing happens to the relationship (no add, no delete)
+    // When deleting a story, the relation with the education is deleted
+    @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<NewEducation> educations = new HashSet<>();
+
     @Override
     public void completeRelationships() {
         this.getProjects().forEach(project ->
                 project.getStories().add(this)
+        );
+        this.getEducations().forEach(education ->
+                education.getStories().add(this)
         );
         if (this.getDiary() != null) {
             if (this.getDiary().getStories() == null)

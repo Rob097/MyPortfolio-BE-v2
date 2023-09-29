@@ -41,6 +41,9 @@ public class NewUserDto extends AuditableDto {
     @JsonView(Verbose.class)
     Set<NewProjectDto> projects;
 
+    @JsonView(Verbose.class)
+    Set<NewEducationDto> educations;
+
     public enum SexDto {
         MALE,
         FEMALE;

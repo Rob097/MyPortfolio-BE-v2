@@ -96,6 +96,15 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private Set<NewEducation> educations = new HashSet<>();
+
     @Override
     public void completeRelationships() {
         if (this.getDiaries() != null) {
@@ -108,6 +117,12 @@ public class NewUser extends SlugDao {
             this.getProjects().forEach(project -> {
                 project.setUser(this);
                 project.completeRelationships();
+            });
+        }
+        if (this.getEducations() != null) {
+            this.getEducations().forEach(education -> {
+                education.setUser(this);
+                education.completeRelationships();
             });
         }
     }
