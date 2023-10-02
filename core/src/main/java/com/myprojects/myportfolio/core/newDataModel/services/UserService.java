@@ -5,12 +5,10 @@ import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service(value = "newUserService")
@@ -19,11 +17,14 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final DiaryServiceI diaryService;
+
+    public UserService(UserRepository userRepository, DiaryServiceI diaryService) {
         super();
         this.repository = userRepository;
 
         this.userRepository = userRepository;
+        this.diaryService = diaryService;
     }
 
     @Override
@@ -45,30 +46,18 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
             throw new IllegalArgumentException("User with email " + user.getEmail() + " already exists");
         });
 
-        return super.save(user);
-    }
+        // Save user
+        NewUser savedUser = super.save(user);
 
-    @Override
-    public NewUser update(NewUser user) {
-        Validate.notNull(user, super.fieldMissing("user"));
+        // Save user's diaries (and story for cascade):
+        user.getDiaries().forEach(diary -> {
+            if(diary.getId()==null) {
+                diary.setUser(savedUser);
+                this.diaryService.save(diary);
+            }
+        });
 
-        return super.update(user);
-    }
-
-    /**
-     * Method used to check if an id is the same as the one of the current logged-in user
-     */
-    @Override
-    public boolean hasId(Integer id) {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<NewUser> user = this.userRepository.findByEmail(username);
-        return user.isPresent() && user.get().getId().equals(id);
-    }
-
-    @Override
-    public NewUser getCurrentLoggedInUser() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return this.userRepository.findByEmail(username).orElse(null);
+        return savedUser;
     }
 
     /**********************/

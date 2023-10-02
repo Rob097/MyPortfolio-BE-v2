@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_users", uniqueConstraints = { @UniqueConstraint(columnNames = { "slug" }) })
+@Table(name = "new_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"slug"})})
 public class NewUser extends SlugDao {
 
     @Serial
@@ -78,28 +78,38 @@ public class NewUser extends SlugDao {
 
     private String description;
 
+    // User is the owner of the relationship.
+    // When creating a new user you can only create new diaries. You can't connect existing diaries.
+    // When updating a user, you can't create or update diaries.
+    //      This is because it's not necessary. You can use the diary controller to create or update diaries.
+    // When deleting a user, the diaries ARE DELETED because the user is the owner of the diary itself.
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @Builder.Default
     private Set<NewDiary> diaries = new HashSet<>();
 
+    // User is the owner of the relationship.
+    // When creating or updating a user, you can't create or update projects.
+    // This is because it's not necessary. You can use the project controller to create or update projects.
+    // When deleting a user, the projects ARE DELETED because the user is the owner of the project itself.
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
+    // User is the owner of the relationship.
+    // When creating or updating a user, you can't create or update educations.
+    // This is because it's not necessary. You can use the education controller to create or update educations.
+    // When deleting a user, the educations ARE DELETED because the user is the owner of the education itself.
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @Builder.Default

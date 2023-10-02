@@ -120,4 +120,14 @@ public class NewStory extends SlugDao {
             this.getDiary().getStories().remove(this);
         }
     }
+
+    //////////////////////
+    //  Custom methods  //
+    //////////////////////
+
+    public Integer getDiaryId() {
+        if(this.getDiary()==null)
+            return null;
+        return this.getDiary().getId();
+    }
 }

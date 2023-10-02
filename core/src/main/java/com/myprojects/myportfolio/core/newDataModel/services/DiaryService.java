@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.newDataModel.services;
 
+import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
 import com.myprojects.myportfolio.core.newDataModel.repositories.DiaryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,22 +15,22 @@ public class DiaryService extends BaseService<NewDiary> implements DiaryServiceI
 
     private final DiaryRepository diaryRepository;
 
-    private final UserServiceI userService;
+    private final UtilsServiceI utilsService;
 
-    public DiaryService(DiaryRepository diaryRepository, UserServiceI userService) {
+    public DiaryService(DiaryRepository diaryRepository, UtilsServiceI utilsService) {
         super();
         this.repository = diaryRepository;
 
         this.diaryRepository = diaryRepository;
-        this.userService = userService;
+        this.utilsService = utilsService;
     }
 
     @Override
     public NewDiary save(NewDiary diary) {
 
         // If the diary does not have a user, set the current logged-in user
-        if (diary.getUser() == null || diary.getUser().getId() == null) {
-            diary.setUser(userService.getCurrentLoggedInUser());
+        if (diary.getUserId() == null) {
+            diary.setUser(utilsService.getCurrentLoggedInUser());
         }
 
         // Check if the diary already exists

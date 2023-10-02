@@ -72,4 +72,14 @@ public class NewDiary extends AuditableDao {
             this.getUser().getDiaries().remove(this);
         }
     }
+
+    //////////////////////
+    //  Custom methods  //
+    //////////////////////
+
+    public Integer getUserId() {
+        if(this.getUser()==null)
+            return null;
+        return this.getUser().getId();
+    }
 }

@@ -7,8 +7,4 @@ public interface UserServiceI extends BaseServiceI<NewUser> {
 
     NewUser findBy(Specification<NewUser> specification);
 
-    boolean hasId(Integer id);
-
-    NewUser getCurrentLoggedInUser();
-
 }

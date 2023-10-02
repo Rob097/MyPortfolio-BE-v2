@@ -2,10 +2,12 @@ package com.myprojects.myportfolio.core.newDataModel.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
+import com.myprojects.myportfolio.core.newDataModel.dto.groups.OnUpdate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.time.LocalDate;
@@ -19,28 +21,29 @@ public class NewEducationDto extends AuditableDto {
     @Serial
     private static final long serialVersionUID = -1216538670421106118L;
 
-    @NotNull( message = "User Id cannot be null")
+    @NotNull(message = "Education: User Id cannot be null", groups = OnUpdate.class)
     Integer userId;
 
     String slug;
 
-    @NotNull( message = "Field cannot be null")
+    @NotNull(message = "Education: Field cannot be null")
     String field;
 
-    @NotNull( message = "School cannot be null")
+    @NotNull(message = "Education: School cannot be null")
     String school;
 
-    @NotNull( message = "Degree cannot be null")
+    @NotNull(message = "Education: Degree cannot be null")
     String degree;
 
     Double grade;
 
-    @NotNull( message = "Description cannot be null")
+    @NotNull(message = "Education: Description cannot be null")
     String description;
 
     LocalDate fromDate;
     LocalDate toDate;
 
+    @Valid
     @JsonView(Verbose.class)
     Set<NewStoryDto> stories;
 }

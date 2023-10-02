@@ -2,7 +2,6 @@ package com.myprojects.myportfolio.core.newDataModel.services;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
 import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,14 +17,14 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
 
     private final ProjectRepository projectRepository;
 
-    private final StoryRepository storyRepository;
+    private final StoryServiceI storyService;
 
-    public ProjectService(ProjectRepository projectRepository, StoryRepository storyRepository) {
+    public ProjectService(ProjectRepository projectRepository, StoryServiceI storyService) {
         super();
         this.repository = projectRepository;
 
         this.projectRepository = projectRepository;
-        this.storyRepository = storyRepository;
+        this.storyService = storyService;
     }
 
     @Override
@@ -52,6 +51,7 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
     @Override
     public NewProject save(NewProject project) {
         Validate.notNull(project, fieldMissing("project"));
+        Validate.notNull(project.getUserId(), fieldMissing("User Id"));
 
         // Check if the entity already exists
         this.checkIfEntityAlreadyExists(project.getId());
@@ -60,7 +60,7 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
         if (project.getStories() != null && !project.getStories().isEmpty()) {
             project.getStories().forEach(story -> {
                 if (story.getId() == null) {
-                    storyRepository.save(story);
+                    storyService.save(story);
                 }
             });
         }
@@ -94,17 +94,17 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
         if (project.getStories() != null && !project.getStories().isEmpty()) {
             project.getStories().forEach(story -> {
                 if (story.getId() == null) {
-                    storyRepository.save(story);
+                    storyService.save(story);
                 }
             });
         }
 
-        // Load the existing stories in order to not lose them.
-        projectRepository.findById(project.getId()).ifPresent(existingProject -> {
-            existingProject.getStories().forEach(story -> {
-                project.getStories().add(story);
-            });
-        });
+        // Load the existing stories in order to not lose them (or change them).
+        projectRepository.findById(project.getId()).ifPresent(existingProject ->
+                existingProject.getStories().forEach(existingStory ->
+                        project.getStories().add(existingStory)
+                )
+        );
 
         // Connect the stories to the project
         project.completeRelationships();

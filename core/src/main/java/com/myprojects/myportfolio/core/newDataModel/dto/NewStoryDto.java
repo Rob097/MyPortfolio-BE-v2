@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.newDataModel.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
+import com.myprojects.myportfolio.core.newDataModel.dto.groups.OnUpdate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,11 +20,11 @@ public class NewStoryDto extends AuditableDto {
     @Serial
     private static final long serialVersionUID = -5591758414212539206L;
 
-    @NotNull(message = "Diary id cannot be null")
+    @NotNull(message = "Story: Diary id cannot be null", groups = OnUpdate.class)
     Integer diaryId;
     String slug;
 
-    @NotNull(message = "Title cannot be null")
+    @NotNull(message = "Story: Title cannot be null")
     String title;
     String description;
     LocalDate fromDate;

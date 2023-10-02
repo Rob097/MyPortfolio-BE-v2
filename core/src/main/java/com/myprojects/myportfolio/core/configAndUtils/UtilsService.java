@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -43,6 +44,22 @@ public class UtilsService implements UtilsServiceI {
         String normalized = Normalizer.normalize(nowhitespace, Normalizer.Form.NFD);
         String slug = NONLATIN.matcher(normalized).replaceAll("");
         return slug.toLowerCase(Locale.ENGLISH);
+    }
+
+    /**
+     * Method used to check if an id is the same as the one of the current logged-in user
+     */
+    @Override
+    public boolean hasId(Integer id) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<NewUser> user = this.userRepository.findByEmail(username);
+        return user.isPresent() && user.get().getId().equals(id);
+    }
+
+    @Override
+    public NewUser getCurrentLoggedInUser() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return this.userRepository.findByEmail(username).orElse(null);
     }
 
     /**

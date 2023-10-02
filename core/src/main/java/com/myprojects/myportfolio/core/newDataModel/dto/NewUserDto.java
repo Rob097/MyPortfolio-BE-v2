@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.util.Set;
@@ -20,13 +21,13 @@ public class NewUserDto extends AuditableDto {
 
     String slug;
 
-    @NotNull( message = "First name cannot be null")
+    @NotNull( message = "User: First name cannot be null")
     String firstName;
 
-    @NotNull( message = "Last name cannot be null")
+    @NotNull( message = "User: Last name cannot be null")
     String lastName;
 
-    @NotNull( message = "Email cannot be null")
+    @NotNull( message = "User: Email cannot be null")
     String email;
     String phone;
     Integer age;
@@ -35,12 +36,15 @@ public class NewUserDto extends AuditableDto {
     String title;
     String description;
 
+    @Valid
     @JsonView(Verbose.class)
     Set<NewDiaryDto> diaries;
 
+    @Valid
     @JsonView(Verbose.class)
     Set<NewProjectDto> projects;
 
+    @Valid
     @JsonView(Verbose.class)
     Set<NewEducationDto> educations;
 

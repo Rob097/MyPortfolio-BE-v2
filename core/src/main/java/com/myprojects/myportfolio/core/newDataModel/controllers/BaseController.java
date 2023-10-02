@@ -7,6 +7,8 @@ import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.newDataModel.dao.BaseDao;
 import com.myprojects.myportfolio.core.newDataModel.dto.BaseDto;
+import com.myprojects.myportfolio.core.newDataModel.dto.groups.OnCreate;
+import com.myprojects.myportfolio.core.newDataModel.dto.groups.OnUpdate;
 import com.myprojects.myportfolio.core.newDataModel.mappers.BaseMapper;
 import com.myprojects.myportfolio.core.newDataModel.services.BaseServiceI;
 import com.sun.xml.bind.v2.TODO;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,7 +65,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     @PostMapping()
     // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
-            @Valid @RequestBody T entity
+            @Validated(OnCreate.class) @RequestBody T entity
     ) throws Exception {
         Validate.notNull(entity, resourceMissing());
 
@@ -75,7 +78,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
-            @Valid @RequestBody T entity
+            @Validated(OnUpdate.class) @RequestBody T entity
     ) throws Exception {
         Validate.notNull(entity, resourceMissing());
         Validate.notNull(entity.getId(), fieldMissing("id"));

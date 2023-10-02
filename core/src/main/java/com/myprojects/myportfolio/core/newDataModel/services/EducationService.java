@@ -52,6 +52,7 @@ public class EducationService extends BaseService<NewEducation> implements Educa
     @Override
     public NewEducation save(NewEducation education) {
         Validate.notNull(education, fieldMissing("education"));
+        Validate.notNull(education.getUserId(), fieldMissing("User Id"));
 
         // Check if the entity already exists
         this.checkIfEntityAlreadyExists(education.getId());
@@ -100,11 +101,11 @@ public class EducationService extends BaseService<NewEducation> implements Educa
         }
 
         // Load the existing stories in order to not lose them.
-        educationRepository.findById(education.getId()).ifPresent(existingEducation -> {
-            existingEducation.getStories().forEach(story -> {
-                education.getStories().add(story);
-            });
-        });
+        educationRepository.findById(education.getId()).ifPresent(existingEducation ->
+            existingEducation.getStories().forEach(story ->
+                education.getStories().add(story)
+            )
+        );
 
         // Connect the stories to the education
         education.completeRelationships();

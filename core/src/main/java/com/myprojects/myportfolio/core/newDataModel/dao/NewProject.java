@@ -73,4 +73,13 @@ public class NewProject extends SlugDao {
         }
     }
 
+    //////////////////////
+    //  Custom methods  //
+    //////////////////////
+
+    public Integer getUserId() {
+        if(this.getUser()==null)
+            return null;
+        return this.getUser().getId();
+    }
 }

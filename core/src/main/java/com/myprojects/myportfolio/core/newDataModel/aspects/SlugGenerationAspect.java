@@ -10,9 +10,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Aspect
@@ -29,6 +27,8 @@ public class SlugGenerationAspect {
 
     protected BaseRepository<? extends SlugDao, Integer> repository;
 
+    private final Map<Object, Boolean> visitedEntities = new HashMap<>();
+
     public SlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository, EducationRepository educationRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
@@ -42,101 +42,106 @@ public class SlugGenerationAspect {
      * @param entity the entity to save
      */
     @Before("execution(* org.springframework.data.repository.CrudRepository+.save(*)) && args(entity)")
-    public void generateSlug(BaseDao entity) {
-
-        if (entity instanceof NewUser user) {
-            generateUserSlug(user);
-
-            if (user.getProjects() != null) {
-                user.getProjects().forEach(this::generateProjectSlug);
-            }
-
-            if (user.getDiaries() != null) {
-                user.getDiaries().forEach(diary -> {
-                    if (diary.getStories() != null) {
-                        diary.getStories().forEach(this::generateStorySlug);
-                    }
-                });
-            }
-
-        } else if (entity instanceof NewProject project) {
-            generateProjectSlug(project);
-
-            if (project.getStories() != null) {
-                project.getStories().forEach(this::generateStorySlug);
-            }
-
-        } else if (entity instanceof NewEducation education) {
-            generateEducationSlug(education);
-
-            if (education.getStories() != null) {
-                education.getStories().forEach(this::generateStorySlug);
-            }
-
-        } else if (entity instanceof NewStory story) {
-            generateStorySlug(story);
-
-        } else if (entity instanceof NewDiary diary) {
-            if (diary.getStories() != null) {
-                diary.getStories().forEach(this::generateStorySlug);
-            }
-        }
-
-    }
-
-    private void generateUserSlug(NewUser entity) {
-        this.repository = this.userRepository;
-        this.calculateSlug(entity);
-    }
-
-    private void generateProjectSlug(NewProject entity) {
-        this.repository = this.projectRepository;
-        this.calculateSlug(entity);
-    }
-
-    private void generateEducationSlug(NewEducation entity) {
-        this.repository = this.educationRepository;
-        this.calculateSlug(entity);
-    }
-
-    private void generateStorySlug(NewStory entity) {
-        this.repository = this.storyRepository;
-        this.calculateSlug(entity);
+    public void newGenerateSlug(BaseDao entity) {
+        List<String> computedSlugs = new ArrayList<>();
+        visitedEntities.clear(); // Clear the map for each new iteration
+        iterateEntity(entity, computedSlugs);
     }
 
     /**
-     * Generates a slug for the entity if it implements SlugDao
+     * Iterates over the entity and all the children entities that implement SlugDao
+     *
+     * @param entity the entity to iterate over
+     */
+    private void iterateEntity(Object entity, List<String> computedSlugs) {
+
+        // Check if this entity has been visited before to avoid infinite recursion
+        if (visitedEntities.putIfAbsent(entity, true) != null) {
+            return;
+        }
+
+        if (entity instanceof SlugDao slugEntity) {
+            if (Strings.isBlank(slugEntity.getSlug())) {
+                calculateSlug(slugEntity, computedSlugs);
+            }
+        }
+
+        Class<?> entityClass = entity.getClass();
+        Field[] fields = entityClass.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object fieldValue = field.get(entity);
+                if (fieldValue instanceof BaseDao) {
+                    iterateEntity(fieldValue, computedSlugs);
+                } else if (fieldValue instanceof Set<?> set) {
+                    for (Object setValue : set) {
+                        if (setValue instanceof BaseDao) {
+                            iterateEntity(setValue, computedSlugs);
+                        }
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Error while getting slug sources", e);
+            }
+        }
+    }
+
+
+    /**
+     * Generates a slug for the entity
      *
      * @param entity the entity to generate the slug for
      */
-    private void calculateSlug(Object entity) {
-        if (entity instanceof SlugDao slugEntity) {
-            if (Strings.isBlank(slugEntity.getSlug())) {
-                log.info("calculateSlug - BEGIN");
+    private void calculateSlug(SlugDao entity, List<String> computedSlugs) {
+        if (Strings.isBlank(entity.getSlug())) {
+            List<String> sources = getSlugSources(entity);
 
-                boolean isDone = false;
-                int index = 0;
-                String slug;
-                List<String> sources = getSlugSources(entity);
-
-                do {
-                    String appendix = index == 0 ? "" : ("-" + index);
-                    slug = slugEntity.generateSlug(sources, appendix);
-
-                    Optional<? extends SlugDao> existingUser = repository.findBySlugConstraint(slug, slugEntity);
-
-                    if (existingUser.isPresent()) {
-                        index++;
-                    } else {
-                        isDone = true;
-                    }
-
-                } while (!isDone);
-
-                slugEntity.setSlug(slug);
-
-                log.info("calculateSlug: {} - END", slug);
+            // If one of the sources is null, we can't generate a slug
+            if (sources.isEmpty() || sources.stream().anyMatch(Objects::isNull)) {
+                return;
             }
+
+            log.info("calculateSlug - BEGIN");
+            setRepository(entity);
+            boolean isDone = false;
+            int index = 0;
+            String slug;
+
+            do {
+                String appendix = index == 0 ? "" : ("-" + index);
+                slug = entity.generateSlug(sources, appendix);
+
+                Optional<? extends SlugDao> existingUser = repository.findBySlugConstraint(slug, entity);
+
+                if (existingUser.isPresent() || computedSlugs.contains(slug)) {
+                    index++;
+                } else {
+                    isDone = true;
+                }
+
+            } while (!isDone);
+
+            entity.setSlug(slug);
+
+            log.info("calculateSlug: {} - END", slug);
+        }
+    }
+
+    /**
+     * Sets the repository according to the entity
+     *
+     * @param entity the entity to set the repository for
+     */
+    private <T extends SlugDao> void setRepository(T entity) {
+        if (entity instanceof NewUser) {
+            this.repository = this.userRepository;
+        } else if (entity instanceof NewProject) {
+            this.repository = this.projectRepository;
+        } else if (entity instanceof NewEducation) {
+            this.repository = this.educationRepository;
+        } else if (entity instanceof NewStory) {
+            this.repository = this.storyRepository;
         }
     }
 

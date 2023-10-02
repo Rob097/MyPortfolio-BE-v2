@@ -1,7 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.services;
 
+import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
 import com.myprojects.myportfolio.core.newDataModel.repositories.DiaryRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.EducationRepository;
@@ -30,9 +30,9 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
 
     private final EducationRepository educationRepository;
 
-    private final UserServiceI userService;
+    private final UtilsServiceI utilsService;
 
-    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, UserServiceI userService) {
+    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, UtilsServiceI utilsService) {
         super();
         this.repository = storyRepository;
 
@@ -40,7 +40,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         this.diaryRepository = diaryRepository;
         this.projectRepository = projectRepository;
         this.educationRepository = educationRepository;
-        this.userService = userService;
+        this.utilsService = utilsService;
     }
 
     @Override
@@ -57,6 +57,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     @Override
     public NewStory save(NewStory story) {
         Validate.notNull(story, super.fieldMissing("story"));
+        Validate.notNull(story.getDiaryId(), super.fieldMissing("Diary Id"));
 
         // TODO: Reactivate once tests are finished.
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
@@ -93,7 +94,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
 
     private void isDiaryOfCurrentUser(NewStory story) {
         NewDiary diary = diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id: " + story.getDiary().getId()));
-        if (!userService.hasId(diary.getUser().getId()))
+        if (!utilsService.hasId(diary.getUser().getId()))
             throw new IllegalArgumentException("You are not allowed to edit someone else's diary's stories.");
     }
 
