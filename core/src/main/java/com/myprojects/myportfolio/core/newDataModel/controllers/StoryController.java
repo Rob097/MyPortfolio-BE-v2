@@ -4,14 +4,10 @@ import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
+import com.myprojects.myportfolio.core.newDataModel.dao.*;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewStoryDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.StoryMapper;
-import com.myprojects.myportfolio.core.newDataModel.services.DiaryServiceI;
-import com.myprojects.myportfolio.core.newDataModel.services.ProjectServiceI;
-import com.myprojects.myportfolio.core.newDataModel.services.StoryServiceI;
+import com.myprojects.myportfolio.core.newDataModel.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.MediaType;
@@ -33,7 +29,11 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
 
     private final ProjectServiceI projectService;
 
-    public StoryController(StoryServiceI storyService, StoryMapper storyMapper, DiaryServiceI diaryService, ProjectServiceI projectService) {
+    private final EducationServiceI educationService;
+
+    private final ExperienceServiceI experienceService;
+
+    public StoryController(StoryServiceI storyService, StoryMapper storyMapper, DiaryServiceI diaryService, ProjectServiceI projectService, EducationServiceI educationService, ExperienceServiceI experienceService) {
         this.service = storyService;
         this.mapper = storyMapper;
 
@@ -41,6 +41,8 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
         this.storyMapper = storyMapper;
         this.diaryService = diaryService;
         this.projectService = projectService;
+        this.educationService = educationService;
+        this.experienceService = experienceService;
     }
 
     /**
@@ -82,8 +84,7 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
 
                 NewDiary oldDiary = story.getDiary();
                 diaryService.removeStoriesFromDiary(oldDiary.getId(), new Integer[]{story.getId()});
-            }
-            if (operation.getPath().matches("^/project")) {
+            } else if (operation.getPath().matches("^/project")) {
                 NewProject project = projectService.findById(Integer.parseInt(operation.getValue()));
 
                 if (operation.getOp() == PatchOperation.Op.add) {
@@ -95,7 +96,32 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
                 }
 
                 isToUpdate = true;
+            } else if (operation.getPath().matches("^/education")) {
+                NewEducation education = educationService.findById(Integer.parseInt(operation.getValue()));
+
+                if (operation.getOp() == PatchOperation.Op.add) {
+                    education.getStories().add(story);
+                    story.getEducations().add(education);
+                } else if (operation.getOp() == PatchOperation.Op.remove) {
+                    education.getStories().remove(story);
+                    story.getEducations().remove(education);
+                }
+
+                isToUpdate = true;
+            } else if (operation.getPath().matches("^/experience")) {
+                NewExperience experience = experienceService.findById(Integer.parseInt(operation.getValue()));
+
+                if (operation.getOp() == PatchOperation.Op.add) {
+                    experience.getStories().add(story);
+                    story.getExperiences().add(experience);
+                } else if (operation.getOp() == PatchOperation.Op.remove) {
+                    experience.getStories().remove(story);
+                    story.getExperiences().remove(experience);
+                }
+
+                isToUpdate = true;
             }
+
         }
 
         if (isToUpdate) {
