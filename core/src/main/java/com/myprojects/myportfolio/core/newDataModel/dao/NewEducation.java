@@ -16,11 +16,30 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_educations", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "slug" }) })
+@Table(name = "new_educations", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
 public class NewEducation extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = 1569828648829514030L;
+
+    @Getter
+    @AllArgsConstructor
+    public enum FIELDS {
+        ID("id"),
+        CREATEDAT("createdAt"),
+        UPDATEDAT("updatedAt"),
+        SLUG("slug"),
+        FROMDATE("fromDate"),
+        TODATE("toDate"),
+        FIELD("field"),
+        SCHOOL("school"),
+        DEGREE("degree"),
+        GRADE("grade"),
+        DESCRIPTION("description"),
+        ;
+
+        private final String name;
+    }
 
     // Field of Study
     @SlugSource
@@ -99,7 +118,7 @@ public class NewEducation extends SlugDao {
     //////////////////////
 
     public Integer getUserId() {
-        if(this.getUser()==null)
+        if (this.getUser() == null)
             return null;
         return this.getUser().getId();
     }

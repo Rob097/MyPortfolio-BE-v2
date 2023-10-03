@@ -4,7 +4,6 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewProjectDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.ProjectMapper;
 import com.myprojects.myportfolio.core.newDataModel.services.ProjectServiceI;
@@ -41,7 +40,7 @@ public class ProjectController extends BaseController<NewProject, NewProjectDto>
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        NewProject project = projectService.findBy(findByEquals(NewStory.FIELDS.SLUG.name(), slug));
+        NewProject project = projectService.findBy(findByEquals(NewProject.FIELDS.SLUG.name(), slug));
 
         return this.buildSuccessResponse(projectMapper.mapToDto(project), view);
     }

@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
+import com.myprojects.myportfolio.core.newDataModel.dao.enums.Sex;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -115,6 +116,18 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewEducation> educations = new HashSet<>();
 
+    // User is the owner of the relationship.
+    // When creating or updating a user, you can't create or update experiences.
+    // This is because it's not necessary. You can use the education controller to create or update experiences.
+    // When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private Set<NewExperience> experiences = new HashSet<>();
+
     @Override
     public void completeRelationships() {
         if (this.getDiaries() != null) {
@@ -135,11 +148,12 @@ public class NewUser extends SlugDao {
                 education.completeRelationships();
             });
         }
-    }
-
-    public enum Sex {
-        MALE,
-        FEMALE
+        if (this.getExperiences() != null) {
+            this.getExperiences().forEach(experience -> {
+                experience.setUser(this);
+                experience.completeRelationships();
+            });
+        }
     }
 
     public NewUser(Integer id, String email) {

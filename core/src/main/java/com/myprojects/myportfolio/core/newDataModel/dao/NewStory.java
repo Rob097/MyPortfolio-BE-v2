@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_stories", uniqueConstraints = { @UniqueConstraint(columnNames = { "diary_id", "slug" }) })
+@Table(name = "new_stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
 public class NewStory extends SlugDao {
 
     @Serial
@@ -93,6 +93,14 @@ public class NewStory extends SlugDao {
     @Builder.Default
     private Set<NewEducation> educations = new HashSet<>();
 
+    // NewExperience is the owner of the relationship.
+    // When creating a story, we have to specify an already existing experienceId
+    // When updating a story, nothing happens to the relationship (no add, no delete)
+    // When deleting a story, the relation with the experience is deleted
+    @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<NewExperience> experiences = new HashSet<>();
+
     @Override
     public void completeRelationships() {
         this.getProjects().forEach(project ->
@@ -100,6 +108,9 @@ public class NewStory extends SlugDao {
         );
         this.getEducations().forEach(education ->
                 education.getStories().add(this)
+        );
+        this.getExperiences().forEach(experience ->
+                experience.getStories().add(this)
         );
         if (this.getDiary() != null) {
             if (this.getDiary().getStories() == null)
@@ -116,6 +127,9 @@ public class NewStory extends SlugDao {
         this.getEducations().forEach(education ->
                 education.getStories().remove(this)
         );
+        this.getExperiences().forEach(experience ->
+                experience.getStories().remove(this)
+        );
         if (this.getDiary() != null) {
             this.getDiary().getStories().remove(this);
         }
@@ -126,7 +140,7 @@ public class NewStory extends SlugDao {
     //////////////////////
 
     public Integer getDiaryId() {
-        if(this.getDiary()==null)
+        if (this.getDiary() == null)
             return null;
         return this.getDiary().getId();
     }

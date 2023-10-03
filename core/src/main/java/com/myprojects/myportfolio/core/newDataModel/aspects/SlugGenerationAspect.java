@@ -25,15 +25,18 @@ public class SlugGenerationAspect {
 
     private final EducationRepository educationRepository;
 
+    private final ExperienceRepository experienceRepository;
+
     protected BaseRepository<? extends SlugDao, Integer> repository;
 
     private final Map<Object, Boolean> visitedEntities = new HashMap<>();
 
-    public SlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository, EducationRepository educationRepository) {
+    public SlugGenerationAspect(UserRepository userRepository, ProjectRepository projectRepository, StoryRepository storyRepository, EducationRepository educationRepository, ExperienceRepository experienceRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.storyRepository = storyRepository;
         this.educationRepository = educationRepository;
+        this.experienceRepository = experienceRepository;
     }
 
     /**
@@ -142,6 +145,8 @@ public class SlugGenerationAspect {
             this.repository = this.educationRepository;
         } else if (entity instanceof NewStory) {
             this.repository = this.storyRepository;
+        } else if (entity instanceof NewExperience) {
+            this.repository = this.experienceRepository;
         }
     }
 

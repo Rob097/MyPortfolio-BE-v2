@@ -1,14 +1,8 @@
 package com.myprojects.myportfolio.core.configAndUtils;
 
-import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
+import com.myprojects.myportfolio.core.newDataModel.dao.*;
 import com.myprojects.myportfolio.core.newDataModel.dto.*;
-import com.myprojects.myportfolio.core.newDataModel.repositories.DiaryRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
+import com.myprojects.myportfolio.core.newDataModel.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +25,12 @@ public class UtilsService implements UtilsServiceI {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private EducationRepository educationRepository;
+
+    @Autowired
+    private ExperienceRepository experienceRepository;
 
     @Autowired
     private StoryRepository storyRepository;
@@ -85,6 +85,12 @@ public class UtilsService implements UtilsServiceI {
             } else if (entity instanceof NewProjectDto) {
                 NewProject project = projectRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Project not found"));
                 return currentUser.getId().equals(project.getUser().getId());
+            } else if (entity instanceof NewEducationDto) {
+                NewEducation education = educationRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Education not found"));
+                return currentUser.getId().equals(education.getUser().getId());
+            } else if (entity instanceof NewExperienceDto) {
+                NewExperience experience = experienceRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Experience not found"));
+                return currentUser.getId().equals(experience.getUser().getId());
             } else if (entity instanceof NewStoryDto) {
                 NewStory story = storyRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Story not found"));
                 return currentUser.getId().equals(story.getDiary().getUser().getId());
@@ -98,6 +104,10 @@ public class UtilsService implements UtilsServiceI {
                 return currentUser.getId().equals(((NewDiaryDto) entity).getUserId());
             } else if (entity instanceof NewProjectDto) {
                 return currentUser.getId().equals(((NewProjectDto) entity).getUserId());
+            } else if (entity instanceof NewEducationDto) {
+                return currentUser.getId().equals(((NewEducationDto) entity).getUserId());
+            } else if (entity instanceof NewExperienceDto) {
+                return currentUser.getId().equals(((NewExperienceDto) entity).getUserId());
             } else if (entity instanceof NewStoryDto) {
                 NewDiary diary = diaryRepository.findById(((NewStoryDto) entity).getDiaryId()).orElseThrow(() -> new RuntimeException("Diary not found"));
                 return currentUser.getId().equals(diary.getUser().getId());

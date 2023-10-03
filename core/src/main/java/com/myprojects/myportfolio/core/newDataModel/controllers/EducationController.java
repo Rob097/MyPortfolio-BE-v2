@@ -4,7 +4,6 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewEducation;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewEducationDto;
 import com.myprojects.myportfolio.core.newDataModel.mappers.EducationMapper;
 import com.myprojects.myportfolio.core.newDataModel.services.EducationServiceI;
@@ -40,7 +39,7 @@ public class EducationController extends BaseController<NewEducation, NewEducati
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        NewEducation education = educationService.findBy(findByEquals(NewStory.FIELDS.SLUG.name(), slug));
+        NewEducation education = educationService.findBy(findByEquals(NewEducation.FIELDS.SLUG.name(), slug));
 
         return this.buildSuccessResponse(educationMapper.mapToDto(education), view);
     }

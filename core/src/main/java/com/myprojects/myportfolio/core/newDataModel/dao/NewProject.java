@@ -21,6 +21,20 @@ public class NewProject extends SlugDao {
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
 
+    @Getter
+    @AllArgsConstructor
+    public enum FIELDS {
+        ID("id"),
+        CREATEDAT("createdAt"),
+        UPDATEDAT("updatedAt"),
+        SLUG("slug"),
+        TITLE("title"),
+        DESCRIPTION("description"),
+        ;
+
+        private final String name;
+    }
+
     @SlugSource
     @Column(nullable = false)
     private String title;

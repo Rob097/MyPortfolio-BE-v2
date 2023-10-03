@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.mappers;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.NewEducation;
+import com.myprojects.myportfolio.core.newDataModel.dao.NewExperience;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewStoryDto;
@@ -16,12 +17,14 @@ public interface StoryMapper extends BaseMapper<NewStory, NewStoryDto> {
     @Mapping(target = "diaryId", source = "diary.id")
     @Mapping(target = "projectsIds", source = "projects", qualifiedByName = "daoToId")
     @Mapping(target = "educationsIds", source = "educations", qualifiedByName = "daoToId")
+    @Mapping(target = "experiencesIds", source = "experiences", qualifiedByName = "daoToId")
     NewStoryDto mapToDto(NewStory entity);
 
     @Override
     @Mapping(target = "diary.id", source = "diaryId")
     @Mapping(target = "projects", source = "projectsIds", qualifiedByName = "idToProject")
     @Mapping(target = "educations", source = "educationsIds", qualifiedByName = "idToEducation")
+    @Mapping(target = "experiences", source = "experiencesIds", qualifiedByName = "idToExperience")
     NewStory mapToDao(NewStoryDto dto);
 
     @Named(value = "idToProject")
@@ -36,6 +39,13 @@ public interface StoryMapper extends BaseMapper<NewStory, NewStoryDto> {
         NewEducation education = NewEducation.builder().build();
         education.setId(id);
         return education;
+    }
+
+    @Named(value = "idToExperience")
+    static NewExperience idToExperience(Integer id) {
+        NewExperience experience = NewExperience.builder().build();
+        experience.setId(id);
+        return experience;
     }
 
 }

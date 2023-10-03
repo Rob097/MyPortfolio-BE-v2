@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.newDataModel.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
+import com.myprojects.myportfolio.core.newDataModel.dao.enums.Sex;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,18 +22,18 @@ public class NewUserDto extends AuditableDto {
 
     String slug;
 
-    @NotNull( message = "User: First name cannot be null")
+    @NotNull(message = "User: First name cannot be null")
     String firstName;
 
-    @NotNull( message = "User: Last name cannot be null")
+    @NotNull(message = "User: Last name cannot be null")
     String lastName;
 
-    @NotNull( message = "User: Email cannot be null")
+    @NotNull(message = "User: Email cannot be null")
     String email;
     String phone;
     Integer age;
     AddressDto address;
-    SexDto sex;
+    Sex sex;
     String title;
     String description;
 
@@ -48,8 +49,8 @@ public class NewUserDto extends AuditableDto {
     @JsonView(Verbose.class)
     Set<NewEducationDto> educations;
 
-    public enum SexDto {
-        MALE,
-        FEMALE;
-    }
+    @Valid
+    @JsonView(Verbose.class)
+    Set<NewExperienceDto> experiences;
+
 }
