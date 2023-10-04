@@ -111,23 +111,27 @@ public class SlugGenerationAspect {
             int index = 0;
             String slug;
 
-            do {
-                String appendix = index == 0 ? "" : ("-" + index);
-                slug = entity.generateSlug(sources, appendix);
+            try {
+                do {
+                    String appendix = index == 0 ? "" : ("-" + index);
+                    slug = entity.generateSlug(sources, appendix);
 
-                Optional<? extends SlugDao> existingUser = repository.findBySlugConstraint(slug, entity);
+                    Optional<? extends SlugDao> existingUser = repository.findBySlugConstraint(slug, entity);
 
-                if (existingUser.isPresent() || computedSlugs.contains(slug)) {
-                    index++;
-                } else {
-                    isDone = true;
-                }
+                    if (existingUser.isPresent() || computedSlugs.contains(slug)) {
+                        index++;
+                    } else {
+                        isDone = true;
+                    }
 
-            } while (!isDone);
+                } while (!isDone);
 
-            entity.setSlug(slug);
+                entity.setSlug(slug);
 
-            log.info("calculateSlug: {} - END", slug);
+                log.info("calculateSlug: {} - END", slug);
+            } catch (Exception e) {
+                log.error("Error while generating slug: " + e.getMessage());
+            }
         }
     }
 

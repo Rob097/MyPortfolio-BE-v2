@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.newDataModel.dao.enums.Sex;
 import lombok.*;
@@ -87,8 +88,10 @@ public class NewUser extends SlugDao {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
+    @JsonManagedReference
     @Builder.Default
     private Set<NewDiary> diaries = new HashSet<>();
 
@@ -99,8 +102,10 @@ public class NewUser extends SlugDao {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
+    @JsonManagedReference
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
@@ -111,8 +116,10 @@ public class NewUser extends SlugDao {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
+    @JsonManagedReference
     @Builder.Default
     private Set<NewEducation> educations = new HashSet<>();
 
@@ -123,8 +130,10 @@ public class NewUser extends SlugDao {
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
+    @JsonManagedReference
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
 

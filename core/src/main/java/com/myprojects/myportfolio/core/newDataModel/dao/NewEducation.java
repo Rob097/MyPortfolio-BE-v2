@@ -1,5 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -81,7 +83,9 @@ public class NewEducation extends SlugDao {
                     name = "new_user_education_fk"
             )
     )
-    private NewUser user;
+    @JsonBackReference
+    @Builder.Default
+    private NewUser user = new NewUser();
 
     // NewEducation is the owner of the relationship.
     // When Creating a new Education or Updating an existing education is possible to create a new story or connect an existing story.
@@ -92,6 +96,7 @@ public class NewEducation extends SlugDao {
             name = "new_education_stories",
             joinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
+    @JsonManagedReference
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 

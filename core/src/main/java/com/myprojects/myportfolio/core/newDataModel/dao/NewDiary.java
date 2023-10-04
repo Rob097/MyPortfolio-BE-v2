@@ -1,5 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -39,7 +41,9 @@ public class NewDiary extends AuditableDao {
                     name = "new_user_diary_fk"
             )
     )
-    private NewUser user;
+    @JsonBackReference
+    @Builder.Default
+    private NewUser user = new NewUser();
 
     // Diary is the owner of the relationship.
     // When creating or updating a diary you can only create new stories. You can't connect existing stories or remove existing stories that are already connected.
@@ -48,9 +52,10 @@ public class NewDiary extends AuditableDao {
     @OneToMany(
             mappedBy = "diary",
             orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.EAGER
     )
+    @JsonManagedReference
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 

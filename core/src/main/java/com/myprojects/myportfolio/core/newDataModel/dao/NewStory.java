@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.newDataModel.dao;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -75,13 +76,16 @@ public class NewStory extends SlugDao {
                     name = "new_diary_story_fk"
             )
     )
-    private NewDiary diary;
+    @JsonBackReference
+    @Builder.Default
+    private NewDiary diary = new NewDiary();
 
     // NewProject is the owner of the relationship.
     // When creating a story, we have to specify an already existing projectId
     // When updating a story, nothing happens to the relationship (no add, no delete)
     // When deleting a story, the relation with the project is deleted
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @JsonBackReference
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
@@ -90,6 +94,7 @@ public class NewStory extends SlugDao {
     // When updating a story, nothing happens to the relationship (no add, no delete)
     // When deleting a story, the relation with the education is deleted
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @JsonBackReference
     @Builder.Default
     private Set<NewEducation> educations = new HashSet<>();
 
@@ -98,6 +103,7 @@ public class NewStory extends SlugDao {
     // When updating a story, nothing happens to the relationship (no add, no delete)
     // When deleting a story, the relation with the experience is deleted
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @JsonBackReference
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
 
