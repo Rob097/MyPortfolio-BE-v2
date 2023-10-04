@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.core.newDataModel.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.newDataModel.dao.enums.Sex;
+import com.myprojects.myportfolio.core.newDataModel.dto.skills.NewUserSkillDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -52,5 +53,8 @@ public class NewUserDto extends AuditableDto {
     @Valid
     @JsonView(Verbose.class)
     Set<NewExperienceDto> experiences;
+
+    @JsonView(Verbose.class)
+    Set<NewUserSkillDto> skills;
 
 }

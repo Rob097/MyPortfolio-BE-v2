@@ -142,7 +142,15 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // User is the owner of the relationship.
+    // When creating or updating a user, you can't create or update skills but you can create or update the relation NewUserSkill.
+    // AT THE MOMENT, when updating a user, all the existing userSkills that are not provided, will be deleted.
+    // When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = { CascadeType.ALL },
+            fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default
     private Set<NewUserSkill> skills = new HashSet<>();
@@ -171,6 +179,11 @@ public class NewUser extends SlugDao {
             this.getExperiences().forEach(experience -> {
                 experience.setUser(this);
                 experience.completeRelationships();
+            });
+        }
+        if (this.getSkills() != null) {
+            this.getSkills().forEach(skill -> {
+                skill.setUser(this);
             });
         }
     }

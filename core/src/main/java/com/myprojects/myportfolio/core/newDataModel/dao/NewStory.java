@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.newDataModel.dao;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
+import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewSkill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -106,6 +107,14 @@ public class NewStory extends SlugDao {
     @JsonBackReference
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "story_skills",
+            joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
+    @Builder.Default
+    private Set<NewSkill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {

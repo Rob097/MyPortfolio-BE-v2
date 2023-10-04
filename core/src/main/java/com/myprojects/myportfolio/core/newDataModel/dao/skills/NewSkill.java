@@ -11,6 +11,7 @@ import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("JpaEntityListenerInspection")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -25,6 +26,8 @@ public class NewSkill extends BaseDao {
 
     private String name;
 
+    // When creating or updating a Skill, you can only specify an already existing category.
+    // When deleting a skill, the category is not deleted but the relationship is deleted.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "category_id",
@@ -39,11 +42,17 @@ public class NewSkill extends BaseDao {
 
     @OneToMany(
             mappedBy = "skill",
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JsonManagedReference
     @Builder.Default
     private Set<NewUserSkill> users = new HashSet<>();
+
+    @PrePersist
+    public void categoryCheckPersist() {
+        if (category == null || category.getId() == null) {
+            throw new IllegalArgumentException("Skill category is not valid");
+        }
+    }
 
 }

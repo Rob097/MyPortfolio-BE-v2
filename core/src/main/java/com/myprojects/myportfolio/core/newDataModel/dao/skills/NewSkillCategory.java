@@ -5,7 +5,10 @@ import com.myprojects.myportfolio.core.newDataModel.dao.BaseDao;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,10 +27,11 @@ public class NewSkillCategory extends BaseDao {
 
     private String name;
 
+    // Skill Category can't create, update or delete skills.
+    // The bidirectional relationship is used only for reading skills internally in the BE.
     @OneToMany(
             mappedBy = "category",
             orphanRemoval = true,
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JsonManagedReference
