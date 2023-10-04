@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.core.newDataModel.dao;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.newDataModel.dao.enums.Sex;
+import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewUserSkill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -80,11 +81,13 @@ public class NewUser extends SlugDao {
 
     private String description;
 
-    // User is the owner of the relationship.
-    // When creating a new user you can only create new diaries. You can't connect existing diaries.
-    // When updating a user, you can't create or update diaries.
-    //      This is because it's not necessary. You can use the diary controller to create or update diaries.
-    // When deleting a user, the diaries ARE DELETED because the user is the owner of the diary itself.
+    /**
+     * @Owner: User is the owner of the relationship.
+     * @Create: When creating a new user you can only create new diaries. You can't connect existing diaries.
+     * @Update: When updating a user, you can't create or update diaries.
+     *          This is because it's not necessary. You can use the diary controller to create or update diaries.
+     * @Delete: When deleting a user, the diaries ARE DELETED because the user is the owner of the diary itself.
+     */
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
@@ -95,10 +98,12 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewDiary> diaries = new HashSet<>();
 
-    // User is the owner of the relationship.
-    // When creating or updating a user, you can't create or update projects.
-    // This is because it's not necessary. You can use the project controller to create or update projects.
-    // When deleting a user, the projects ARE DELETED because the user is the owner of the project itself.
+    /**
+     * @Owner: User is the owner of the relationship.
+     * @Create&Update: When creating or updating a user, you can't create or update projects.
+     *                 This is because it's not necessary. You can use the project controller to create or update projects.
+     * @Delete: When deleting a user, the projects ARE DELETED because the user is the owner of the project itself.
+     */
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
@@ -136,6 +141,11 @@ public class NewUser extends SlugDao {
     @JsonManagedReference
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @Builder.Default
+    private Set<NewUserSkill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {
