@@ -46,15 +46,15 @@ public abstract class IController<R> {
 
 
     /* METHODS */
-    abstract ResponseEntity<MessageResources<R>> find(String filters, IView view, Pageable pageable) throws Exception;
+    protected abstract ResponseEntity<MessageResources<R>> find(String filters, IView view, Pageable pageable) throws Exception;
 
-    abstract ResponseEntity<MessageResource<R>> get(Integer id, IView view) throws Exception;
+    protected abstract ResponseEntity<MessageResource<R>> get(Integer id, IView view) throws Exception;
 
-    abstract ResponseEntity<MessageResource<R>> create(R resource) throws Exception;
+    protected abstract ResponseEntity<MessageResource<R>> create(R resource) throws Exception;
 
-    abstract ResponseEntity<MessageResource<R>> update(Integer id, R resource) throws Exception;
+    protected abstract ResponseEntity<MessageResource<R>> update(Integer id, R resource) throws Exception;
 
-    abstract ResponseEntity<MessageResource<R>> delete(Integer id) throws Exception;
+    protected abstract ResponseEntity<MessageResource<R>> delete(Integer id) throws Exception;
 
 
     /* FILTERS AND VIEW */

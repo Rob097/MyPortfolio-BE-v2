@@ -1,5 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.dto.skills;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewUserSkillPK;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,4 +19,12 @@ public class NewUserSkillDto implements Serializable {
     Integer userId;
     Boolean isMain;
     Integer orderId;
+
+    @JsonIgnore
+    public NewUserSkillPK getId() {
+        if(userId==null || skill==null || skill.getId()==null)
+            return null;
+        return new NewUserSkillPK(userId, skill.getId());
+    }
+
 }

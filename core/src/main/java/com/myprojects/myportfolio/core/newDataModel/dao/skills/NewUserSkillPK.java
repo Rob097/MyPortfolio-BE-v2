@@ -1,13 +1,11 @@
 package com.myprojects.myportfolio.core.newDataModel.dao.skills;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor

@@ -12,6 +12,11 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * NewUserSkill Is a composite relational entity that represents the many-to-many relationship between NewUser and NewSkill.
+ * When creating or updating, you have to indicate an already existing userId and skillId.
+ * When deleting, the record is deleted by the composite key.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -50,5 +55,30 @@ public class NewUserSkill implements Serializable {
 
     @Column(name = "order_id")
     private Integer orderId;
+
+    public NewUserSkillPK getId() {
+        return NewUserSkillPK.builder()
+                .userId(userId)
+                .skillId(skillId)
+                .build();
+    }
+
+    public void completeRelations() {
+        if (this.user != null) {
+            this.user.getSkills().add(this);
+        }
+        if (this.skill != null) {
+            this.skill.getUsers().add(this);
+        }
+    }
+
+    public void removeRelationships() {
+        if (this.user != null) {
+            this.user.getSkills().remove(this);
+        }
+        if (this.skill != null) {
+            this.skill.getUsers().remove(this);
+        }
+    }
 
 }

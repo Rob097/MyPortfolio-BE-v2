@@ -40,8 +40,10 @@ public class NewSkill extends BaseDao {
     @JsonBackReference
     private NewSkillCategory category;
 
+    // When creating, updating a Skill, users are ignored.
     @OneToMany(
             mappedBy = "skill",
+            orphanRemoval = true,
             fetch = FetchType.LAZY
     )
     @JsonManagedReference
