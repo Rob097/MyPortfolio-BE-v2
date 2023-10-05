@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,7 +32,15 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<MessageResource<?>> handleNoSuchElementException(NoSuchElementException e) {
-        log.error(e.getMessage(), e);
+        log.error(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<MessageResource<?>> handleEntityNotFoundException(EntityNotFoundException e) {
+        log.error(e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));

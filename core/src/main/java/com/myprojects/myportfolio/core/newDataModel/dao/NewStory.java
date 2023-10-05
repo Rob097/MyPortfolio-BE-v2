@@ -108,9 +108,15 @@ public class NewStory extends SlugDao {
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
 
+    // When creating a story, we can specify a list of ALREADY EXISTING skills
+    // When updating a story, we can also update the skills.
+    //    - If a skill is already in the list, nothing happens
+    //    - If a skill is not in the list, it is added
+    //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
+    // When deleting a story, the relationship is removed
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "story_skills",
+            name = "new_story_skills",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default

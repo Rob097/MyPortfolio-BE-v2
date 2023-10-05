@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.core.newDataModel.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.newDataModel.dto.groups.OnUpdate;
+import com.myprojects.myportfolio.core.newDataModel.dto.skills.NewSkillDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,7 @@ public class NewProjectDto extends AuditableDto {
     @Valid
     @JsonView(Verbose.class)
     Set<NewStoryDto> stories;
+
+    @JsonView(Verbose.class)
+    Set<NewSkillDto> skills;
 }

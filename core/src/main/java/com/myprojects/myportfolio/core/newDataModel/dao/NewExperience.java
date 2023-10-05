@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.newDataModel.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.newDataModel.dao.enums.EmploymentTypeEnum;
+import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewSkill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -99,6 +100,20 @@ public class NewExperience extends SlugDao {
     @JsonManagedReference
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
+
+    // When creating a experience, we can specify a list of ALREADY EXISTING skills
+    // When updating a experience, we can also update the skills.
+    //    - If a skill is already in the list, nothing happens
+    //    - If a skill is not in the list, it is added
+    //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
+    // When deleting a experience, the relationship is removed
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "new_experience_skills",
+            joinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
+    @Builder.Default
+    private Set<NewSkill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {

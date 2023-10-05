@@ -2,11 +2,12 @@ package com.myprojects.myportfolio.core.newDataModel.mappers;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.NewExperience;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewExperienceDto;
+import com.myprojects.myportfolio.core.newDataModel.mappers.skills.SkillMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
-@Mapper(componentModel = "spring", uses = {StoryMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+@Mapper(componentModel = "spring", uses = {StoryMapper.class, SkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface ExperienceMapper extends BaseMapper<NewExperience, NewExperienceDto> {
 
     @Override
