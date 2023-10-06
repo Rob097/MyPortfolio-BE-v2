@@ -10,9 +10,4 @@ public interface BaseMapper<A extends BaseDao, T extends BaseDto> {
 
     A mapToDao(T dto);
 
-    @Named(value = "daoToId")
-    static Integer daoToId(BaseDao entity) {
-        return entity.getId();
-    }
-
 }

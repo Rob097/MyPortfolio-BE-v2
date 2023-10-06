@@ -1,16 +1,14 @@
 package com.myprojects.myportfolio.core.newDataModel.mappers;
 
-import com.myprojects.myportfolio.core.newDataModel.dao.NewEducation;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewExperience;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewProject;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
+import com.myprojects.myportfolio.core.newDataModel.dao.*;
 import com.myprojects.myportfolio.core.newDataModel.dto.NewStoryDto;
+import com.myprojects.myportfolio.core.newDataModel.mappers.skills.SkillMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.NullValueMappingStrategy;
 
-@Mapper(componentModel = "spring", nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+@Mapper(componentModel = "spring", uses = {SkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface StoryMapper extends BaseMapper<NewStory, NewStoryDto> {
 
     @Override
@@ -46,6 +44,11 @@ public interface StoryMapper extends BaseMapper<NewStory, NewStoryDto> {
         NewExperience experience = NewExperience.builder().build();
         experience.setId(id);
         return experience;
+    }
+
+    @Named(value = "daoToId")
+    static Integer daoToId(BaseDao entity) {
+        return entity.getId();
     }
 
 }

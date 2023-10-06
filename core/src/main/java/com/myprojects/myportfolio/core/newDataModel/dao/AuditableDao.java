@@ -12,7 +12,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.sql.Timestamp;
 
-@SuppressWarnings("JpaEntityListenerInspection")
 @Setter
 @Getter
 @AllArgsConstructor
