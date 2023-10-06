@@ -71,9 +71,11 @@ public class NewEducation extends SlugDao {
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
 
-    // When Creating an Education, we need to pass an existing userId.
-    // When Updating an education, the already connected user is left untouched.
-    // When Deleting an education, the user is not deleted but the relationship is deleted.
+    /**
+     * @Create: When Creating an Education, we need to pass an existing userId.
+     * @Update: When Updating an education, the already connected user is left untouched.
+     * @Delete: When Deleting an education, the user is not deleted but the relationship is deleted.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",
@@ -88,10 +90,12 @@ public class NewEducation extends SlugDao {
     @Builder.Default
     private NewUser user = new NewUser();
 
-    // NewEducation is the owner of the relationship.
-    // When Creating a new Education or Updating an existing education is possible to create a new story or connect an existing story.
-    // When Updating an education, the already connected stories are left untouched.
-    // When Deleting an education, the stories are not deleted but the relationship is deleted.
+    /**
+     * @Owner: NewEducation is the owner of the relationship.
+     * @Create: When Creating a new Education or Updating an existing education is possible to create a new story or connect an existing story.
+     * @Update: When Updating an education, the already connected stories are left untouched.
+     * @Delete: When Deleting an education, the stories are not deleted but the relationship is deleted.
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "new_education_stories",
@@ -101,12 +105,14 @@ public class NewEducation extends SlugDao {
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
-    // When creating an education, we can specify a list of ALREADY EXISTING skills
-    // When updating an education, we can also update the skills.
-    //    - If a skill is already in the list, nothing happens
-    //    - If a skill is not in the list, it is added
-    //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
-    // When deleting an education, the relationship is removed
+    /**
+     * @Create: When creating an education, we can specify a list of ALREADY EXISTING skills
+     * @Update: When updating an education, we can also update the skills.
+     *          - If a skill is already in the list, nothing happens
+     *          - If a skill is not in the list, it is added
+     *          - If a skill is in the list but not in the new list, it is removed (ATTENTION)
+     * @Delete: When deleting an education, the relationship is removed
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "new_education_skills",

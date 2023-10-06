@@ -71,9 +71,11 @@ public class NewExperience extends SlugDao {
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
 
-    // When Creating an Experience, we need to pass an existing userId.
-    // When Updating an experience, the already connected user is left untouched.
-    // When Deleting an experience, the user is not deleted but the relationship is deleted.
+    /**
+     * @Create: When Creating an Experience, we need to pass an existing userId.
+     * @Update: When Updating an experience, the already connected user is left untouched.
+     * @Delete: When Deleting an experience, the user is not deleted but the relationship is deleted.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",
@@ -88,10 +90,12 @@ public class NewExperience extends SlugDao {
     @Builder.Default
     private NewUser user = new NewUser();
 
-    // NewExperience is the owner of the relationship.
-    // When Creating a new Experience or Updating an existing experience is possible to create a new story or connect an existing story.
-    // When Updating an experience, the already connected stories are left untouched.
-    // When Deleting an experience, the stories are not deleted but the relationship is deleted.
+    /**
+     * @Owner: NewExperience is the owner of the relationship.
+     * @Create: When Creating a new Experience or Updating an existing experience is possible to create a new story or connect an existing story.
+     * @Update: When Updating an experience, the already connected stories are left untouched.
+     * @Delete: When Deleting an experience, the stories are not deleted but the relationship is deleted.
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "new_experience_stories",
@@ -101,12 +105,14 @@ public class NewExperience extends SlugDao {
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
-    // When creating an experience, we can specify a list of ALREADY EXISTING skills
-    // When updating an experience, we can also update the skills.
-    //    - If a skill is already in the list, nothing happens
-    //    - If a skill is not in the list, it is added
-    //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
-    // When deleting an experience, the relationship is removed
+    /**
+     * @Create: When creating an experience, we can specify a list of ALREADY EXISTING skills
+     * @Update: When updating an experience, we can also update the skills.
+     *          - If a skill is already in the list, nothing happens
+     *          - If a skill is not in the list, it is added
+     *          - If a skill is in the list but not in the new list, it is removed (ATTENTION)
+     * @Delete: When deleting an experience, the relationship is removed
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "new_experience_skills",

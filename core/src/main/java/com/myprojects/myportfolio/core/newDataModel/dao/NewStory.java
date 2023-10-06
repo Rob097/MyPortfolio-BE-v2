@@ -65,9 +65,11 @@ public class NewStory extends SlugDao {
     @Column(columnDefinition = "TEXT")
     private String secondRelevantSection;
 
-    // When creating a story, we have to specify an already existing diaryId
-    // When updating a story, we can also update the diaryId
-    // When deleting a story, the relation with the diary is deleted
+    /**
+     * @Create: When creating a story, we have to specify an already existing diaryId
+     * @Update: When updating a story, we can also update the diaryId
+     * @Delete: When deleting a story, the relation with the diary is deleted
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "diary_id",
@@ -81,39 +83,47 @@ public class NewStory extends SlugDao {
     @Builder.Default
     private NewDiary diary = new NewDiary();
 
-    // NewProject is the owner of the relationship.
-    // When creating a story, we have to specify an already existing projectId
-    // When updating a story, nothing happens to the relationship (no add, no delete)
-    // When deleting a story, the relation with the project is deleted
+    /**
+     * @Owner: NewProject is the owner of the relationship.
+     * @Create: When creating a story, we have to specify an already existing projectId
+     * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
+     * @Delete: When deleting a story, the relation with the project is deleted
+     */
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
-    // NewEducation is the owner of the relationship.
-    // When creating a story, we have to specify an already existing educationId
-    // When updating a story, nothing happens to the relationship (no add, no delete)
-    // When deleting a story, the relation with the education is deleted
+    /**
+     * @Owner: NewEducation is the owner of the relationship.
+     * @Create: When creating a story, we have to specify an already existing educationId
+     * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
+     * @Delete: When deleting a story, the relation with the education is deleted
+     */
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
     private Set<NewEducation> educations = new HashSet<>();
 
-    // NewExperience is the owner of the relationship.
-    // When creating a story, we have to specify an already existing experienceId
-    // When updating a story, nothing happens to the relationship (no add, no delete)
-    // When deleting a story, the relation with the experience is deleted
+    /**
+     * @Owner: NewExperience is the owner of the relationship.
+     * @Create: When creating a story, we have to specify an already existing experienceId
+     * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
+     * @Delete: When deleting a story, the relation with the experience is deleted
+     */
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
 
-    // When creating a story, we can specify a list of ALREADY EXISTING skills
-    // When updating a story, we can also update the skills.
-    //    - If a skill is already in the list, nothing happens
-    //    - If a skill is not in the list, it is added
-    //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
-    // When deleting a story, the relationship is removed
+    /**
+     * @Create: When creating a story, we can specify a list of ALREADY EXISTING skills
+     * @Update: When updating a story, we can also update the skills.
+     *          - If a skill is already in the list, nothing happens
+     *          - If a skill is not in the list, it is added
+     *          - If a skill is in the list but not in the new list, it is removed (ATTENTION)
+     * @Delete: When deleting a story, the relationship is removed
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "new_story_skills",

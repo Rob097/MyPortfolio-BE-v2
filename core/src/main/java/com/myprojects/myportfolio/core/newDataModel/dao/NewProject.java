@@ -45,9 +45,11 @@ public class NewProject extends SlugDao {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    // When Creating a Project, we need to pass an existing userId.
-    // When Updating a project, the already connected user is left untouched.
-    // When Deleting a project, the user is not deleted but the relationship is deleted.
+    /**
+     * @Create: When Creating a Project, we need to pass an existing userId.
+     * @Update: When Updating a project, the already connected user is left untouched.
+     * @Delete: When Deleting a project, the user is not deleted but the relationship is deleted.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "user_id",
@@ -62,10 +64,12 @@ public class NewProject extends SlugDao {
     @Builder.Default
     private NewUser user = new NewUser();
 
-    // NewProject is the owner of the relationship.
-    // When Creating a new Project or Updating an existing project is possible to create a new story or connect an existing story.
-    // When Updating a project, the already connected stories are left untouched.
-    // When Deleting a project, the stories are not deleted but the relationship is deleted.
+    /**
+     * @Owner: NewProject is the owner of the relationship.
+     * @Create: When Creating a new Project or Updating an existing project is possible to create a new story or connect an existing story.
+     * @Update: When Updating a project, the already connected stories are left untouched.
+     * @Delete: When Deleting a project, the stories are not deleted but the relationship is deleted.
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "new_project_stories",
@@ -75,12 +79,14 @@ public class NewProject extends SlugDao {
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
-    // When creating a project, we can specify a list of ALREADY EXISTING skills (the ID must be present)
-    // When updating a project, we can also update the skills.
-    //    - If a skill is already in the list, nothing happens
-    //    - If a skill is not in the list, it is added
-    //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
-    // When deleting a project, the relationship is removed
+    /**
+     * @Create: When creating a project, we can specify a list of ALREADY EXISTING skills (the ID must be present)
+     * @Update: When updating a project, we can also update the skills.
+     *          - If a skill is already in the list, nothing happens
+     *          - If a skill is not in the list, it is added
+     *          - If a skill is in the list but not in the new list, it is removed (ATTENTION)
+     * @Delete: When deleting a project, the relationship is removed
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "new_project_skills",
