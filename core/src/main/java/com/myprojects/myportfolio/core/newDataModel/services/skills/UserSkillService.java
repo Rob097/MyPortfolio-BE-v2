@@ -36,8 +36,7 @@ public class UserSkillService implements UserSkillServiceI {
         }
         checkRelationsExists(t);
 
-        t.completeRelations();
-        return userSkillRepository.save(t);
+        return userSkillRepository.saveAndFlush(t);
     }
 
     @Override
@@ -56,7 +55,6 @@ public class UserSkillService implements UserSkillServiceI {
         Validate.notNull(t.getId(), "Mandatory parameter is missing: id");
         checkIfEntityDoesNotExist(t);
 
-        t.removeRelationships();
         userSkillRepository.delete(t);
     }
 

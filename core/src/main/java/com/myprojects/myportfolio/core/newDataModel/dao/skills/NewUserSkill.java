@@ -56,6 +56,24 @@ public class NewUserSkill implements Serializable {
     @Column(name = "order_id")
     private Integer orderId;
 
+    public void setUser(NewUser user) {
+        this.user = user;
+        this.userId = user.getId();
+    }
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+        this.user = NewUser.builder().id(userId).build();
+    }
+
+    public void setSkill(NewSkill skill) {
+        this.skill = skill;
+        this.skillId = skill.getId();
+    }
+    public void setSkillId(Integer skillId) {
+        this.skillId = skillId;
+        this.skill = NewSkill.builder().id(skillId).build();
+    }
+
     public NewUserSkillPK getId() {
         return NewUserSkillPK.builder()
                 .userId(userId)
@@ -63,7 +81,8 @@ public class NewUserSkill implements Serializable {
                 .build();
     }
 
-    public void completeRelations() {
+    @PrePersist
+    public void completeRelationships() {
         if (this.user != null) {
             this.user.getSkills().add(this);
         }
@@ -72,6 +91,7 @@ public class NewUserSkill implements Serializable {
         }
     }
 
+    @PreRemove
     public void removeRelationships() {
         if (this.user != null) {
             this.user.getSkills().remove(this);

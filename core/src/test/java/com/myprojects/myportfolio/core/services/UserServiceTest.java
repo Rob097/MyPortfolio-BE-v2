@@ -4,6 +4,7 @@ import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.newDataModel.dao.*;
 import com.myprojects.myportfolio.core.newDataModel.dao.enums.EmploymentTypeEnum;
 import com.myprojects.myportfolio.core.newDataModel.dao.enums.Sex;
+import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewUserSkill;
 import com.myprojects.myportfolio.core.newDataModel.services.UserServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,10 +93,19 @@ class UserServiceTest extends BaseTest {
         experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);
         experiences.add(experience);
 
+        Set<NewUserSkill> skills = new HashSet<>();
+        NewUserSkill userSkill = new NewUserSkill();
+        userSkill.setSkillId(1);
+        userSkill.setUser(this.userWithRelations);
+        userSkill.setIsMain(true);
+        userSkill.setOrderId(1);
+        skills.add(userSkill);
+
         this.userWithRelations.setDiaries(diaries);
         this.userWithRelations.setProjects(projects);
         this.userWithRelations.setEducations(educations);
         this.userWithRelations.setExperiences(experiences);
+        this.userWithRelations.setSkills(skills);
 
     }
 
@@ -169,6 +179,7 @@ class UserServiceTest extends BaseTest {
             assertEquals(this.userWithRelations.getProvince(), createdUser.getProvince());
             assertEquals(this.userWithRelations.getCap(), createdUser.getCap());
             assertEquals(this.userWithRelations.getDiaries().size(), createdUser.getDiaries().size());
+            assertEquals(this.userWithRelations.getSkills().size(), createdUser.getSkills().size());
 
             assertEquals(0, createdUser.getProjects().size());
             assertEquals(0, createdUser.getEducations().size());
@@ -228,6 +239,24 @@ class UserServiceTest extends BaseTest {
             newProject.setTitle("Test Project 2");
             newProject.setDescription("Test Description 2");
             this.userWithRelations.getProjects().add(newProject);
+            NewEducation newEducation = new NewEducation();
+            newEducation.setField("Test Field 2");
+            newEducation.setSchool("Test School 2");
+            newEducation.setDegree("Test Degree 2");
+            newEducation.setDescription("Test Description 2");
+            this.userWithRelations.getEducations().add(newEducation);
+            NewExperience newExperience = new NewExperience();
+            newExperience.setTitle("Test Title 2");
+            newExperience.setCompanyName("Test Company 2");
+            newExperience.setDescription("Test Description 2");
+            newExperience.setEmploymentType(EmploymentTypeEnum.FULL_TIME);
+            this.userWithRelations.getExperiences().add(newExperience);
+            NewUserSkill newUserSkill = new NewUserSkill();
+            newUserSkill.setSkillId(2);
+            newUserSkill.setUser(this.userWithRelations);
+            newUserSkill.setIsMain(false);
+            newUserSkill.setOrderId(2);
+            this.userWithRelations.getSkills().add(newUserSkill);
 
             // Update the user
             this.userService.update(this.userWithRelations);
@@ -242,6 +271,7 @@ class UserServiceTest extends BaseTest {
             assertEquals(0, updatedUser.getProjects().size());
             assertEquals(0, updatedUser.getEducations().size());
             assertEquals(0, updatedUser.getExperiences().size());
+            assertEquals(this.userWithRelations.getSkills().size(), updatedUser.getSkills().size());
 
         } catch (Exception e) {
             fail(e.getMessage());
@@ -301,6 +331,7 @@ class UserServiceTest extends BaseTest {
 
             // Check if the relations have been deleted correctly:
             assertTrue(this.userWithRelations.getDiaries() == null || this.userWithRelations.getDiaries().isEmpty());
+            assertTrue(this.userWithRelations.getSkills() == null || this.userWithRelations.getSkills().isEmpty());
 
             // These relations should not event been created
             assertTrue(this.userWithRelations.getProjects() == null || this.userWithRelations.getProjects().isEmpty());

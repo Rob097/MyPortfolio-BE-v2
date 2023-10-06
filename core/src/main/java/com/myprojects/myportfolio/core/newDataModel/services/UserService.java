@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.newDataModel.services;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
 import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
+import com.myprojects.myportfolio.core.newDataModel.services.skills.UserSkillService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,12 +20,15 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
 
     private final DiaryServiceI diaryService;
 
-    public UserService(UserRepository userRepository, DiaryServiceI diaryService) {
+    private final UserSkillService userSkillService;
+
+    public UserService(UserRepository userRepository, DiaryServiceI diaryService, UserSkillService userSkillService) {
         super();
         this.repository = userRepository;
 
         this.userRepository = userRepository;
         this.diaryService = diaryService;
+        this.userSkillService = userSkillService;
     }
 
     @Override
@@ -55,6 +59,12 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
                 diary.setUser(savedUser);
                 this.diaryService.save(diary);
             }
+        });
+
+        // Save user's skills:
+        user.getSkills().forEach(skill -> {
+            skill.setUser(savedUser);
+            this.userSkillService.save(skill);
         });
 
         return savedUser;

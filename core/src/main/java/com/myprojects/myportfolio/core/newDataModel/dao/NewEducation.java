@@ -101,12 +101,12 @@ public class NewEducation extends SlugDao {
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
-    // When creating a education, we can specify a list of ALREADY EXISTING skills
-    // When updating a education, we can also update the skills.
+    // When creating an education, we can specify a list of ALREADY EXISTING skills
+    // When updating an education, we can also update the skills.
     //    - If a skill is already in the list, nothing happens
     //    - If a skill is not in the list, it is added
     //    - If a skill is in the list but not in the new list, it is removed (ATTENTION)
-    // When deleting a education, the relationship is removed
+    // When deleting an education, the relationship is removed
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "new_education_skills",
