@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.newDataModel.services.skills;
 
 import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewUserSkill;
+import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewUserSkillPK;
 import com.myprojects.myportfolio.core.newDataModel.repositories.UserRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.skills.SkillRepository;
 import com.myprojects.myportfolio.core.newDataModel.repositories.skills.UserSkillRepository;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Slf4j
@@ -25,6 +27,16 @@ public class UserSkillService implements UserSkillServiceI {
         this.userSkillRepository = userSkillRepository;
         this.userRepository = userRepository;
         this.skillRepository = skillRepository;
+    }
+
+    @Override
+    public NewUserSkill findById(NewUserSkillPK id) {
+        Validate.notNull(id, "Mandatory parameter is missing: id");
+        Validate.notNull(id.getUserId(), "Mandatory parameter is missing: userId");
+        Validate.notNull(id.getSkillId(), "Mandatory parameter is missing: skillId");
+
+        return userSkillRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
     }
 
     @Override
