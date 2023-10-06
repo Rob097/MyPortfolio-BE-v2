@@ -75,7 +75,7 @@ public class NewProject extends SlugDao {
     @Builder.Default
     private Set<NewStory> stories = new HashSet<>();
 
-    // When creating a project, we can specify a list of ALREADY EXISTING skills
+    // When creating a project, we can specify a list of ALREADY EXISTING skills (the ID must be present)
     // When updating a project, we can also update the skills.
     //    - If a skill is already in the list, nothing happens
     //    - If a skill is not in the list, it is added

@@ -54,8 +54,7 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         Validate.notNull(t.getId(), fieldMissing("id"));
         checkIfEntityDoesNotExist(t.getId());
 
-        // TODO: From tests is necessary using the saveAndFlush, but from postman (controller) it doesn't seems to be necessary.
-        return repository.saveAndFlush(t);
+        return repository.save(t);
     }
 
     @Override

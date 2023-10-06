@@ -77,13 +77,13 @@ public class StoryController extends BaseController<NewStory, NewStoryDto> {
 
         for (PatchOperation operation : operations) {
             if (operation.getPath().matches("^/diary") && operation.getOp() == PatchOperation.Op.replace) {
+                NewDiary oldDiary = story.getDiary();
+                diaryService.removeStoriesFromDiary(oldDiary.getId(), new Integer[]{story.getId()});
+
                 NewDiary newDiary = diaryService.findById(Integer.parseInt(operation.getValue()));
                 newDiary.getStories().add(story);
                 story.setDiary(newDiary);
                 isToUpdate = true;
-
-                NewDiary oldDiary = story.getDiary();
-                diaryService.removeStoriesFromDiary(oldDiary.getId(), new Integer[]{story.getId()});
             } else if (operation.getPath().matches("^/project")) {
                 NewProject project = projectService.findById(Integer.parseInt(operation.getValue()));
 

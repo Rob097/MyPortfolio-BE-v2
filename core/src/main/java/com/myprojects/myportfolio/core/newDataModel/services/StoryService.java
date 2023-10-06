@@ -3,10 +3,7 @@ package com.myprojects.myportfolio.core.newDataModel.services;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
 import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
-import com.myprojects.myportfolio.core.newDataModel.repositories.DiaryRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.EducationRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.ProjectRepository;
-import com.myprojects.myportfolio.core.newDataModel.repositories.StoryRepository;
+import com.myprojects.myportfolio.core.newDataModel.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,9 +27,11 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
 
     private final EducationRepository educationRepository;
 
+    private final ExperienceRepository experienceRepository;
+
     private final UtilsServiceI utilsService;
 
-    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, UtilsServiceI utilsService) {
+    public StoryService(StoryRepository storyRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, ExperienceRepository experienceRepository, UtilsServiceI utilsService) {
         super();
         this.repository = storyRepository;
 
@@ -40,6 +39,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         this.diaryRepository = diaryRepository;
         this.projectRepository = projectRepository;
         this.educationRepository = educationRepository;
+        this.experienceRepository = experienceRepository;
         this.utilsService = utilsService;
     }
 
@@ -110,6 +110,11 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
         story.setEducations(
                 story.getEducations().stream()
                         .map(education -> educationRepository.findById(education.getId()).orElseThrow(() -> new EntityNotFoundException("No education found with id.")))
+                        .collect(Collectors.toSet())
+        );
+        story.setExperiences(
+                story.getExperiences().stream()
+                        .map(experience -> experienceRepository.findById(experience.getId()).orElseThrow(() -> new EntityNotFoundException("No experience found with id.")))
                         .collect(Collectors.toSet())
         );
     }

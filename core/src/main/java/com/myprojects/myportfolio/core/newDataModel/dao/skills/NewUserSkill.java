@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * NewUserSkill Is a composite relational entity that represents the many-to-many relationship between NewUser and NewSkill.
@@ -31,11 +32,11 @@ public class NewUserSkill implements Serializable {
     private static final long serialVersionUID = -7991529850180063512L;
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
     @Id
-    @Column(name = "skill_id")
+    @Column(name = "skill_id", nullable = false)
     private Integer skillId;
 
     @MapsId("userId")
@@ -103,4 +104,21 @@ public class NewUserSkill implements Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NewUserSkill that = (NewUserSkill) o;
+
+        if (!Objects.equals(userId, that.userId)) return false;
+        return Objects.equals(skillId, that.skillId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId != null ? userId.hashCode() : 0;
+        result = 31 * result + (skillId != null ? skillId.hashCode() : 0);
+        return result;
+    }
 }

@@ -51,23 +51,24 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
         });
 
         // Save user
-        NewUser savedUser = super.save(user);
+        super.save(user);
 
         // Save user's diaries (and story for cascade):
         user.getDiaries().forEach(diary -> {
-            if(diary.getId()==null) {
-                diary.setUser(savedUser);
+            if (diary.getId() == null) {
+                diary.setUser(user);
                 this.diaryService.save(diary);
             }
         });
 
         // Save user's skills:
         user.getSkills().forEach(skill -> {
-            skill.setUser(savedUser);
+            user.getSkills().remove(skill); // Remove the old skill from the user's list (to avoid duplicates)
+            skill.setUser(user);
             this.userSkillService.save(skill);
         });
 
-        return savedUser;
+        return user;
     }
 
     /**********************/

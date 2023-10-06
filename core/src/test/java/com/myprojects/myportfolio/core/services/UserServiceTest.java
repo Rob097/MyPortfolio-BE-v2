@@ -120,6 +120,7 @@ class UserServiceTest extends BaseTest {
             // After saving the user, hibernate would use the first level cache to retrieve the user from memory
             // instead of hitting the database again. So we need to clear the entity manager to force the next query
             // Clear the entity manager to force the next query to hit the database
+            entityManager.flush();
             entityManager.clear();
 
             // Check if the user has been saved correctly:
@@ -158,6 +159,7 @@ class UserServiceTest extends BaseTest {
             // After saving the user, hibernate would use the first level cache to retrieve the user from memory
             // instead of hitting the database again. So we need to clear the entity manager to force the next query
             // Clear the entity manager to force the next query to hit the database
+            entityManager.flush();
             entityManager.clear();
 
             // check if the user has been saved correctly:
@@ -205,6 +207,7 @@ class UserServiceTest extends BaseTest {
             this.userService.update(this.user);
 
             // Clear the entity manager to force the next query to hit the database
+            entityManager.flush();
             entityManager.clear();
 
             // Check if the user has been updated correctly:
@@ -225,6 +228,7 @@ class UserServiceTest extends BaseTest {
 
             // Save the user with relations
             userService.save(this.userWithRelations);
+            entityManager.flush();
             entityManager.clear();
 
             // Change the user
@@ -260,6 +264,7 @@ class UserServiceTest extends BaseTest {
 
             // Update the user
             this.userService.update(this.userWithRelations);
+            entityManager.flush();
             entityManager.clear();
 
             // Check if the user has been updated correctly:
@@ -291,6 +296,7 @@ class UserServiceTest extends BaseTest {
 
             // Flush the entity manager to force the next query to hit the database
             entityManager.flush();
+            entityManager.clear();
 
             // Check if the user has been deleted correctly:
             NewUser deletedUser = this.userService.findById(this.user.getId());
@@ -319,6 +325,7 @@ class UserServiceTest extends BaseTest {
 
             // Flush the entity manager to force the next query to hit the database
             entityManager.flush();
+            entityManager.clear();
 
             // Check if the user has been deleted correctly:
             try {
