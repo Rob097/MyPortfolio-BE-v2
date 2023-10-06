@@ -27,8 +27,10 @@ public class NewSkillCategory extends BaseDao {
 
     private String name;
 
-    // Skill Category can't create, update or delete skills.
-    // The bidirectional relationship is used only for reading skills internally in the BE.
+    /**
+     * The bidirectional relationship is used only for reading skills internally in the BE.
+     * The Skill Category can't create, update or delete skills.
+     */
     @OneToMany(
             mappedBy = "category",
             orphanRemoval = true,

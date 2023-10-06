@@ -5,6 +5,10 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * This class is a composite primary key for the NewUserSkill entity.
+ * It's composed of the userId and the skillId.
+ */
 @Builder
 @Getter
 @Setter

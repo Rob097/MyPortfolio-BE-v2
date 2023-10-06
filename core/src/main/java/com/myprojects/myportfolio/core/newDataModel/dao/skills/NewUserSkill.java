@@ -60,6 +60,7 @@ public class NewUserSkill implements Serializable {
         this.user = user;
         this.userId = user.getId();
     }
+
     public void setUserId(Integer userId) {
         this.userId = userId;
         this.user = NewUser.builder().id(userId).build();
@@ -69,6 +70,7 @@ public class NewUserSkill implements Serializable {
         this.skill = skill;
         this.skillId = skill.getId();
     }
+
     public void setSkillId(Integer skillId) {
         this.skillId = skillId;
         this.skill = NewSkill.builder().id(skillId).build();

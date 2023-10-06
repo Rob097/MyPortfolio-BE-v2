@@ -114,10 +114,12 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewProject> projects = new HashSet<>();
 
-    // User is the owner of the relationship.
-    // When creating or updating a user, you can't create or update educations.
-    // This is because it's not necessary. You can use the education controller to create or update educations.
-    // When deleting a user, the educations ARE DELETED because the user is the owner of the education itself.
+    /**
+     * @Owner: User is the owner of the relationship.
+     * @Create&Update: When creating or updating a user, you can't create or update educations.
+     *                 This is because it's not necessary. You can use the education controller to create or update educations.
+     * @Delete: When deleting a user, the educations ARE DELETED because the user is the owner of the education itself.
+     */
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
@@ -128,10 +130,12 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewEducation> educations = new HashSet<>();
 
-    // User is the owner of the relationship.
-    // When creating or updating a user, you can't create or update experiences.
-    // This is because it's not necessary. You can use the education controller to create or update experiences.
-    // When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
+    /**
+     * @Owner: User is the owner of the relationship.
+     * @Create&Update: When creating or updating a user, you can't create or update experiences.
+     *                 This is because it's not necessary. You can use the education controller to create or update experiences.
+     * @Delete: When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
+     */
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
@@ -142,14 +146,16 @@ public class NewUser extends SlugDao {
     @Builder.Default
     private Set<NewExperience> experiences = new HashSet<>();
 
-    // User is the owner of the relationship.
-    // When creating or updating a user, you can create or update the relation NewUserSkill.
-    //     You have to specify the skill id and, in the update, also the user id.
-    // When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
+    /**
+     * @Owner: User is the owner of the relationship.
+     * @Create&Update: When creating or updating a user, you can create or update the relation NewUserSkill.
+     *                 You have to specify the skill id and, in the update, also the user id.
+     * @Delete: When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
+     */
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = { CascadeType.MERGE, CascadeType.REMOVE },
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default

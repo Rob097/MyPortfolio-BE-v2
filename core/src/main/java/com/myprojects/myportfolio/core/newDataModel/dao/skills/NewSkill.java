@@ -26,8 +26,10 @@ public class NewSkill extends BaseDao {
 
     private String name;
 
-    // When creating or updating a Skill, you can only specify an already existing category.
-    // When deleting a skill, the category is not deleted but the relationship is deleted.
+    /**
+     * @Create&Update: When creating or updating a Skill, you can only specify an already existing category.
+     * @Delete: When deleting a skill, the category is not deleted but the relationship is deleted.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "category_id",
@@ -40,7 +42,10 @@ public class NewSkill extends BaseDao {
     @JsonBackReference
     private NewSkillCategory category;
 
-    // When creating, updating a Skill, users are ignored.
+    /**
+     * @Create&Update: When creating, updating a Skill, users are ignored.
+     * @Delete: When deleting a skill, the relationship is deleted.
+     */
     @OneToMany(
             mappedBy = "skill",
             orphanRemoval = true,
