@@ -10,7 +10,7 @@ import com.myprojects.myportfolio.dto.CoreUser;
 import com.myprojects.myportfolio.dto.SignINRequest;
 import com.myprojects.myportfolio.dto.SignINResponse;
 import com.myprojects.myportfolio.dto.SignUPRequest;
-import com.myprojects.myportfolio.mapper.DBUserMapper;
+import com.myprojects.myportfolio.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.mapper.SignUPMapper;
 import com.myprojects.myportfolio.service.AuthenticationUserService;
 import io.jsonwebtoken.Jwts;
@@ -45,7 +45,7 @@ public class AuthenticationUserController {
 
     private final SignUPMapper signUPMapper;
 
-    private final DBUserMapper dbUserMapper;
+    private final CoreUserMapper coreUserMapper;
 
     private final AuthenticationManager authenticationManager;
 
@@ -56,10 +56,10 @@ public class AuthenticationUserController {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthenticationUserController(AuthenticationUserService applicationUserService, SignUPMapper signUPMapper, DBUserMapper dbUserMapper, AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder) {
+    public AuthenticationUserController(AuthenticationUserService applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder) {
         this.applicationUserService = applicationUserService;
         this.signUPMapper = signUPMapper;
-        this.dbUserMapper = dbUserMapper;
+        this.coreUserMapper = coreUserMapper;
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
@@ -111,7 +111,7 @@ public class AuthenticationUserController {
         DBUser registeredUser = this.applicationUserService.registerUser(userToRegister);
         messages.add(new Message("User successfully registered."));
 
-        MessageResource<CoreUser> result = new MessageResource<>(dbUserMapper.map(registeredUser), messages);
+        MessageResource<CoreUser> result = new MessageResource<>(coreUserMapper.map(registeredUser), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -165,7 +165,7 @@ public class AuthenticationUserController {
             messages.add(new Message("No updates made."));
         }
 
-        MessageResource<CoreUser> result = new MessageResource<>(dbUserMapper.map(user), messages);
+        MessageResource<CoreUser> result = new MessageResource<>(coreUserMapper.map(user), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -181,7 +181,7 @@ public class AuthenticationUserController {
         this.applicationUserService.deleteUser(user);
         messages.add(new Message("User successfully deleted."));
 
-        MessageResource<CoreUser> result = new MessageResource<>(dbUserMapper.map(user), messages);
+        MessageResource<CoreUser> result = new MessageResource<>(coreUserMapper.map(user), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
