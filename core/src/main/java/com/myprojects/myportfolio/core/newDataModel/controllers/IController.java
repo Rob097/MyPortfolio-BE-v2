@@ -121,7 +121,7 @@ public abstract class IController<R> {
     }
 
     public ResponseEntity<MessageResource<R>> buildSuccessResponse(@NotNull R element, IView view, List<Message> messages) {
-        MessageResource<R> result = new MessageResource<>(serializeElement(element, view), messages);
+        MessageResource<R> result = new MessageResource<>(serializeElement(element, view, true), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -136,16 +136,20 @@ public abstract class IController<R> {
     }
 
     public ResponseEntity<MessageResources<R>> buildSuccessResponses(@NotNull Iterable<R> iterable, IView view, List<Message> messages) {
+        return this.buildSuccessResponsesOfGenericType(iterable, view, new ArrayList<>(), true);
+    }
+
+    public <C> ResponseEntity<MessageResources<C>> buildSuccessResponsesOfGenericType(@NotNull Iterable<C> iterable, IView view, List<Message> messages, boolean logErrors) {
         boolean isLast = true;
         if (iterable instanceof Slice) {
-            isLast = ((Slice<R>) iterable).isLast();
+            isLast = ((Slice<C>) iterable).isLast();
         }
 
         int count = 0;
-        List<R> content = new ArrayList<>();
-        for (R r : iterable) {
+        List<C> content = new ArrayList<>();
+        for (C r : iterable) {
             count++;
-            content.add(serializeElement(r, view));
+            content.add(serializeElement(r, view, logErrors));
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -153,7 +157,7 @@ public abstract class IController<R> {
         headers.put("IS-LAST", List.of("" + isLast));
         headers.put("NUMBER", List.of("" + count));
 
-        MessageResources<R> result = new MessageResources<>(content, messages);
+        MessageResources<C> result = new MessageResources<>(content, messages);
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
@@ -191,21 +195,20 @@ public abstract class IController<R> {
      * @param view    the view to use
      * @return the serialized element
      */
-    private R serializeElement(R element, IView view) {
-
-        Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
-        Class<R> clazz = (Class<R>) actualTypeArguments[actualTypeArguments.length - 1];
-
-        R newElement = null;
+    private <C> C serializeElement(C element, IView view, boolean logErrors) {
         try {
+            Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
+            Class<C> clazz = (Class<C>) actualTypeArguments[actualTypeArguments.length - 1];
+
             ObjectMapper mapper = createObjectMapper();
             if (view == null) view = Normal.value;
             String json = mapper.writerWithView(view.getClass()).writeValueAsString(element);
-            newElement = mapper.readValue(json, clazz);
+            return mapper.readValue(json, clazz);
         } catch (Exception e) {
-            log.error("Error in serializeElement: " + e.getMessage(), e);
+            if (logErrors)
+                log.error("Error in serializeElement: " + e.getMessage());
+            return element;
         }
-        return newElement;
     }
 
 }

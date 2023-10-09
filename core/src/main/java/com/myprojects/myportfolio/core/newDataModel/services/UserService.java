@@ -43,6 +43,11 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
     }
 
     @Override
+    public List<String> findAllSlugs() {
+        return this.userRepository.findAllSlugs().orElse(List.of());
+    }
+
+    @Override
     public NewUser save(NewUser user) {
         Validate.notNull(user, super.fieldMissing("user"));
 
