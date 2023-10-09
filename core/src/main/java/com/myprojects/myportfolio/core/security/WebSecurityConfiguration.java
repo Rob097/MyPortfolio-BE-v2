@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.core.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,8 +18,11 @@ import static org.springframework.http.HttpMethod.OPTIONS;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private JwtTokenValidation jwtTokenValidation;
+    private final JwtTokenValidation jwtTokenValidation;
+
+    public WebSecurityConfiguration(JwtTokenValidation jwtTokenValidation) {
+        this.jwtTokenValidation = jwtTokenValidation;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,7 +40,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/core/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/core/new/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/core/new/**").permitAll()
-                .antMatchers(HttpMethod.PATCH, "/api/core/new/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtTokenValidation, UsernamePasswordAuthenticationFilter.class)

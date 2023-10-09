@@ -33,7 +33,7 @@ public class JwtTokenValidation extends OncePerRequestFilter {
         try {
 
             List<String> authorities = this.jwtTokenVerifier.validateToken(request);
-            if(authorities!=null && !authorities.isEmpty()){
+            if (authorities != null && !authorities.isEmpty()) {
 
                 String username = authorities.get(0);
                 authorities.remove(0);
