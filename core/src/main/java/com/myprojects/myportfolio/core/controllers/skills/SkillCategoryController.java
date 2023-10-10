@@ -11,6 +11,7 @@ import com.myprojects.myportfolio.core.services.skills.SkillCategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +50,7 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
 
     @Override
     @PutMapping(value = "/{id}")
-    // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
     public ResponseEntity<MessageResource<SkillCategoryDto>> update(
             @PathVariable("id") Integer id,
             @Validated(OnUpdate.class) @RequestBody SkillCategoryDto entity
@@ -64,7 +65,7 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
 
     @Override
     @DeleteMapping(value = "/{id}")
-    // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
     public ResponseEntity<MessageResource<SkillCategoryDto>> delete(
             @PathVariable("id") Integer id
     ) throws Exception {

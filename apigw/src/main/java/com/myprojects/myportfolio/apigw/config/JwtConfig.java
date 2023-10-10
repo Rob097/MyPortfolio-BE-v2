@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtConfig {
 
+
     public String getAuthorizationHeader() {
         return HttpHeaders.AUTHORIZATION;
     }
@@ -13,5 +14,7 @@ public class JwtConfig {
     public String getInternalAuthorizationHeader() {
         return "Internal-Authorization";
     }
+
+    public String getTokenPrefix() {return "Bearer ";};
 
 }

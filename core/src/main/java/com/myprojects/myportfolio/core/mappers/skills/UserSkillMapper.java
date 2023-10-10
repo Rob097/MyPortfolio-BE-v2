@@ -15,5 +15,6 @@ public interface UserSkillMapper {
 
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "skill.id", source = "skillId")
+    @Mapping(target = "skill.name", source = "skill.name")
     UserSkillDto mapToDto(UserSkill dao);
 }

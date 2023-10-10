@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.apigw.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -24,6 +25,9 @@ public class AuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
         request.getHeaders();
         String authorizationHeader = request.getHeaders().getFirst(jwtConfig.getAuthorizationHeader());
+
+        if(StringUtils.isBlank(authorizationHeader))
+            authorizationHeader = jwtConfig.getTokenPrefix() + "not authenticated but coming from load balancer";
 
         // Set internal authorization header in order to make sure that every request pass through the api gateway (load balancer)
         exchange.getRequest().mutate()

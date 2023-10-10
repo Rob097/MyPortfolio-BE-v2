@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +60,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PostMapping()
-    // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
             @Validated(OnCreate.class) @RequestBody T entity
     ) throws Exception {
@@ -71,7 +72,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PutMapping(value = "/{id}")
-    // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
+    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
             @Validated(OnUpdate.class) @RequestBody T entity
@@ -94,10 +95,9 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         A entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
 
-        /* TODO reactivate PreAuthorize
         if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete), false)) {
             throw new Exception("You can't delete it because is not yours.");
-        }*/
+        }
 
         service.delete(entityToDelete);
         return this.buildSuccessResponse(mapper.mapToDto(entityToDelete));

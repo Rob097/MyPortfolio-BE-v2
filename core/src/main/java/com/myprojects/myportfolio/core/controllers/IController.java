@@ -100,7 +100,7 @@ public abstract class IController<R> {
      *
      * @param key   the key
      * @param value the value
-     * @return the specification
+     * @return the specifications
      */
     public <T> Specification<T> findByEquals(String key, Object value) {
         SpecificationsBuilder<T> builder = new SpecificationsBuilder<>();

@@ -59,9 +59,9 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         Validate.notNull(story, super.fieldMissing("story"));
         Validate.notNull(story.getDiaryId(), super.fieldMissing("Diary Id"));
 
-        // TODO: Reactivate once tests are finished.
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
-        // isDiaryOfCurrentUser(story);
+        isDiaryOfCurrentUser(story);
+
         loadStoryRelations(story);
 
         return super.save(story);
@@ -71,9 +71,8 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
     public Story update(Story story) {
         Validate.notNull(story, super.fieldMissing("story"));
 
-        // TODO: Reactivate once tests are finished.
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
-        // isDiaryOfCurrentUser(story);
+        isDiaryOfCurrentUser(story);
 
         return super.update(story);
     }
