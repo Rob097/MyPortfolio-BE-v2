@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 INSERT INTO roles (id, name)
 VALUES
     (1, 'ROLE_ADMIN'),
-    (2, 'ROLE_BASIC');
+    (2, 'ROLE_BASIC'),
+    (3, 'SYS_ADMIN')
+;
 
 -- Popola la tabella "permissions"
 INSERT INTO permissions (id, name, description)
@@ -51,7 +53,10 @@ VALUES
     (1, 1),
     (1, 2),
     (2, 1),
-    (2, 2);
+    (2, 2),
+    (3, 1),
+    (3, 2)
+;
 
 
 ##############################
@@ -67,9 +72,9 @@ ALTER TABLE experience_skills AUTO_INCREMENT = 1;
 ALTER TABLE projects AUTO_INCREMENT = 1;
 ALTER TABLE project_skills AUTO_INCREMENT = 1;
 ALTER TABLE stories AUTO_INCREMENT = 1;
-ALTER TABLE story_educations AUTO_INCREMENT = 1;
-ALTER TABLE story_experiences AUTO_INCREMENT = 1;
-ALTER TABLE story_projects AUTO_INCREMENT = 1;
+ALTER TABLE education_stories AUTO_INCREMENT = 1;
+ALTER TABLE experience_stories AUTO_INCREMENT = 1;
+ALTER TABLE project_stories AUTO_INCREMENT = 1;
 ALTER TABLE story_skills AUTO_INCREMENT = 1;
 ALTER TABLE user_skills AUTO_INCREMENT = 1;
 -- Insert new mock data into the 'skills_category' table
@@ -87,56 +92,56 @@ VALUES
     ('SQL', 3);
 
 -- Insert mock data into the 'users' table
-INSERT INTO users (address, age, cap, city, email, first_name, last_name, nation, nationality, province, sex, slug, description, phone, title)
+INSERT INTO users (created_at, updated_at, slug, address, age, cap, city, email, first_name, last_name, nation, nationality, province, sex, slug, description, phone, title)
 VALUES
-    ('123 Main St', 28, '12345', 'Milan', 'user1@example.com', 'John', 'Doe', 'Italy', 'Italian', 'MI', 'Male', 'john-doe', 'I am a software engineer with a passion for creating innovative solutions...', '+1234567890', 'Software Engineer'),
-    ('456 Elm St', 25, '54321', 'Rome', 'user2@example.com', 'Jane', 'Smith', 'Italy', 'Italian', 'RM', 'Female', 'jane-smith', 'I specialize in web development and love turning ideas into interactive websites...', '+9876543210', 'Web Developer'),
-    ('789 Oak St', 30, '67890', 'Naples', 'user3@example.com', 'Michael', 'Johnson', 'Italy', 'Italian', 'NA', 'Male', 'michael-johnson', 'I have a strong background in database management and optimization...', '+1122334455', 'Database Administrator'),
-    ('101 Pine St', 32, '11223', 'Turin', 'user4@example.com', 'Emily', 'Brown', 'Italy', 'Italian', 'TO', 'Female', 'emily-brown', 'I am passionate about UI/UX design and crafting delightful user experiences...', '+9988776655', 'UI/UX Designer');
+    (NOW(), NOW(), 'John-Doe', '123 Main St', 28, '12345', 'Milan', 'user1@example.com', 'John', 'Doe', 'Italy', 'Italian', 'MI', 'Male', 'john-doe', 'I am a software engineer with a passion for creating innovative solutions...', '+1234567890', 'Software Engineer'),
+    (NOW(), NOW(), 'Jane-Smith', '456 Elm St', 25, '54321', 'Rome', 'user2@example.com', 'Jane', 'Smith', 'Italy', 'Italian', 'RM', 'Female', 'jane-smith', 'I specialize in web development and love turning ideas into interactive websites...', '+9876543210', 'Web Developer'),
+    (NOW(), NOW(), 'Michael-Johnson', '789 Oak St', 30, '67890', 'Naples', 'user3@example.com', 'Michael', 'Johnson', 'Italy', 'Italian', 'NA', 'Male', 'michael-johnson', 'I have a strong background in database management and optimization...', '+1122334455', 'Database Administrator'),
+    (NOW(), NOW(), 'Emily-Brown', '101 Pine St', 32, '11223', 'Turin', 'user4@example.com', 'Emily', 'Brown', 'Italy', 'Italian', 'TO', 'Female', 'emily-brown', 'I am passionate about UI/UX design and crafting delightful user experiences...', '+9988776655', 'UI/UX Designer');
 
-INSERT INTO diaries (user_id)
+INSERT INTO diaries (created_at, updated_at, user_id)
 VALUES
-    (1),
-    (2),
-    (3),
-    (4);
+    (NOW(), NOW(), 1),
+    (NOW(), NOW(), 2),
+    (NOW(), NOW(), 3),
+    (NOW(), NOW(), 4);
 
 
 -- Insert new mock data into the 'educations' table with descriptions
 -- Use a random HTML description between 500 and 1500 characters for each row
-INSERT INTO educations (degree, description, school, start_date, user_id, entry_date_time)
+INSERT INTO educations (created_at, updated_at, slug, field, degree, description, school, from_date, user_id)
 VALUES
-    ('Bachelor of Science', '<h2>Computer Science</h2><p>This is a blog about my educational journey in computer science. It all began with a passion for technology and coding. I pursued my bachelor\'s degree at the University of XYZ, where I learned the fundamentals of algorithms, data structures, and software development. Throughout my academic journey, I worked on exciting projects and gained hands-on experience in programming...</p>', 'University of XYZ', '2020-09-01', 1, NOW()),
-    ('Master of Engineering', '<h2>Software Engineering</h2><p>In this blog, I delve deep into the world of software engineering. From coding challenges to team projects, I share my experiences and insights into building robust and scalable software solutions. My master\'s degree in software engineering from ABC University has equipped me with advanced knowledge and problem-solving skills...</p>', 'ABC University', '2018-09-01', 2, NOW()),
-    ('Bachelor of Computer Science', '<h2>Computer Science Journey</h2><p>My educational journey in computer science has been remarkable. I studied computer science at XYZ University, where I honed my programming skills and explored various technologies. This blog documents my path from a curious student to a proficient software engineer...</p>', 'XYZ University', '2019-08-01', 3, NOW()),
-    ('Master of Web Development', '<h2>Web Development Adventures</h2><p>My passion for web development led me to pursue a master\'s degree in this field. Throughout my studies at WebDev Institute, I learned to create stunning websites and web applications. This blog showcases my web development journey and the projects that have shaped my skills...</p>', 'WebDev Institute', '2017-09-01', 4, NOW());
+    (NOW(), NOW(), 'computer-science', 'Bachelor of Science', 'Computer Science', '<h2>Computer Science</h2><p>This is a blog about my educational journey in computer science. It all began with a passion for technology and coding. I pursued my bachelor\'s degree at the University of XYZ, where I learned the fundamentals of algorithms, data structures, and software development. Throughout my academic journey, I worked on exciting projects and gained hands-on experience in programming...</p>', 'University of XYZ', '2020-09-01', 1),
+    (NOW(), NOW(), 'software-engineering', 'Master of Engineering', 'Software Engineering', '<h2>Software Engineering</h2><p>In this blog, I delve deep into the world of software engineering. From coding challenges to team projects, I share my experiences and insights into building robust and scalable software solutions. My master\'s degree in software engineering from ABC University has equipped me with advanced knowledge and problem-solving skills...</p>', 'ABC University', '2018-09-01', 2),
+    (NOW(), NOW(), 'computer-science-journey', 'Bachelor of Computer Science', 'Computer Science', '<h2>Computer Science Journey</h2><p>My educational journey in computer science has been remarkable. I studied computer science at XYZ University, where I honed my programming skills and explored various technologies. This blog documents my path from a curious student to a proficient software engineer...</p>', 'XYZ University', '2019-08-01', 3),
+    (NOW(), NOW(), 'web-development-adventures', 'Master of Web Development', 'Web Development', '<h2>Web Development Adventures</h2><p>My passion for web development led me to pursue a master\'s degree in this field. Throughout my studies at WebDev Institute, I learned to create stunning websites and web applications. This blog showcases my web development journey and the projects that have shaped my skills...</p>', 'WebDev Institute', '2017-09-01', 4);
 
 -- Insert new mock data into the 'experiences' table with descriptions
 -- Use a random HTML description between 500 and 1500 characters for each row
-INSERT INTO experiences (description, start_date, user_id, entry_date_time)
+INSERT INTO experiences (created_at, updated_at, slug, title, description, from_date, user_id)
 VALUES
-    ('<h2>Software Developer</h2><p>My journey as a software developer has been filled with exciting projects. I\'ve learned to write clean and efficient code, collaborate with cross-functional teams, and deliver high-quality software solutions. My experience includes working on Java and Spring Boot applications, as well as React frontends...</p>', '2022-01-15', 1, NOW()),
-    ('<h2>Frontend Developer</h2><p>As a frontend developer, I\'ve had the opportunity to create user-friendly interfaces. From responsive designs to interactive web apps, I\'ve contributed to enhancing the user experience. My skills include React, Next.js, and CSS frameworks...</p>', '2021-06-01', 2, NOW()),
-    ('<h2>Database Administrator</h2><p>I have a strong background in database management and optimization. My role as a database administrator involves ensuring data integrity, performance tuning, and maintaining data security. I am proficient in SQL, database design, and cloud-based databases...</p>', '2020-03-10', 3, NOW()),
-    ('<h2>UI/UX Designer</h2><p>I am passionate about UI/UX design and crafting delightful user experiences. From wireframing to prototyping, I focus on user-centered design principles. My design toolkit includes Adobe XD, Figma, and a keen eye for detail...</p>', '2019-07-20', 4, NOW());
+    (NOW(), NOW(), 'title-of-my-first-experience', 'Title of my first experience', '<h2>Software Developer</h2><p>My journey as a software developer has been filled with exciting projects. I\'ve learned to write clean and efficient code, collaborate with cross-functional teams, and deliver high-quality software solutions. My experience includes working on Java and Spring Boot applications, as well as React frontends...</p>', '2022-01-15', 1),
+    (NOW(), NOW(), 'title-of-my-second-experience', 'Title of my second experience', '<h2>Frontend Developer</h2><p>As a frontend developer, I\'ve had the opportunity to create user-friendly interfaces. From responsive designs to interactive web apps, I\'ve contributed to enhancing the user experience. My skills include React, Next.js, and CSS frameworks...</p>', '2021-06-01', 2),
+    (NOW(), NOW(), 'title-of-my-third-experience', 'Title of my third experience', '<h2>Database Administrator</h2><p>I have a strong background in database management and optimization. My role as a database administrator involves ensuring data integrity, performance tuning, and maintaining data security. I am proficient in SQL, database design, and cloud-based databases...</p>', '2020-03-10', 3),
+    (NOW(), NOW(), 'title-of-my-fourth-experience', 'Title of my fourth experience', '<h2>UI/UX Designer</h2><p>I am passionate about UI/UX design and crafting delightful user experiences. From wireframing to prototyping, I focus on user-centered design principles. My design toolkit includes Adobe XD, Figma, and a keen eye for detail...</p>', '2019-07-20', 4);
 
 -- Insert new mock data into the 'projects' table with descriptions
 -- Use a random HTML description between 500 and 1500 characters for each row
-INSERT INTO projects (title, description, user_id, entry_date_time)
+INSERT INTO projects (created_at, updated_at, slug, title, description, user_id)
 VALUES
-    ('E-commerce Platform', '<h2>Building an E-commerce Platform</h2><p>Our team embarked on the ambitious project to build an e-commerce platform that would revolutionize online shopping. I played a key role in developing the backend using Java and Spring Boot, as well as integrating payment gateways...</p>', 1, NOW()),
-    ('Personal Portfolio', '<h2>Creating a Personal Portfolio</h2><p>Designing and developing my personal portfolio was a journey filled with creativity. I wanted to showcase my skills and projects in a visually appealing way. This project allowed me to experiment with the latest web development technologies...</p>', 2, NOW()),
-    ('Database Optimization', '<h2>Database Optimization Project</h2><p>I led a database optimization project to enhance query performance and reduce response times. This project involved SQL query tuning, indexing strategies, and implementing caching mechanisms. The result was a significant improvement in application speed...</p>', 3, NOW()),
-    ('UI Redesign', '<h2>User Interface Redesign</h2><p>Redesigning the user interface of our flagship product was an exciting challenge. I worked closely with the design team to create a modern and intuitive UI. The project included creating responsive layouts and implementing user feedback...</p>', 4, NOW());
+    (NOW(), NOW(), 'e-commerce-platform', 'E-commerce Platform', '<h2>Building an E-commerce Platform</h2><p>Our team embarked on the ambitious project to build an e-commerce platform that would revolutionize online shopping. I played a key role in developing the backend using Java and Spring Boot, as well as integrating payment gateways...</p>', 1),
+    (NOW(), NOW(), 'personal-portfolio', 'Personal Portfolio', '<h2>Creating a Personal Portfolio</h2><p>Designing and developing my personal portfolio was a journey filled with creativity. I wanted to showcase my skills and projects in a visually appealing way. This project allowed me to experiment with the latest web development technologies...</p>', 2),
+    (NOW(), NOW(), 'database-optimization', 'Database Optimization', '<h2>Database Optimization Project</h2><p>I led a database optimization project to enhance query performance and reduce response times. This project involved SQL query tuning, indexing strategies, and implementing caching mechanisms. The result was a significant improvement in application speed...</p>', 3),
+    (NOW(), NOW(), 'ui-redesign', 'UI Redesign', '<h2>User Interface Redesign</h2><p>Redesigning the user interface of our flagship product was an exciting challenge. I worked closely with the design team to create a modern and intuitive UI. The project included creating responsive layouts and implementing user feedback...</p>', 4);
 
 -- Insert new mock data into the 'stories' table with descriptions
 -- Use a random HTML description between 500 and 1500 characters for each row
-INSERT INTO stories (description, title, diary_id, entry_date_time)
+INSERT INTO stories (created_at, updated_at, slug, description, title, diary_id)
 VALUES
-    ('<h2>My Journey in Software Development</h2><p>From writing my first line of code to becoming a seasoned software developer, this is my story. Join me on this exciting journey as I share the challenges, triumphs, and lessons learned along the way...</p>', 'Software Development Journey', 1, NOW()),
-    ('<h2>Frontend Redesign Project</h2><p>Exploring the challenges and triumphs of redesigning our frontend. From wireframing to user testing, every step was crucial to success. This blog delves into the details of the project and the impact it had on our users...</p>', 'Frontend Redesign Project', 2, NOW()),
-    ('<h2>Database Optimization Story</h2><p>Optimizing our database was a critical project that improved our application\'s performance. In this blog, I share the strategies and techniques used to achieve remarkable results. Database administrators and developers will find valuable insights...</p>', 'Database Optimization Story', 3, NOW()),
-    ('<h2>Designing User-Focused Interfaces</h2><p>As a UI/UX designer, my goal is to create interfaces that users love. Join me on a journey of designing user-focused interfaces, from wireframes to interactive prototypes. This blog showcases my passion for creating visually appealing and user-friendly designs...</p>', 'UI/UX Design Chronicles', 4, NOW());
+    (NOW(), NOW(), 'software-development-journey', '<h2>My Journey in Software Development</h2><p>From writing my first line of code to becoming a seasoned software developer, this is my story. Join me on this exciting journey as I share the challenges, triumphs, and lessons learned along the way...</p>', 'Software Development Journey', 1),
+    (NOW(), NOW(), 'frontend-redesign-project', '<h2>Frontend Redesign Project</h2><p>Exploring the challenges and triumphs of redesigning our frontend. From wireframing to user testing, every step was crucial to success. This blog delves into the details of the project and the impact it had on our users...</p>', 'Frontend Redesign Project', 2),
+    (NOW(), NOW(), 'database-optimization-story', '<h2>Database Optimization Story</h2><p>Optimizing our database was a critical project that improved our application\'s performance. In this blog, I share the strategies and techniques used to achieve remarkable results. Database administrators and developers will find valuable insights...</p>', 'Database Optimization Story', 3),
+    (NOW(), NOW(), 'ui/ux-design-chronicles', '<h2>Designing User-Focused Interfaces</h2><p>As a UI/UX designer, my goal is to create interfaces that users love. Join me on a journey of designing user-focused interfaces, from wireframes to interactive prototypes. This blog showcases my passion for creating visually appealing and user-friendly designs...</p>', 'UI/UX Design Chronicles', 4);
 
 -- Insert new mock data into the 'experience_skills' table
 INSERT INTO experience_skills (experience_id, skill_id)
@@ -170,7 +175,7 @@ VALUES
     (1, 1, 2, 4); -- User 4 with skill React as the main skill
 
 -- Insert new mock data into the 'story_educations' table
-INSERT INTO story_educations (story_id, education_id)
+INSERT INTO education_stories (story_id, education_id)
 VALUES
     (1, 1),
     (2, 2),
@@ -178,7 +183,7 @@ VALUES
     (4, 4);
 
 -- Insert new mock data into the 'story_experiences' table
-INSERT INTO story_experiences (story_id, experience_id)
+INSERT INTO experience_stories (story_id, experience_id)
 VALUES
     (1, 1),
     (2, 2),
@@ -186,7 +191,7 @@ VALUES
     (4, 4);
 
 -- Insert new mock data into the 'story_projects' table
-INSERT INTO story_projects (story_id, project_id)
+INSERT INTO project_stories (story_id, project_id)
 VALUES
     (1, 1),
     (2, 2),
