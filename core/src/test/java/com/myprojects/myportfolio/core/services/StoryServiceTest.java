@@ -2,8 +2,7 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.dao.*;
-import com.myprojects.myportfolio.core.dao.*;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +27,12 @@ public class StoryServiceTest extends BaseTest {
     @Autowired
     private EntityManager entityManager;
 
-    private NewStory story;
-    private NewStory storyWithRelations;
+    private Story story;
+    private Story storyWithRelations;
 
-    private NewStory getNewStory() {
-        NewStory newStory = new NewStory();
-        newStory.setDiary(NewDiary.builder().id(1).build());
+    private Story getStory() {
+        Story newStory = new Story();
+        newStory.setDiary(Diary.builder().id(1).build());
         newStory.setTitle("Title");
         newStory.setDescription("Description");
         newStory.setFromDate(LocalDate.now());
@@ -46,37 +45,37 @@ public class StoryServiceTest extends BaseTest {
 
     @BeforeEach
     void setUp() {
-        this.story = getNewStory();
-        this.storyWithRelations = getNewStory();
+        this.story = getStory();
+        this.storyWithRelations = getStory();
 
-        Set<NewProject> projects = new HashSet<>();
-        /*NewProject project = new NewProject();
+        Set<Project> projects = new HashSet<>();
+        /*Project project = new Project();
         project.setTitle("Test Project");
         project.setDescription("Test Description");*/
-        projects.add(NewProject.builder().id(1).build());
+        projects.add(Project.builder().id(1).build());
 
-        Set<NewEducation> educations = new HashSet<>();
-        /*NewEducation education = new NewEducation();
+        Set<Education> educations = new HashSet<>();
+        /*Education education = new Education();
         education.setField("Test Field");
         education.setSchool("Test School");
         education.setDegree("Test Degree");
         education.setDescription("Test Description");*/
-        educations.add(NewEducation.builder().id(1).build());
+        educations.add(Education.builder().id(1).build());
 
-        Set<NewExperience> experiences = new HashSet<>();
-        /*NewExperience experience = new NewExperience();
+        Set<Experience> experiences = new HashSet<>();
+        /*Experience experience = new Experience();
         experience.setTitle("Test Title");
         experience.setCompanyName("Test Company");
         experience.setDescription("Test Description");
         experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);*/
-        experiences.add(NewExperience.builder().id(1).build());
+        experiences.add(Experience.builder().id(1).build());
 
-        Set<NewSkill> skills = new HashSet<>();
-        /*NewSkill newSkill = new NewSkill();
-        newSkill.setCategory(NewSkillCategory.builder().id(1).build());
+        Set<Skill> skills = new HashSet<>();
+        /*Skill newSkill = new Skill();
+        newSkill.setCategory(SkillCategory.builder().id(1).build());
         newSkill.setName("Test Skill");
         skills.add(newSkill);*/
-        NewSkill existingSkill = NewSkill.builder().id(1).build();
+        Skill existingSkill = Skill.builder().id(1).build();
         skills.add(existingSkill);
 
         this.storyWithRelations.setProjects(projects);
@@ -98,7 +97,7 @@ public class StoryServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the story has been saved correctly:
-            NewStory createdStory = this.storyService.findById(this.story.getId());
+            Story createdStory = this.storyService.findById(this.story.getId());
             assertNotNull(createdStory);
 
             // Check if the story fields are correct
@@ -128,7 +127,7 @@ public class StoryServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the story has been saved correctly:
-            NewStory createdStory = this.storyService.findById(this.storyWithRelations.getId());
+            Story createdStory = this.storyService.findById(this.storyWithRelations.getId());
             assertNotNull(createdStory);
 
             // Check if the story fields are correct
@@ -157,7 +156,7 @@ public class StoryServiceTest extends BaseTest {
             this.storyService.save(this.story);
 
             // Change the story
-            String newTitle = "New Title";
+            String newTitle = " Title";
             this.story.setTitle(newTitle);
 
             // Update the story
@@ -168,7 +167,7 @@ public class StoryServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the story has been updated correctly:
-            NewStory updatedStory = this.storyService.findById(this.story.getId());
+            Story updatedStory = this.storyService.findById(this.story.getId());
             assertNotNull(updatedStory);
             assertEquals(this.story.getTitle(), updatedStory.getTitle());
             assertEquals(newTitle, updatedStory.getTitle());
@@ -186,13 +185,13 @@ public class StoryServiceTest extends BaseTest {
             this.storyService.save(this.storyWithRelations);
 
             // Change the story
-            String newTitle = "New Title";
+            String newTitle = " Title";
             this.storyWithRelations.setTitle(newTitle);
-            this.storyWithRelations.setDiary(NewDiary.builder().id(2).build());
-            this.storyWithRelations.getProjects().add(NewProject.builder().id(2).build());
-            this.storyWithRelations.getEducations().add(NewEducation.builder().id(2).build());
-            this.storyWithRelations.getExperiences().add(NewExperience.builder().id(2).build());
-            this.storyWithRelations.getSkills().add(NewSkill.builder().id(2).build());
+            this.storyWithRelations.setDiary(Diary.builder().id(2).build());
+            this.storyWithRelations.getProjects().add(Project.builder().id(2).build());
+            this.storyWithRelations.getEducations().add(Education.builder().id(2).build());
+            this.storyWithRelations.getExperiences().add(Experience.builder().id(2).build());
+            this.storyWithRelations.getSkills().add(Skill.builder().id(2).build());
 
             // Update the story
             this.storyService.update(this.storyWithRelations);
@@ -202,7 +201,7 @@ public class StoryServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the story has been updated correctly:
-            NewStory updatedStory = this.storyService.findById(this.storyWithRelations.getId());
+            Story updatedStory = this.storyService.findById(this.storyWithRelations.getId());
             assertNotNull(updatedStory);
             assertEquals(this.storyWithRelations.getTitle(), updatedStory.getTitle());
             assertEquals(newTitle, updatedStory.getTitle());
@@ -232,7 +231,7 @@ public class StoryServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the story has been deleted correctly:
-            NewStory deletedStory = this.storyService.findById(this.story.getId());
+            Story deletedStory = this.storyService.findById(this.story.getId());
             assertNull(deletedStory);
         } catch (EntityNotFoundException e) {
             // The story has been deleted correctly
@@ -265,7 +264,7 @@ public class StoryServiceTest extends BaseTest {
 
             // Check if the story has been deleted correctly:
             try {
-                NewStory deletedStory = this.storyService.findById(this.storyWithRelations.getId());
+                Story deletedStory = this.storyService.findById(this.storyWithRelations.getId());
                 assertNull(deletedStory);
             } catch (EntityNotFoundException e) {
                 // The story has been deleted correctly

@@ -1,12 +1,12 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.dao.NewDiary;
-import com.myprojects.myportfolio.core.dao.NewExperience;
-import com.myprojects.myportfolio.core.dao.NewStory;
-import com.myprojects.myportfolio.core.dao.NewUser;
+import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dao.Experience;
+import com.myprojects.myportfolio.core.dao.Story;
+import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,11 @@ public class ExperienceServiceTest extends BaseTest {
     @Autowired
     private EntityManager entityManager;
 
-    private NewExperience experience;
-    private NewExperience experienceWithRelations;
+    private Experience experience;
+    private Experience experienceWithRelations;
 
-    private NewExperience getNewExperience() {
-        NewExperience experience = new NewExperience();
+    private Experience getExperience() {
+        Experience experience = new Experience();
         experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);
         experience.setCompanyName("Test Company");
         experience.setTitle("Test Title");
@@ -43,19 +43,19 @@ public class ExperienceServiceTest extends BaseTest {
         experience.setFromDate(LocalDate.now());
         experience.setToDate(LocalDate.now());
         experience.setDescription("Test Description");
-        experience.setUser(NewUser.builder().id(1).build());
+        experience.setUser(User.builder().id(1).build());
         return experience;
     }
 
     @BeforeEach
     void setUp() {
-        this.experience = getNewExperience();
-        this.experienceWithRelations = getNewExperience();
+        this.experience = getExperience();
+        this.experienceWithRelations = getExperience();
 
-        // Create a new object NewStory and add it to the experience
-        Set<NewStory> stories = new HashSet<>();
-        NewStory story = new NewStory();
-        story.setDiary(NewDiary.builder().id(1).build());
+        // Create a new object Story and add it to the experience
+        Set<Story> stories = new HashSet<>();
+        Story story = new Story();
+        story.setDiary(Diary.builder().id(1).build());
         story.setTitle("Test Story");
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
@@ -65,8 +65,8 @@ public class ExperienceServiceTest extends BaseTest {
         story.setSecondRelevantSection("Test Section");
         stories.add(story);
 
-        Set<NewSkill> skills = new HashSet<>();
-        NewSkill skill = new NewSkill();
+        Set<Skill> skills = new HashSet<>();
+        Skill skill = new Skill();
         skill.setId(1);
         skills.add(skill);
 
@@ -89,7 +89,7 @@ public class ExperienceServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the experience has been saved correctly:
-            NewExperience createdExperience = experienceService.findById(this.experience.getId());
+            Experience createdExperience = experienceService.findById(this.experience.getId());
             assertNotNull(createdExperience);
 
             assertEquals(this.experience.getTitle(), createdExperience.getTitle());
@@ -120,7 +120,7 @@ public class ExperienceServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the experience has been saved correctly:
-            NewExperience createdExperience = experienceService.findById(this.experienceWithRelations.getId());
+            Experience createdExperience = experienceService.findById(this.experienceWithRelations.getId());
             assertNotNull(createdExperience);
 
             assertEquals(this.experienceWithRelations.getTitle(), createdExperience.getTitle());
@@ -146,7 +146,7 @@ public class ExperienceServiceTest extends BaseTest {
             this.experienceService.save(this.experience);
 
             // Change the experience
-            String newTitle = "New Title";
+            String newTitle = " Title";
             this.experience.setTitle(newTitle);
 
             // Update the experience
@@ -157,7 +157,7 @@ public class ExperienceServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the experience has been updated correctly:
-            NewExperience updatedExperience = this.experienceService.findById(this.experience.getId());
+            Experience updatedExperience = this.experienceService.findById(this.experience.getId());
             assertNotNull(updatedExperience);
             assertEquals(this.experience.getTitle(), updatedExperience.getTitle());
             assertEquals(newTitle, updatedExperience.getTitle());
@@ -176,31 +176,31 @@ public class ExperienceServiceTest extends BaseTest {
             entityManager.clear();
 
             // Change the experience
-            String newTitle = "New Title";
+            String newTitle = " Title";
             this.experienceWithRelations.setTitle(newTitle);
 
             // Change title of first story:
-            String newStoryTitle = "New Story Title";
+            String newStoryTitle = " Story Title";
             this.experienceWithRelations.getStories().iterator().next().setTitle(newStoryTitle);
 
             // Change name of the first skill:
-            String newSkillName = "New Skill Name";
+            String newSkillName = " Skill Name";
             this.experienceWithRelations.getSkills().iterator().next().setName(newSkillName);
 
             // Add a new Story:
-            NewStory newStory = new NewStory();
-            newStory.setDiary(NewDiary.builder().id(1).build());
-            newStory.setTitle("New Story");
-            newStory.setDescription("New Description");
+            Story newStory = new Story();
+            newStory.setDiary(Diary.builder().id(1).build());
+            newStory.setTitle(" Story");
+            newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
             newStory.setIsPrimaryStory(true);
-            newStory.setFirstRelevantSection("New Section");
-            newStory.setSecondRelevantSection("New Section");
+            newStory.setFirstRelevantSection(" Section");
+            newStory.setSecondRelevantSection(" Section");
             this.experienceWithRelations.getStories().add(newStory);
 
             // Add a new existing Skill:
-            NewSkill existingSkill = new NewSkill();
+            Skill existingSkill = new Skill();
             existingSkill.setId(2);
             this.experienceWithRelations.getSkills().add(existingSkill);
 
@@ -210,7 +210,7 @@ public class ExperienceServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the experience has been updated correctly:
-            NewExperience updatedExperience = this.experienceService.findById(this.experienceWithRelations.getId());
+            Experience updatedExperience = this.experienceService.findById(this.experienceWithRelations.getId());
             assertNotNull(updatedExperience);
             assertEquals(this.experienceWithRelations.getTitle(), updatedExperience.getTitle());
             assertEquals(newTitle, updatedExperience.getTitle());
@@ -239,7 +239,7 @@ public class ExperienceServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the experience has been deleted correctly:
-            NewExperience deletedExperience = this.experienceService.findById(this.experience.getId());
+            Experience deletedExperience = this.experienceService.findById(this.experience.getId());
             assertNull(deletedExperience);
         } catch (EntityNotFoundException e) {
             // The user has been deleted correctly
@@ -267,7 +267,7 @@ public class ExperienceServiceTest extends BaseTest {
 
             // Check if the experience has been deleted correctly:
             try {
-                NewExperience deletedExperience = this.experienceService.findById(this.experienceWithRelations.getId());
+                Experience deletedExperience = this.experienceService.findById(this.experienceWithRelations.getId());
                 assertNull(deletedExperience);
             } catch (EntityNotFoundException e) {
                 // The user has been deleted correctly

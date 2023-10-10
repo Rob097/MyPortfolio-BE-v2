@@ -3,8 +3,6 @@ package com.myprojects.myportfolio.clients.utils;
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -17,15 +15,19 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 public class MyRequestInterceptor implements RequestInterceptor {
 
-    @Autowired
-    private JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig;
+
+    public MyRequestInterceptor(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     @Override
     public void apply(RequestTemplate template) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        assert requestAttributes != null;
         String authorization = requestAttributes.getRequest().getHeader(jwtConfig.getAuthorizationHeader());
         String internalAuthorization = requestAttributes.getRequest().getHeader(jwtConfig.getInternalAuthorizationHeader());
-        if(null != authorization) {
+        if (null != authorization) {
             template.header(jwtConfig.getAuthorizationHeader(), authorization);
             template.header(jwtConfig.getInternalAuthorizationHeader(), internalAuthorization);
         }

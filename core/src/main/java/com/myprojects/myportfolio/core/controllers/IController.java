@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.myprojects.myportfolio.clients.utils.UtilsConstants.DATE_FORMAT;
-import static com.myprojects.myportfolio.clients.utils.UtilsConstants.TIME_FORMAT;
-
 @Slf4j
 @SuppressWarnings({"unused", "unchecked"})
 public abstract class IController<R> {
@@ -43,6 +40,8 @@ public abstract class IController<R> {
     public final String filterOperation = "([:!<>])";
     public final String filterValue = "(.+)";
     public final String filtersSeparator = ",";
+    public final String DATE_FORMAT = "dd/MM/yyyy";
+    public final String TIME_FORMAT = "HH:mm:ss";
 
 
     /* METHODS */

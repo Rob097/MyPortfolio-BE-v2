@@ -12,7 +12,7 @@ import java.util.List;
 
 @FeignClient(
         value = "core",
-        path = "api/core/new/users"
+        path = "api/core/users"
 )
 public interface UserClient {
 

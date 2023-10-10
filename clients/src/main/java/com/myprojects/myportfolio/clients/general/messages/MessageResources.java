@@ -1,141 +1,81 @@
 package com.myprojects.myportfolio.clients.general.messages;
 
-import java.util.*;
-import java.util.stream.StreamSupport;
-
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * @author Roberto97
  * Class used to incapsulate the content returned to the FE and also the messages (IMessage).
  * This class is used for collection. For single objects call MessageResource.
- * @param <T> 
- * 
+ * @param <T>
+ *
  */
 public class MessageResources<T> extends MessageSupport implements Iterable<T> {
 
-	private final Collection<T> content;
-
-	/**
-	 * Creates an empty MessageResources instance.
-	 */
-	protected MessageResources() {
-		this(new ArrayList<T>());
-	}
+    private final Collection<T> content;
 
 
-	/**
-	 * Creates a MessageResources instance with the given content.
-	 * 
-	 * @param content must not be null.
-	 */
-	public MessageResources(Iterable<T> content) {
+    public MessageResources(Iterable<T> content, Iterable<? extends IMessage> messages) {
 
-		Assert.notNull(content, "Content must not be null");
+        Assert.notNull(content, "Content must not be null!");
 
-		this.content = new ArrayList<T>();
+        this.content = new ArrayList<>();
 
-		for (T element : content) {
-			this.content.add(element);
-		}
+        for (T element : content) {
+            this.content.add(element);
+        }
+        if (messages != null) {
+            this.add(messages);
+        }
+    }
 
-		if(StreamSupport.stream(this.content.spliterator(), false).count() == 0){
-			Message noResultFound = new Message("No results found with specified criteria.");
-			List<Message> messages = List.of(noResultFound);
-			this.add(messages);
-		}
+    /**
+     * Returns the underlying elements.
+     *
+     * @return the content will never be null.
+     */
+    public Collection<T> getContent() {
+        return Collections.unmodifiableCollection(content);
+    }
 
-	}
-	
-	/**
-	 * Creates a Resources instance with the given content and messages.
-	 * 
-	 * @param content must not be  null.
-	 * @param messages the messages to be added to the Resources.
-	 */
-	public MessageResources(Iterable<T> content, IMessage... messages) {
-		this(content, Arrays.asList(messages));
-	}
 
-	public MessageResources(Iterable<T> content, Iterable<? extends IMessage> messages) {
+    @Override
+    public Iterator<T> iterator() {
+        return content.iterator();
+    }
 
-		Assert.notNull(content, "Content must not be null!");
 
-		this.content = new ArrayList<T>();
+    @Override
+    public String toString() {
+        return String.format("MessageResources { content: %s, %s }", getContent(), super.toString());
+    }
 
-		for (T element : content) {
-			this.content.add(element);
-		}
-		if (messages!=null) {
-			this.add(messages);
-		}
-	}
 
-	/**
-	 * Creates a new MessageResources instance by wrapping the given domain class instances into a MessageResource.
-	 * 
-	 * @param content must not be null.
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends MessageResource<S>, S> MessageResources<T> wrap(Iterable<S> content) {
+    @Override
+    public boolean equals(Object obj) {
 
-		Assert.notNull(content, "Content must not be null");
-		ArrayList<T> resources = new ArrayList<T>();
+        if (obj == this) {
+            return true;
+        }
 
-		for (S element : content) {
-			resources.add((T) new MessageResource<S>(element));
-		}
+        if (obj == null || !obj.getClass().equals(getClass())) {
+            return false;
+        }
 
-		return new MessageResources<T>(resources);
-	}
+        MessageResources<?> that = (MessageResources<?>) obj;
 
-	/**
-	 * Returns the underlying elements.
-	 * 
-	 * @return the content will never be null.
-	 */
-	public Collection<T> getContent() {
-		return Collections.unmodifiableCollection(content);
-	}
+        boolean contentEqual = Objects.equals(this.content, that.content);
+        return contentEqual && super.equals(obj);
+    }
 
-	
-	@Override
-	public Iterator<T> iterator() {
-		return content.iterator();
-	}
 
-	
-	@Override
-	public String toString() {
-		return String.format("MessageResources { content: %s, %s }", getContent(), super.toString());
-	}
+    @Override
+    public int hashCode() {
 
-	
-	@Override
-	public boolean equals(Object obj) {
+        int result = super.hashCode();
+        result += content == null ? 0 : 17 * content.hashCode();
 
-		if (obj == this) {
-			return true;
-		}
-
-		if (obj == null || !obj.getClass().equals(getClass())) {
-			return false;
-		}
-
-		MessageResources<?> that = (MessageResources<?>) obj;
-
-		boolean contentEqual = this.content == null ? that.content == null : this.content.equals(that.content);
-		return contentEqual ? super.equals(obj) : false;
-	}
-
-	
-	@Override
-	public int hashCode() {
-
-		int result = super.hashCode();
-		result += content == null ? 0 : 17 * content.hashCode();
-
-		return result;
-	}
+        return result;
+    }
 }

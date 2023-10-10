@@ -5,10 +5,10 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
-import com.myprojects.myportfolio.core.dto.groups.OnCreate;
-import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
 import com.myprojects.myportfolio.core.dao.BaseDao;
 import com.myprojects.myportfolio.core.dto.BaseDto;
+import com.myprojects.myportfolio.core.dto.groups.OnCreate;
+import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
 import com.myprojects.myportfolio.core.mappers.BaseMapper;
 import com.myprojects.myportfolio.core.services.BaseServiceI;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
             @RequestParam(name = FILTERS, required = false) String filters,
             @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view,
             Pageable pageable
-    ) throws Exception {
+    ) {
         Specification<A> specifications = this.defineFilters(filters);
 
         Slice<A> entities = service.findAll(specifications, pageable);

@@ -24,7 +24,7 @@ public class SpecificationsBuilder<T> {
         }
 
         List<Specification<T>> specs = params.stream()
-                .map(CoreSpecification<T>::new)
+                .map(CustomSpecification<T>::new)
                 .collect(Collectors.toList());
 
         Specification<T> result = specs.get(0);

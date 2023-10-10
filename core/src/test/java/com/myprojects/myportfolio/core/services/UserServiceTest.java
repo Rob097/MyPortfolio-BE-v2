@@ -2,10 +2,9 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.dao.*;
-import com.myprojects.myportfolio.core.dao.*;
 import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
 import com.myprojects.myportfolio.core.dao.enums.Sex;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +28,11 @@ class UserServiceTest extends BaseTest {
     @Autowired
     private EntityManager entityManager;
 
-    private NewUser user;
-    private NewUser userWithRelations;
+    private User user;
+    private User userWithRelations;
 
-    private static NewUser getNewUser() {
-        NewUser newUser = new NewUser();
+    private static User getUser() {
+        User newUser = new User();
         newUser.setFirstName("John");
         newUser.setLastName("Doe");
         newUser.setEmail("john.doe7@fake.com");
@@ -53,48 +52,48 @@ class UserServiceTest extends BaseTest {
 
     @BeforeEach
     void setUp() {
-        this.user = getNewUser();
-        this.userWithRelations = getNewUser();
+        this.user = getUser();
+        this.userWithRelations = getUser();
 
-        Set<NewStory> stories = new HashSet<>();
-        NewStory story = new NewStory();
+        Set<Story> stories = new HashSet<>();
+        Story story = new Story();
         story.setTitle("Test Story");
         story.setDescription("Test Description");
         story.setIsPrimaryStory(true);
         stories.add(story);
 
-        Set<NewDiary> diaries = new HashSet<>();
-        NewDiary diary = new NewDiary();
+        Set<Diary> diaries = new HashSet<>();
+        Diary diary = new Diary();
         diary.setTitle("Test Diary");
         diary.setDescription("Test Description");
         diary.setIsMain(true);
         diary.setStories(stories);
         diaries.add(diary);
 
-        Set<NewProject> projects = new HashSet<>();
-        NewProject project = new NewProject();
+        Set<Project> projects = new HashSet<>();
+        Project project = new Project();
         project.setTitle("Test Project");
         project.setDescription("Test Description");
         projects.add(project);
 
-        Set<NewEducation> educations = new HashSet<>();
-        NewEducation education = new NewEducation();
+        Set<Education> educations = new HashSet<>();
+        Education education = new Education();
         education.setField("Test Field");
         education.setSchool("Test School");
         education.setDegree("Test Degree");
         education.setDescription("Test Description");
         educations.add(education);
 
-        Set<NewExperience> experiences = new HashSet<>();
-        NewExperience experience = new NewExperience();
+        Set<Experience> experiences = new HashSet<>();
+        Experience experience = new Experience();
         experience.setTitle("Test Title");
         experience.setCompanyName("Test Company");
         experience.setDescription("Test Description");
         experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);
         experiences.add(experience);
 
-        Set<NewUserSkill> skills = new HashSet<>();
-        NewUserSkill userSkill = new NewUserSkill();
+        Set<UserSkill> skills = new HashSet<>();
+        UserSkill userSkill = new UserSkill();
         userSkill.setSkillId(1);
         userSkill.setUser(this.userWithRelations);
         userSkill.setIsMain(true);
@@ -124,7 +123,7 @@ class UserServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the user has been saved correctly:
-            NewUser createdUser = this.userService.findById(this.user.getId());
+            User createdUser = this.userService.findById(this.user.getId());
             assertNotNull(createdUser);
 
             assertEquals(this.user.getFirstName(), createdUser.getFirstName());
@@ -163,7 +162,7 @@ class UserServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the user has been saved correctly:
-            NewUser createdUser = userService.findById(this.userWithRelations.getId());
+            User createdUser = userService.findById(this.userWithRelations.getId());
             assertNotNull(createdUser);
 
             assertEquals(this.userWithRelations.getFirstName(), createdUser.getFirstName());
@@ -211,7 +210,7 @@ class UserServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the user has been updated correctly:
-            NewUser updatedUser = this.userService.findById(this.user.getId());
+            User updatedUser = this.userService.findById(this.user.getId());
             assertNotNull(updatedUser);
             assertEquals(this.user.getFirstName(), updatedUser.getFirstName());
             assertEquals(newFirstName, updatedUser.getFirstName());
@@ -234,28 +233,28 @@ class UserServiceTest extends BaseTest {
             // Change the user
             String newFirstName = "Roberto";
             this.userWithRelations.setFirstName(newFirstName);
-            NewDiary newDiary = new NewDiary();
+            Diary newDiary = new Diary();
             newDiary.setTitle("Test Diary 2");
             newDiary.setDescription("Test Description 2");
             newDiary.setIsMain(false);
             this.userWithRelations.getDiaries().add(newDiary);
-            NewProject newProject = new NewProject();
+            Project newProject = new Project();
             newProject.setTitle("Test Project 2");
             newProject.setDescription("Test Description 2");
             this.userWithRelations.getProjects().add(newProject);
-            NewEducation newEducation = new NewEducation();
+            Education newEducation = new Education();
             newEducation.setField("Test Field 2");
             newEducation.setSchool("Test School 2");
             newEducation.setDegree("Test Degree 2");
             newEducation.setDescription("Test Description 2");
             this.userWithRelations.getEducations().add(newEducation);
-            NewExperience newExperience = new NewExperience();
+            Experience newExperience = new Experience();
             newExperience.setTitle("Test Title 2");
             newExperience.setCompanyName("Test Company 2");
             newExperience.setDescription("Test Description 2");
             newExperience.setEmploymentType(EmploymentTypeEnum.FULL_TIME);
             this.userWithRelations.getExperiences().add(newExperience);
-            NewUserSkill newUserSkill = new NewUserSkill();
+            UserSkill newUserSkill = new UserSkill();
             newUserSkill.setSkillId(2);
             newUserSkill.setUser(this.userWithRelations);
             newUserSkill.setIsMain(false);
@@ -268,7 +267,7 @@ class UserServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the user has been updated correctly:
-            NewUser updatedUser = this.userService.findById(this.userWithRelations.getId());
+            User updatedUser = this.userService.findById(this.userWithRelations.getId());
             assertNotNull(updatedUser);
             assertEquals(this.userWithRelations.getFirstName(), updatedUser.getFirstName());
             assertEquals(newFirstName, updatedUser.getFirstName());
@@ -299,7 +298,7 @@ class UserServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the user has been deleted correctly:
-            NewUser deletedUser = this.userService.findById(this.user.getId());
+            User deletedUser = this.userService.findById(this.user.getId());
             assertNull(deletedUser);
         } catch (EntityNotFoundException e) {
             // The user has been deleted correctly
@@ -329,7 +328,7 @@ class UserServiceTest extends BaseTest {
 
             // Check if the user has been deleted correctly:
             try {
-                NewUser deletedUser = this.userService.findById(this.userWithRelations.getId());
+                User deletedUser = this.userService.findById(this.userWithRelations.getId());
                 assertNull(deletedUser);
             } catch (EntityNotFoundException e) {
                 // The user has been deleted correctly

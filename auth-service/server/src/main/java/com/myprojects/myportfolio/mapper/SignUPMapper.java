@@ -1,6 +1,5 @@
 package com.myprojects.myportfolio.mapper;
 
-import com.myprojects.myportfolio.clients.general.Mapper;
 import com.myprojects.myportfolio.dao.DBUser;
 import com.myprojects.myportfolio.dto.SignUPRequest;
 import org.springframework.stereotype.Component;

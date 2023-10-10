@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.clients.general.specifications.CoreSpecification;
+import com.myprojects.myportfolio.clients.general.specifications.CustomSpecification;
 import com.myprojects.myportfolio.core.dao.BaseDao;
 import com.myprojects.myportfolio.core.repositories.BaseRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +16,10 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
 
     protected BaseRepository<T, Integer> repository;
 
-    protected CoreSpecification<T> specification;
+    protected CustomSpecification<T> specification;
 
     public BaseService() {
-        this.specification = new CoreSpecification<>();
+        this.specification = new CustomSpecification<>();
     }
 
     @Override

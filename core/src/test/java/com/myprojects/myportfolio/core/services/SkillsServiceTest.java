@@ -1,9 +1,9 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
-import com.myprojects.myportfolio.core.dao.skills.NewSkillCategory;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
+import com.myprojects.myportfolio.core.dao.skills.SkillCategory;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import com.myprojects.myportfolio.core.services.skills.SkillCategoryService;
 import com.myprojects.myportfolio.core.services.skills.SkillService;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
@@ -34,23 +34,23 @@ public class SkillsServiceTest extends BaseTest {
     @Autowired
     private EntityManager entityManager;
 
-    private NewSkillCategory skillCategory;
-    private NewSkill skill;
-    private NewUserSkill userSkill;
+    private SkillCategory skillCategory;
+    private Skill skill;
+    private UserSkill userSkill;
 
     @BeforeEach
     void setUp() {
-        // Create a new NewSkillCategory and assign it to this.skillCategory
-        skillCategory = new NewSkillCategory();
+        // Create a new SkillCategory and assign it to this.skillCategory
+        skillCategory = new SkillCategory();
         skillCategory.setName("Test Skill Category");
 
-        // Create a new NewSkill and assign it to this.skill
-        skill = new NewSkill();
+        // Create a new Skill and assign it to this.skill
+        skill = new Skill();
         skill.setName("Test Skill");
         skill.setCategory(skillCategory);
 
-        // Create a new NewUserSkill and assign it to this.userSkill
-        userSkill = new NewUserSkill();
+        // Create a new UserSkill and assign it to this.userSkill
+        userSkill = new UserSkill();
         userSkill.setUserId(1);
         userSkill.setSkill(skill);
         userSkill.setIsMain(true);
@@ -62,17 +62,17 @@ public class SkillsServiceTest extends BaseTest {
 
         try {
 
-            NewSkillCategory savedCategory = this.skillCategoryService.save(this.skillCategory);
+            SkillCategory savedCategory = this.skillCategoryService.save(this.skillCategory);
             assertNotNull(savedCategory);
             assertNotNull(savedCategory.getId());
 
             this.skill.setCategory(savedCategory);
-            NewSkill savedSkill = this.skillsService.save(this.skill);
+            Skill savedSkill = this.skillsService.save(this.skill);
             assertNotNull(savedSkill);
             assertNotNull(savedSkill.getId());
 
             this.userSkill.setSkill(savedSkill);
-            NewUserSkill savedUserSkill = this.userSkillService.save(this.userSkill);
+            UserSkill savedUserSkill = this.userSkillService.save(this.userSkill);
             assertNotNull(savedUserSkill);
             assertNotNull(savedUserSkill.getId());
             assertNotNull(savedUserSkill.getId().getUserId());
@@ -89,15 +89,15 @@ public class SkillsServiceTest extends BaseTest {
 
         try {
 
-            NewSkillCategory savedCategory = this.skillCategoryService.save(this.skillCategory);
+            SkillCategory savedCategory = this.skillCategoryService.save(this.skillCategory);
             this.skill.setCategory(savedCategory);
-            NewSkill savedSkill = this.skillsService.save(this.skill);
+            Skill savedSkill = this.skillsService.save(this.skill);
             this.userSkill.setSkill(savedSkill);
-            NewUserSkill savedUserSkill = this.userSkillService.save(this.userSkill);
+            UserSkill savedUserSkill = this.userSkillService.save(this.userSkill);
 
             // Update the skill category
             savedCategory.setName("Updated Test Skill Category");
-            NewSkillCategory updatedCategory = this.skillCategoryService.update(savedCategory);
+            SkillCategory updatedCategory = this.skillCategoryService.update(savedCategory);
             assertNotNull(updatedCategory);
             assertNotNull(updatedCategory.getId());
             assertNotNull(updatedCategory.getName());
@@ -105,7 +105,7 @@ public class SkillsServiceTest extends BaseTest {
 
             // Update the skill
             savedSkill.setName("Updated Test Skill");
-            NewSkill updatedSkill = this.skillsService.update(savedSkill);
+            Skill updatedSkill = this.skillsService.update(savedSkill);
             assertNotNull(updatedSkill);
             assertNotNull(updatedSkill.getId());
             assertNotNull(updatedSkill.getName());
@@ -113,7 +113,7 @@ public class SkillsServiceTest extends BaseTest {
 
             // Update the user skill
             savedUserSkill.setIsMain(false);
-            NewUserSkill updatedUserSkill = this.userSkillService.update(savedUserSkill);
+            UserSkill updatedUserSkill = this.userSkillService.update(savedUserSkill);
             assertNotNull(updatedUserSkill);
             assertNotNull(updatedUserSkill.getId());
             assertNotNull(updatedUserSkill.getId().getUserId());

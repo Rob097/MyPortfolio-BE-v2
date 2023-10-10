@@ -1,11 +1,11 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.dao.NewDiary;
-import com.myprojects.myportfolio.core.dao.NewProject;
-import com.myprojects.myportfolio.core.dao.NewStory;
-import com.myprojects.myportfolio.core.dao.NewUser;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dao.Project;
+import com.myprojects.myportfolio.core.dao.Story;
+import com.myprojects.myportfolio.core.dao.User;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +30,26 @@ public class ProjectServiceTest extends BaseTest {
     @Autowired
     private EntityManager entityManager;
 
-    private NewProject project;
-    private NewProject projectWithRelations;
+    private Project project;
+    private Project projectWithRelations;
 
-    private NewProject getNewProject() {
-        NewProject project = new NewProject();
+    private Project getProject() {
+        Project project = new Project();
         project.setTitle("Test Project");
         project.setDescription("Test Description");
-        project.setUser(NewUser.builder().id(1).build());
+        project.setUser(User.builder().id(1).build());
         return project;
     }
 
     @BeforeEach
     void setUp() {
-        this.project = getNewProject();
-        this.projectWithRelations = getNewProject();
+        this.project = getProject();
+        this.projectWithRelations = getProject();
 
-        // Create a new object NewStory and add it to the project
-        Set<NewStory> stories = new HashSet<>();
-        NewStory story = new NewStory();
-        story.setDiary(NewDiary.builder().id(1).build());
+        // Create a new object Story and add it to the project
+        Set<Story> stories = new HashSet<>();
+        Story story = new Story();
+        story.setDiary(Diary.builder().id(1).build());
         story.setTitle("Test Story");
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
@@ -59,8 +59,8 @@ public class ProjectServiceTest extends BaseTest {
         story.setSecondRelevantSection("Test Section");
         stories.add(story);
 
-        Set<NewSkill> skills = new HashSet<>();
-        NewSkill skill = new NewSkill();
+        Set<Skill> skills = new HashSet<>();
+        Skill skill = new Skill();
         skill.setId(1);
         skills.add(skill);
 
@@ -83,7 +83,7 @@ public class ProjectServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the project has been saved correctly:
-            NewProject createdProject = projectService.findById(this.project.getId());
+            Project createdProject = projectService.findById(this.project.getId());
             assertNotNull(createdProject);
 
             assertEquals(this.project.getTitle(), createdProject.getTitle());
@@ -109,7 +109,7 @@ public class ProjectServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the project has been saved correctly:
-            NewProject createdProject = projectService.findById(this.projectWithRelations.getId());
+            Project createdProject = projectService.findById(this.projectWithRelations.getId());
             assertNotNull(createdProject);
 
             assertEquals(this.projectWithRelations.getTitle(), createdProject.getTitle());
@@ -130,7 +130,7 @@ public class ProjectServiceTest extends BaseTest {
             this.projectService.save(this.project);
 
             // Change the project
-            String newTitle = "New Title";
+            String newTitle = " Title";
             this.project.setTitle(newTitle);
 
             // Update the project
@@ -141,7 +141,7 @@ public class ProjectServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the project has been updated correctly:
-            NewProject updatedProject = this.projectService.findById(this.project.getId());
+            Project updatedProject = this.projectService.findById(this.project.getId());
             assertNotNull(updatedProject);
             assertEquals(this.project.getTitle(), updatedProject.getTitle());
             assertEquals(newTitle, updatedProject.getTitle());
@@ -160,31 +160,31 @@ public class ProjectServiceTest extends BaseTest {
             entityManager.clear();
 
             // Change the project
-            String newTitle = "New Title";
+            String newTitle = " Title";
             this.projectWithRelations.setTitle(newTitle);
 
             // Change title of first story:
-            String newStoryTitle = "New Story Title";
+            String newStoryTitle = " Story Title";
             this.projectWithRelations.getStories().iterator().next().setTitle(newStoryTitle);
 
             // Change name of the first skill:
-            String newSkillName = "New Skill Name";
+            String newSkillName = " Skill Name";
             this.projectWithRelations.getSkills().iterator().next().setName(newSkillName);
 
             // Add a new Story:
-            NewStory newStory = new NewStory();
-            newStory.setDiary(NewDiary.builder().id(1).build());
-            newStory.setTitle("New Story");
-            newStory.setDescription("New Description");
+            Story newStory = new Story();
+            newStory.setDiary(Diary.builder().id(1).build());
+            newStory.setTitle(" Story");
+            newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
             newStory.setIsPrimaryStory(true);
-            newStory.setFirstRelevantSection("New Section");
-            newStory.setSecondRelevantSection("New Section");
+            newStory.setFirstRelevantSection(" Section");
+            newStory.setSecondRelevantSection(" Section");
             this.projectWithRelations.getStories().add(newStory);
 
             // Add a new existing Skill:
-            NewSkill existingSkill = new NewSkill();
+            Skill existingSkill = new Skill();
             existingSkill.setId(2);
             this.projectWithRelations.getSkills().add(existingSkill);
 
@@ -194,7 +194,7 @@ public class ProjectServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the project has been updated correctly:
-            NewProject updatedProject = this.projectService.findById(this.projectWithRelations.getId());
+            Project updatedProject = this.projectService.findById(this.projectWithRelations.getId());
             assertNotNull(updatedProject);
             assertEquals(this.projectWithRelations.getTitle(), updatedProject.getTitle());
             assertEquals(newTitle, updatedProject.getTitle());
@@ -223,7 +223,7 @@ public class ProjectServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the project has been deleted correctly:
-            NewProject deletedProject = this.projectService.findById(this.project.getId());
+            Project deletedProject = this.projectService.findById(this.project.getId());
             assertNull(deletedProject);
         } catch (EntityNotFoundException e) {
             // The user has been deleted correctly
@@ -251,7 +251,7 @@ public class ProjectServiceTest extends BaseTest {
 
             // Check if the project has been deleted correctly:
             try {
-                NewProject deletedProject = this.projectService.findById(this.projectWithRelations.getId());
+                Project deletedProject = this.projectService.findById(this.projectWithRelations.getId());
                 assertNull(deletedProject);
             } catch (EntityNotFoundException e) {
                 // The user has been deleted correctly

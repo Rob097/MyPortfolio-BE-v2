@@ -1,4 +1,4 @@
-package com.myprojects.myportfolio.clients.general;
+package com.myprojects.myportfolio.mapper;
 
 public interface Mapper<T, Z> {
 

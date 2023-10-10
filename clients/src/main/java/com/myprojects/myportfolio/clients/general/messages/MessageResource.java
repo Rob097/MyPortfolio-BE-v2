@@ -1,96 +1,90 @@
 package com.myprojects.myportfolio.clients.general.messages;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
+
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.springframework.util.Assert;
+import java.util.Objects;
 
 
 /**
  * @author Roberto97
  * Class used to incapsulate the content returned to the FE and also the messages (IMessage).
  * This class is used for single objects. For collection call MessageResources.
- * @param <T> 
- * 
+ * @param <T>
+ *
  */
-public class MessageResource<T> extends MessageSupport{
+@Getter
+@NoArgsConstructor
+public class MessageResource<T> extends MessageSupport {
 
-	/**
-	 * Content returned to FE. It could be of any type as long as is not a collection 
-	 */
-	private final T content;
-	
-	
-	/**
-	 * Creates an empty Resource.
-	 */
-	MessageResource() {
-		this.content = null;
-	}
+    /**
+     * Content returned to FE. It could be of any type as long as is not a collection
+     * -- GETTER --
+     *  Returns the underlying entity.
+     *
 
-	/**
-	 * Creates a new Resource with the given content and messages.
-	 * 
-	 * @param content must not be null.
-	 * @param messages the messages to add to the Resource.
-	 */
-	public MessageResource(T content, IMessage... messages) {
-		this(content, Arrays.asList(messages));
-	}
+     */
+    private T content;
 
-	public MessageResource(T content, Iterable<? extends IMessage> messages) {
 
-		//Assert.notNull(content, "Content must not be null!");
-		Assert.isTrue((content==null || !(content instanceof Collection)), "Content must not be a collection! Use Resources instead!");
-		this.content = content;
-		this.add(messages);
-	}
+    /**
+     * Creates a new Resource with the given content and messages.
+     *
+     * @param content must not be null.
+     * @param messages the messages to add to the Resource.
+     */
+    public MessageResource(T content, IMessage... messages) {
+        this(content, Arrays.asList(messages));
+    }
+
+    public MessageResource(T content, Iterable<? extends IMessage> messages) {
+
+        //Assert.notNull(content, "Content must not be null!");
+        Assert.isTrue((!(content instanceof Collection)), "Content must not be a collection! Use Resources instead!");
+        this.content = content;
+        this.add(messages);
+    }
 
     public MessageResource(T content) {
 //    	Assert.notNull(content, "Content must not be null!");
-		Assert.isTrue((content==null || !(content instanceof Collection)), "Content must not be a collection! Use MessageResources instead!");
-		this.content = content;
+        Assert.isTrue((!(content instanceof Collection)), "Content must not be a collection! Use MessageResources instead!");
+        this.content = content;
     }
-    
-    /**
-	 * Returns the underlying entity.
-	 * 
-	 * @return the content
-	 */
-	public T getContent() {
-		return content;
-	}
 
-	
-	@Override
-	public String toString() {
-		return String.format("MessageResource { content: %s, %s }", getContent(), super.toString());
-	}
 
-	
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public String toString() {
+        return String.format("MessageResource { content: %s, %s }", getContent(), super.toString());
+    }
 
-		if (this == obj) {
-			return true;
-		}
 
-		if (obj == null || !obj.getClass().equals(getClass())) {
-			return false;
-		}
+    @Override
+    public boolean equals(Object obj) {
 
-		MessageResource<?> that = (MessageResource<?>) obj;
+        if (this == obj) {
+            return true;
+        }
 
-		boolean contentEqual = this.content == null ? that.content == null : this.content.equals(that.content);
-		return contentEqual ? super.equals(obj) : false;
-	}
+        if (obj == null || !obj.getClass().equals(getClass())) {
+            return false;
+        }
 
-	
-	@Override
-	public int hashCode() {
+        MessageResource<?> that = (MessageResource<?>) obj;
 
-		int result = super.hashCode();
-		result += content == null ? 0 : 17 * content.hashCode();
-		return result;
-	}
+        boolean contentEqual = Objects.equals(this.content, that.content);
+        return contentEqual && super.equals(obj);
+    }
+
+
+    @Override
+    public int hashCode() {
+
+        int result = super.hashCode();
+        result += content == null ? 0 : 17 * content.hashCode();
+        return result;
+    }
 }

@@ -1,11 +1,11 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.dao.NewDiary;
-import com.myprojects.myportfolio.core.dao.NewEducation;
-import com.myprojects.myportfolio.core.dao.NewStory;
-import com.myprojects.myportfolio.core.dao.NewUser;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dao.Education;
+import com.myprojects.myportfolio.core.dao.Story;
+import com.myprojects.myportfolio.core.dao.User;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ public class EducationServiceTest extends BaseTest {
     @Autowired
     private EntityManager entityManager;
 
-    private NewEducation education;
-    private NewEducation educationWithRelations;
+    private Education education;
+    private Education educationWithRelations;
 
-    private NewEducation getNewEducation() {
-        NewEducation education = new NewEducation();
+    private Education getEducation() {
+        Education education = new Education();
         education.setField("Test Field");
         education.setDegree("Test Degree");
         education.setSchool("Test School");
@@ -42,19 +42,19 @@ public class EducationServiceTest extends BaseTest {
         education.setToDate(LocalDate.now());
         education.setGrade(105d);
         education.setDescription("Test Description");
-        education.setUser(NewUser.builder().id(1).build());
+        education.setUser(User.builder().id(1).build());
         return education;
     }
 
     @BeforeEach
     void setUp() {
-        this.education = getNewEducation();
-        this.educationWithRelations = getNewEducation();
+        this.education = getEducation();
+        this.educationWithRelations = getEducation();
 
-        // Create a new object NewStory and add it to the education
-        Set<NewStory> stories = new HashSet<>();
-        NewStory story = new NewStory();
-        story.setDiary(NewDiary.builder().id(1).build());
+        // Create a new object Story and add it to the education
+        Set<Story> stories = new HashSet<>();
+        Story story = new Story();
+        story.setDiary(Diary.builder().id(1).build());
         story.setTitle("Test Story");
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
@@ -64,8 +64,8 @@ public class EducationServiceTest extends BaseTest {
         story.setSecondRelevantSection("Test Section");
         stories.add(story);
 
-        Set<NewSkill> skills = new HashSet<>();
-        NewSkill skill = new NewSkill();
+        Set<Skill> skills = new HashSet<>();
+        Skill skill = new Skill();
         skill.setId(1);
         skills.add(skill);
 
@@ -88,7 +88,7 @@ public class EducationServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the education has been saved correctly:
-            NewEducation createdEducation = educationService.findById(this.education.getId());
+            Education createdEducation = educationService.findById(this.education.getId());
             assertNotNull(createdEducation);
 
             assertEquals(this.education.getField(), createdEducation.getField());
@@ -119,7 +119,7 @@ public class EducationServiceTest extends BaseTest {
             entityManager.clear();
 
             // check if the education has been saved correctly:
-            NewEducation createdEducation = educationService.findById(this.educationWithRelations.getId());
+            Education createdEducation = educationService.findById(this.educationWithRelations.getId());
             assertNotNull(createdEducation);
 
             assertEquals(this.educationWithRelations.getField(), createdEducation.getField());
@@ -145,7 +145,7 @@ public class EducationServiceTest extends BaseTest {
             this.educationService.save(this.education);
 
             // Change the education
-            String newSchool = "New School";
+            String newSchool = " School";
             this.education.setSchool(newSchool);
 
             // Update the education
@@ -156,7 +156,7 @@ public class EducationServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the education has been updated correctly:
-            NewEducation updatedEducation = this.educationService.findById(this.education.getId());
+            Education updatedEducation = this.educationService.findById(this.education.getId());
             assertNotNull(updatedEducation);
             assertEquals(this.education.getSchool(), updatedEducation.getSchool());
             assertEquals(newSchool, updatedEducation.getSchool());
@@ -175,31 +175,31 @@ public class EducationServiceTest extends BaseTest {
             entityManager.clear();
 
             // Change the education
-            String newSchool = "New School";
+            String newSchool = " School";
             this.educationWithRelations.setSchool(newSchool);
 
             // Change title of first story:
-            String newStoryTitle = "New Story Title";
+            String newStoryTitle = " Story Title";
             this.educationWithRelations.getStories().iterator().next().setTitle(newStoryTitle);
 
             // Change name of the first skill:
-            String newSkillName = "New Skill Name";
+            String newSkillName = " Skill Name";
             this.educationWithRelations.getSkills().iterator().next().setName(newSkillName);
 
             // Add a new Story:
-            NewStory newStory = new NewStory();
-            newStory.setDiary(NewDiary.builder().id(1).build());
-            newStory.setTitle("New Story");
-            newStory.setDescription("New Description");
+            Story newStory = new Story();
+            newStory.setDiary(Diary.builder().id(1).build());
+            newStory.setTitle(" Story");
+            newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
             newStory.setIsPrimaryStory(true);
-            newStory.setFirstRelevantSection("New Section");
-            newStory.setSecondRelevantSection("New Section");
+            newStory.setFirstRelevantSection(" Section");
+            newStory.setSecondRelevantSection(" Section");
             this.educationWithRelations.getStories().add(newStory);
 
             // Add a new existing Skill:
-            NewSkill existingSkill = new NewSkill();
+            Skill existingSkill = new Skill();
             existingSkill.setId(2);
             this.educationWithRelations.getSkills().add(existingSkill);
 
@@ -209,7 +209,7 @@ public class EducationServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the education has been updated correctly:
-            NewEducation updatedEducation = this.educationService.findById(this.educationWithRelations.getId());
+            Education updatedEducation = this.educationService.findById(this.educationWithRelations.getId());
             assertNotNull(updatedEducation);
             assertEquals(this.educationWithRelations.getSchool(), updatedEducation.getSchool());
             assertEquals(newSchool, updatedEducation.getSchool());
@@ -238,7 +238,7 @@ public class EducationServiceTest extends BaseTest {
             entityManager.clear();
 
             // Check if the education has been deleted correctly:
-            NewEducation deletedEducation = this.educationService.findById(this.education.getId());
+            Education deletedEducation = this.educationService.findById(this.education.getId());
             assertNull(deletedEducation);
         } catch (EntityNotFoundException e) {
             // The user has been deleted correctly
@@ -266,7 +266,7 @@ public class EducationServiceTest extends BaseTest {
 
             // Check if the education has been deleted correctly:
             try {
-                NewEducation deletedEducation = this.educationService.findById(this.educationWithRelations.getId());
+                Education deletedEducation = this.educationService.findById(this.educationWithRelations.getId());
                 assertNull(deletedEducation);
             } catch (EntityNotFoundException e) {
                 // The user has been deleted correctly

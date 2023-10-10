@@ -3,7 +3,6 @@ package com.myprojects.myportfolio.clients.general.specifications;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -15,7 +14,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CoreSpecification<T>  implements Specification<T> {
+public class CustomSpecification<T> implements Specification<T> {
 
     private QueryDTO criteria;
 
@@ -25,7 +24,7 @@ public class CoreSpecification<T>  implements Specification<T> {
 
             Expression<T> rootExpression;
 
-            if(criteria.getKey().contains(".")) {
+            if (criteria.getKey().contains(".")) {
                 String childTable = criteria.getKey().substring(0, criteria.getKey().indexOf("."));
                 String childField = criteria.getKey().substring(criteria.getKey().indexOf(".") + 1);
                 rootExpression = colJoin(root, childTable).get(childField);
@@ -40,7 +39,7 @@ public class CoreSpecification<T>  implements Specification<T> {
                 if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
-                // EveryThing else
+                    // EveryThing else
                 } else {
                     return criteriaBuilder.greaterThanOrEqualTo(
                             rootExpression.as(String.class), criteria.getValue().toString());
@@ -54,7 +53,7 @@ public class CoreSpecification<T>  implements Specification<T> {
                 if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
-                // EveryThing else
+                    // EveryThing else
                 } else {
                     return criteriaBuilder.lessThanOrEqualTo(
                             rootExpression.as(String.class), criteria.getValue().toString());
@@ -70,19 +69,19 @@ public class CoreSpecification<T>  implements Specification<T> {
                     String newValue = ((String) criteria.getValue()).replace("*", "%");
                     return criteriaBuilder.like(rootExpression.as(String.class), newValue);
 
-                // LocalDateTime
+                    // LocalDateTime
                 } else if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
-                // Boolean
+                    // Boolean
                 } else if (rootExpression.getJavaType() == Boolean.class) {
-                    if(criteria.getValue().equals("true")) {
+                    if (criteria.getValue().equals("true")) {
                         return criteriaBuilder.isTrue(rootExpression.as(Boolean.class));
                     } else {
                         return criteriaBuilder.isFalse(rootExpression.as(Boolean.class));
                     }
 
-                // EveryThing else
+                    // EveryThing else
                 } else {
                     return criteriaBuilder.equal(rootExpression, criteria.getValue());
                 }
@@ -97,19 +96,19 @@ public class CoreSpecification<T>  implements Specification<T> {
                     String newValue = ((String) criteria.getValue()).replace("*", "%");
                     return criteriaBuilder.notLike(rootExpression.as(String.class), newValue);
 
-                // LocalDateTime
+                    // LocalDateTime
                 } else if (rootExpression.getJavaType() == LocalDateTime.class) {
                     return this.checkDates(root, criteriaBuilder, criteria.getOperation());
 
-                // Boolean
+                    // Boolean
                 } else if (rootExpression.getJavaType() == Boolean.class) {
-                    if(criteria.getValue().equals("true")) {
+                    if (criteria.getValue().equals("true")) {
                         return criteriaBuilder.isFalse(rootExpression.as(Boolean.class));
                     } else {
                         return criteriaBuilder.isTrue(rootExpression.as(Boolean.class));
                     }
 
-                // EveryThing else
+                    // EveryThing else
                 } else {
                     return criteriaBuilder.notEqual(rootExpression, criteria.getValue());
                 }
@@ -136,7 +135,7 @@ public class CoreSpecification<T>  implements Specification<T> {
         Predicate predicate = null;
 
         // Check if we need to compare truncated dates
-        if(localDateTime.getHour()==0 && localDateTime.getMinute()==0 && localDateTime.getSecond()==0){
+        if (localDateTime.getHour() == 0 && localDateTime.getMinute() == 0 && localDateTime.getSecond() == 0) {
             dateExpr = criteriaBuilder.function("DATE", Date.class, rootExpression).as(Date.class);
         } else {
             dateExpr = criteriaBuilder.function("", Date.class, rootExpression).as(Date.class);
@@ -153,7 +152,7 @@ public class CoreSpecification<T>  implements Specification<T> {
 
     }
 
-    private <R> Join<T,R> colJoin(Root<T> root, String child){
+    private <R> Join<T, R> colJoin(Root<T> root, String child) {
         return root.join(child);
     }
 
