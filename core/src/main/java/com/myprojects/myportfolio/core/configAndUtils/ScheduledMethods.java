@@ -16,18 +16,16 @@ public class ScheduledMethods {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private SessionFactory hibernateFactory;
-
     /** Evicts all second level cache hibernate entities. */
     @Scheduled(cron = "${scheduled-cron-expression.cache-eviction}")
     public void evict2ndLevelCache() {
         try {
             log.info("Evicting All Entities from 2nd level cache.");
             Session session = entityManager.unwrap(Session.class);
-            hibernateFactory = session.getSessionFactory();
+            SessionFactory hibernateFactory = session.getSessionFactory();
             hibernateFactory.getCache().evictAll();
         } catch (Exception e) {
-            log.error("SessionController", "evict2ndLevelCache", "Error evicting 2nd level hibernate cache entities: ", e);
+            log.error("Error evicting 2nd level hibernate cache entities: ", e);
         }
     }
 

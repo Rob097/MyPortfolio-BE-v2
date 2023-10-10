@@ -1,13 +1,12 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewExperience;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
-import com.myprojects.myportfolio.core.newDataModel.dao.enums.EmploymentTypeEnum;
-import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewSkill;
-import com.myprojects.myportfolio.core.newDataModel.services.ExperienceService;
+import com.myprojects.myportfolio.core.dao.NewDiary;
+import com.myprojects.myportfolio.core.dao.NewExperience;
+import com.myprojects.myportfolio.core.dao.NewStory;
+import com.myprojects.myportfolio.core.dao.NewUser;
+import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
+import com.myprojects.myportfolio.core.dao.skills.NewSkill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,9 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewDiary;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewStory;
-import com.myprojects.myportfolio.core.newDataModel.dao.NewUser;
-import com.myprojects.myportfolio.core.newDataModel.services.DiaryServiceI;
+import com.myprojects.myportfolio.core.dao.NewDiary;
+import com.myprojects.myportfolio.core.dao.NewStory;
+import com.myprojects.myportfolio.core.dao.NewUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

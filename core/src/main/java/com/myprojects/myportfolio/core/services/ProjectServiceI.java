@@ -1,0 +1,10 @@
+package com.myprojects.myportfolio.core.services;
+
+import com.myprojects.myportfolio.core.dao.NewProject;
+import org.springframework.data.jpa.domain.Specification;
+
+public interface ProjectServiceI extends BaseServiceI<NewProject> {
+
+    NewProject findBy(Specification<NewProject> specification);
+
+}

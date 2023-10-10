@@ -1,12 +1,12 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewSkill;
-import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewSkillCategory;
-import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewUserSkill;
-import com.myprojects.myportfolio.core.newDataModel.services.skills.SkillCategoryService;
-import com.myprojects.myportfolio.core.newDataModel.services.skills.SkillService;
-import com.myprojects.myportfolio.core.newDataModel.services.skills.UserSkillService;
+import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.NewSkillCategory;
+import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
+import com.myprojects.myportfolio.core.services.skills.SkillCategoryService;
+import com.myprojects.myportfolio.core.services.skills.SkillService;
+import com.myprojects.myportfolio.core.services.skills.UserSkillService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

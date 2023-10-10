@@ -1,49 +1,37 @@
 package com.myprojects.myportfolio.core.configAndUtils;
 
-import com.myprojects.myportfolio.core.newDataModel.dao.*;
-import com.myprojects.myportfolio.core.newDataModel.dto.*;
-import com.myprojects.myportfolio.core.newDataModel.repositories.*;
+import com.myprojects.myportfolio.core.dao.*;
+import com.myprojects.myportfolio.core.dto.*;
+import com.myprojects.myportfolio.core.repositories.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.text.Normalizer;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
 public class UtilsService implements UtilsServiceI {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private DiaryRepository diaryRepository;
+    private final DiaryRepository diaryRepository;
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
-    @Autowired
-    private EducationRepository educationRepository;
+    private final EducationRepository educationRepository;
 
-    @Autowired
-    private ExperienceRepository experienceRepository;
+    private final ExperienceRepository experienceRepository;
 
-    @Autowired
-    private StoryRepository storyRepository;
+    private final StoryRepository storyRepository;
 
-    private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");
-    private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
-
-    @Override
-    public String toSlug(String input) {
-        String nowhitespace = WHITESPACE.matcher(input).replaceAll("-");
-        String normalized = Normalizer.normalize(nowhitespace, Normalizer.Form.NFD);
-        String slug = NONLATIN.matcher(normalized).replaceAll("");
-        return slug.toLowerCase(Locale.ENGLISH);
+    public UtilsService(UserRepository userRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, ExperienceRepository experienceRepository, StoryRepository storyRepository) {
+        this.userRepository = userRepository;
+        this.diaryRepository = diaryRepository;
+        this.projectRepository = projectRepository;
+        this.educationRepository = educationRepository;
+        this.experienceRepository = experienceRepository;
+        this.storyRepository = storyRepository;
     }
 
     /**

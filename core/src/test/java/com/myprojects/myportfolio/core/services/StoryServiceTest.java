@@ -1,9 +1,9 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
-import com.myprojects.myportfolio.core.newDataModel.dao.*;
-import com.myprojects.myportfolio.core.newDataModel.dao.skills.NewSkill;
-import com.myprojects.myportfolio.core.newDataModel.services.StoryServiceI;
+import com.myprojects.myportfolio.core.dao.*;
+import com.myprojects.myportfolio.core.dao.*;
+import com.myprojects.myportfolio.core.dao.skills.NewSkill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
