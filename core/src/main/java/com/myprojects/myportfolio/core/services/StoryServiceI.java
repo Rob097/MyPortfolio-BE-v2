@@ -1,10 +1,10 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.core.dao.NewStory;
+import com.myprojects.myportfolio.core.dao.Story;
 import org.springframework.data.jpa.domain.Specification;
 
-public interface StoryServiceI extends BaseServiceI<NewStory> {
+public interface StoryServiceI extends BaseServiceI<Story> {
 
-    NewStory findBy(Specification<NewStory> specification);
+    Story findBy(Specification<Story> specification);
 
 }

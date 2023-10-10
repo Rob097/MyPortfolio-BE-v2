@@ -16,8 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_diaries")
-public class NewDiary extends AuditableDao {
+@Table(name = "diaries")
+public class Diary extends AuditableDao {
 
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
@@ -40,12 +40,12 @@ public class NewDiary extends AuditableDao {
             updatable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "new_user_diary_fk"
+                    name = "user_diary_fk"
             )
     )
     @JsonBackReference
     @Builder.Default
-    private NewUser user = new NewUser();
+    private User user = new User();
 
     /**
      * @Owner: Diary is the owner of the relationship.
@@ -61,7 +61,7 @@ public class NewDiary extends AuditableDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewStory> stories = new HashSet<>();
+    private Set<Story> stories = new HashSet<>();
 
     @Override
     public void completeRelationships() {

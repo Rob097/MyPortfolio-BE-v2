@@ -19,8 +19,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_skills_category")
-public class NewSkillCategory extends BaseDao {
+@Table(name = "skills_category")
+public class SkillCategory extends BaseDao {
 
     @Serial
     private static final long serialVersionUID = 1506623878371112144L;
@@ -38,6 +38,6 @@ public class NewSkillCategory extends BaseDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewSkill> skills = new HashSet<>();
+    private Set<Skill> skills = new HashSet<>();
 
 }

@@ -2,7 +2,7 @@ package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,8 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
-public class NewStory extends SlugDao {
+@Table(name = "stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
+public class Story extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = 3219080188292925051L;
@@ -76,15 +76,15 @@ public class NewStory extends SlugDao {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "new_diary_story_fk"
+                    name = "diary_story_fk"
             )
     )
     @JsonBackReference
     @Builder.Default
-    private NewDiary diary = new NewDiary();
+    private Diary diary = new Diary();
 
     /**
-     * @Owner: NewProject is the owner of the relationship.
+     * @Owner: Project is the owner of the relationship.
      * @Create: When creating a story, we have to specify an already existing projectId
      * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
      * @Delete: When deleting a story, the relation with the project is deleted
@@ -92,10 +92,10 @@ public class NewStory extends SlugDao {
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
-    private Set<NewProject> projects = new HashSet<>();
+    private Set<Project> projects = new HashSet<>();
 
     /**
-     * @Owner: NewEducation is the owner of the relationship.
+     * @Owner: Education is the owner of the relationship.
      * @Create: When creating a story, we have to specify an already existing educationId
      * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
      * @Delete: When deleting a story, the relation with the education is deleted
@@ -103,10 +103,10 @@ public class NewStory extends SlugDao {
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
-    private Set<NewEducation> educations = new HashSet<>();
+    private Set<Education> educations = new HashSet<>();
 
     /**
-     * @Owner: NewExperience is the owner of the relationship.
+     * @Owner: Experience is the owner of the relationship.
      * @Create: When creating a story, we have to specify an already existing experienceId
      * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
      * @Delete: When deleting a story, the relation with the experience is deleted
@@ -114,7 +114,7 @@ public class NewStory extends SlugDao {
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
-    private Set<NewExperience> experiences = new HashSet<>();
+    private Set<Experience> experiences = new HashSet<>();
 
     /**
      * @Create: When creating a story, we can specify a list of ALREADY EXISTING skills
@@ -126,11 +126,11 @@ public class NewStory extends SlugDao {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "new_story_skills",
+            name = "story_skills",
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    private Set<NewSkill> skills = new HashSet<>();
+    private Set<Skill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {

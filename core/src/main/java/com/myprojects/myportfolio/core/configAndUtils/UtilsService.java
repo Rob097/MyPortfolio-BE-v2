@@ -43,12 +43,12 @@ public class UtilsService implements UtilsServiceI {
             return true;
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<NewUser> user = this.userRepository.findByEmail(username);
+        Optional<User> user = this.userRepository.findByEmail(username);
         return user.isPresent() && user.get().getId().equals(id);
     }
 
     @Override
-    public NewUser getCurrentLoggedInUser() {
+    public User getCurrentLoggedInUser() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return this.userRepository.findByEmail(username).orElse(null);
     }
@@ -66,44 +66,44 @@ public class UtilsService implements UtilsServiceI {
             return true;
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        NewUser currentUser = this.userRepository.findByEmail(username).orElse(null);
+        User currentUser = this.userRepository.findByEmail(username).orElse(null);
         if (currentUser == null)
             return false;
 
         if (!isCreate) {
-            if (entity instanceof NewUserDto) {
+            if (entity instanceof UserDto) {
                 return currentUser.getId().equals(entity.getId());
-            } else if (entity instanceof NewDiaryDto) {
-                NewDiary diary = diaryRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Diary not found"));
+            } else if (entity instanceof DiaryDto) {
+                Diary diary = diaryRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Diary not found"));
                 return currentUser.getId().equals(diary.getUser().getId());
-            } else if (entity instanceof NewProjectDto) {
-                NewProject project = projectRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Project not found"));
+            } else if (entity instanceof ProjectDto) {
+                Project project = projectRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Project not found"));
                 return currentUser.getId().equals(project.getUser().getId());
-            } else if (entity instanceof NewEducationDto) {
-                NewEducation education = educationRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Education not found"));
+            } else if (entity instanceof EducationDto) {
+                Education education = educationRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Education not found"));
                 return currentUser.getId().equals(education.getUser().getId());
-            } else if (entity instanceof NewExperienceDto) {
-                NewExperience experience = experienceRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Experience not found"));
+            } else if (entity instanceof ExperienceDto) {
+                Experience experience = experienceRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Experience not found"));
                 return currentUser.getId().equals(experience.getUser().getId());
-            } else if (entity instanceof NewStoryDto) {
-                NewStory story = storyRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Story not found"));
+            } else if (entity instanceof StoryDto) {
+                Story story = storyRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("Story not found"));
                 return currentUser.getId().equals(story.getDiary().getUser().getId());
             } else {
                 throw new RuntimeException("Unknown entity type");
             }
         } else {
-            if (entity instanceof NewUserDto) {
+            if (entity instanceof UserDto) {
                 return true;
-            } else if (entity instanceof NewDiaryDto) {
-                return currentUser.getId().equals(((NewDiaryDto) entity).getUserId());
-            } else if (entity instanceof NewProjectDto) {
-                return currentUser.getId().equals(((NewProjectDto) entity).getUserId());
-            } else if (entity instanceof NewEducationDto) {
-                return currentUser.getId().equals(((NewEducationDto) entity).getUserId());
-            } else if (entity instanceof NewExperienceDto) {
-                return currentUser.getId().equals(((NewExperienceDto) entity).getUserId());
-            } else if (entity instanceof NewStoryDto) {
-                NewDiary diary = diaryRepository.findById(((NewStoryDto) entity).getDiaryId()).orElseThrow(() -> new RuntimeException("Diary not found"));
+            } else if (entity instanceof DiaryDto) {
+                return currentUser.getId().equals(((DiaryDto) entity).getUserId());
+            } else if (entity instanceof ProjectDto) {
+                return currentUser.getId().equals(((ProjectDto) entity).getUserId());
+            } else if (entity instanceof EducationDto) {
+                return currentUser.getId().equals(((EducationDto) entity).getUserId());
+            } else if (entity instanceof ExperienceDto) {
+                return currentUser.getId().equals(((ExperienceDto) entity).getUserId());
+            } else if (entity instanceof StoryDto) {
+                Diary diary = diaryRepository.findById(((StoryDto) entity).getDiaryId()).orElseThrow(() -> new RuntimeException("Diary not found"));
                 return currentUser.getId().equals(diary.getUser().getId());
             } else {
                 throw new RuntimeException("Unknown entity type");

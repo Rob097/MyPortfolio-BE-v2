@@ -1,7 +1,7 @@
 package com.myprojects.myportfolio.core.services.skills;
 
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkillPK;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
+import com.myprojects.myportfolio.core.dao.skills.UserSkillPK;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.repositories.skills.SkillRepository;
 import com.myprojects.myportfolio.core.repositories.skills.UserSkillRepository;
@@ -13,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Slf4j
-@Service(value = "newUserSkillService")
+@Service(value = "UserSkillService")
 @Transactional
 public class UserSkillService implements UserSkillServiceI {
 
@@ -30,7 +30,7 @@ public class UserSkillService implements UserSkillServiceI {
     }
 
     @Override
-    public NewUserSkill findById(NewUserSkillPK id) {
+    public UserSkill findById(UserSkillPK id) {
         Validate.notNull(id, "Mandatory parameter is missing: id");
         Validate.notNull(id.getUserId(), "Mandatory parameter is missing: userId");
         Validate.notNull(id.getSkillId(), "Mandatory parameter is missing: skillId");
@@ -40,7 +40,7 @@ public class UserSkillService implements UserSkillServiceI {
     }
 
     @Override
-    public NewUserSkill save(NewUserSkill t) {
+    public UserSkill save(UserSkill t) {
         Validate.notNull(t, "Mandatory parameter is missing: entity");
 
         if (t.getId() != null && userSkillRepository.findById(t.getId()).isPresent()) {
@@ -52,7 +52,7 @@ public class UserSkillService implements UserSkillServiceI {
     }
 
     @Override
-    public NewUserSkill update(NewUserSkill t) {
+    public UserSkill update(UserSkill t) {
         Validate.notNull(t, "Mandatory parameter is missing: entity");
         Validate.notNull(t.getId(), "Mandatory parameter is missing: id");
         checkIfEntityDoesNotExist(t);
@@ -62,7 +62,7 @@ public class UserSkillService implements UserSkillServiceI {
     }
 
     @Override
-    public void delete(NewUserSkill t) {
+    public void delete(UserSkill t) {
         Validate.notNull(t, "Mandatory parameter is missing: entity");
         Validate.notNull(t.getId(), "Mandatory parameter is missing: id");
         checkIfEntityDoesNotExist(t);
@@ -70,14 +70,14 @@ public class UserSkillService implements UserSkillServiceI {
         userSkillRepository.delete(t);
     }
 
-    private void checkIfEntityDoesNotExist(NewUserSkill t) {
+    private void checkIfEntityDoesNotExist(UserSkill t) {
         if (t.getId() == null || userSkillRepository.findById(t.getId()).isEmpty()) {
             throw new IllegalArgumentException("Entity does not exist" + (t.getId() != null ? (" with id: " + t.getId()) : "."));
         }
     }
 
     // check the user and the skill exists:
-    private void checkRelationsExists(NewUserSkill t) {
+    private void checkRelationsExists(UserSkill t) {
         if (t.getUser() == null || t.getUser().getId() == null || userRepository.findById(t.getUser().getId()).isEmpty()) {
             throw new IllegalArgumentException("User does not exist with this id");
         }

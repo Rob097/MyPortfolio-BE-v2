@@ -1,20 +1,20 @@
 package com.myprojects.myportfolio.core.repositories;
 
-import com.myprojects.myportfolio.core.dao.NewStory;
+import com.myprojects.myportfolio.core.dao.Story;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository(value = "newStoryRepository")
-public interface StoryRepository extends BaseRepository<NewStory, Integer> {
+@Repository(value = "StoryRepository")
+public interface StoryRepository extends BaseRepository<Story, Integer> {
 
     @Override
-    Optional<NewStory> findBySlug(String slug);
+    Optional<Story> findBySlug(String slug);
 
     @Override
-    @Query("SELECT 1 FROM NewStory s WHERE s.slug = :#{#slug} AND s.diary.id = :#{#story.diary.id}")
-    Optional<NewStory> findBySlugConstraint(@Param("slug") String slug, @Param("story") Object story);
+    @Query("SELECT 1 FROM Story s WHERE s.slug = :#{#slug} AND s.diary.id = :#{#story.diary.id}")
+    Optional<Story> findBySlugConstraint(@Param("slug") String slug, @Param("story") Object story);
 
 }

@@ -1,7 +1,7 @@
 package com.myprojects.myportfolio.core.dto.skills;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkillPK;
+import com.myprojects.myportfolio.core.dao.skills.UserSkillPK;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,21 +10,21 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public class NewUserSkillDto implements Serializable {
+public class UserSkillDto implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 600632152770892402L;
 
-    NewSkillDto skill;
+    SkillDto skill;
     Integer userId;
     Boolean isMain;
     Integer orderId;
 
     @JsonIgnore
-    public NewUserSkillPK getId() {
+    public UserSkillPK getId() {
         if(userId==null || skill==null || skill.getId()==null)
             return null;
-        return new NewUserSkillPK(userId, skill.getId());
+        return new UserSkillPK(userId, skill.getId());
     }
 
 }

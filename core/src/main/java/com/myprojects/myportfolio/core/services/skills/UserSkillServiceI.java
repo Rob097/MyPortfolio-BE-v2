@@ -1,16 +1,16 @@
 package com.myprojects.myportfolio.core.services.skills;
 
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkillPK;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
+import com.myprojects.myportfolio.core.dao.skills.UserSkillPK;
 
 public interface UserSkillServiceI {
 
-    NewUserSkill findById(NewUserSkillPK id);
+    UserSkill findById(UserSkillPK id);
 
-    NewUserSkill save(NewUserSkill t);
+    UserSkill save(UserSkill t);
 
-    NewUserSkill update(NewUserSkill t);
+    UserSkill update(UserSkill t);
 
-    void delete(NewUserSkill t);
+    void delete(UserSkill t);
 
 }

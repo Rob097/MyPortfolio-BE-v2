@@ -4,10 +4,10 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.controllers.IController;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import com.myprojects.myportfolio.core.dto.groups.OnCreate;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
-import com.myprojects.myportfolio.core.dto.skills.NewUserSkillDto;
+import com.myprojects.myportfolio.core.dto.skills.UserSkillDto;
 import com.myprojects.myportfolio.core.mappers.skills.UserSkillMapper;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +19,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController("newUserSkillController")
-@RequestMapping("${core-module-basic-path}" + "/new/userSkills")
-public class UserSkillController extends IController<NewUserSkillDto> {
+@RestController("UserSkillController")
+@RequestMapping("${core-module-basic-path}" + "/userSkills")
+public class UserSkillController extends IController<UserSkillDto> {
 
     private final UserSkillService userSkillService;
 
@@ -35,47 +35,47 @@ public class UserSkillController extends IController<NewUserSkillDto> {
     @Override
     @PostMapping()
 //    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#entity.userId)")
-    protected ResponseEntity<MessageResource<NewUserSkillDto>> create(@Validated(OnCreate.class) @RequestBody NewUserSkillDto entity) throws Exception {
+    protected ResponseEntity<MessageResource<UserSkillDto>> create(@Validated(OnCreate.class) @RequestBody UserSkillDto entity) throws Exception {
         Validate.notNull(entity, resourceMissing());
 
-        NewUserSkill newEntity = userSkillService.save(userSkillMapper.mapToDao(entity));
+        UserSkill newEntity = userSkillService.save(userSkillMapper.mapToDao(entity));
         return this.buildSuccessResponse(userSkillMapper.mapToDto(newEntity));
     }
 
     @Override
     @PutMapping()
 //    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#entity.userId)")
-    protected ResponseEntity<MessageResource<NewUserSkillDto>> update(Integer id, @Validated(OnUpdate.class) @RequestBody NewUserSkillDto entity) throws Exception {
+    protected ResponseEntity<MessageResource<UserSkillDto>> update(Integer id, @Validated(OnUpdate.class) @RequestBody UserSkillDto entity) throws Exception {
         Validate.notNull(entity, resourceMissing());
         Validate.notNull(entity.getId(), fieldMissing("id"));
 
-        NewUserSkill updatedEntity = userSkillService.update(userSkillMapper.mapToDao(entity));
+        UserSkill updatedEntity = userSkillService.update(userSkillMapper.mapToDao(entity));
         return this.buildSuccessResponse(userSkillMapper.mapToDto(updatedEntity));
     }
 
     @DeleteMapping(value = "/{userId}/skill/{skillId}")
 //    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#userId)")
-    protected ResponseEntity<MessageResource<NewUserSkillDto>> delete(@PathVariable("userId") Integer userId, @PathVariable("skillId") Integer skillId) throws Exception {
+    protected ResponseEntity<MessageResource<UserSkillDto>> delete(@PathVariable("userId") Integer userId, @PathVariable("skillId") Integer skillId) throws Exception {
         Validate.notNull(userId, fieldMissing("userId"));
         Validate.notNull(skillId, fieldMissing("skillId"));
 
-        NewUserSkill entityToDelete = NewUserSkill.builder().userId(userId).skillId(skillId).build();
+        UserSkill entityToDelete = UserSkill.builder().userId(userId).skillId(skillId).build();
         userSkillService.delete(entityToDelete);
         return this.buildSuccessResponse(userSkillMapper.mapToDto(entityToDelete));
     }
 
     @Override
-    protected ResponseEntity<MessageResources<NewUserSkillDto>> find(String filters, IView view, Pageable pageable) throws Exception {
+    protected ResponseEntity<MessageResources<UserSkillDto>> find(String filters, IView view, Pageable pageable) throws Exception {
         throw new NotImplementedException("Method not implemented");
     }
 
     @Override
-    protected ResponseEntity<MessageResource<NewUserSkillDto>> get(Integer id, IView view) throws Exception {
+    protected ResponseEntity<MessageResource<UserSkillDto>> get(Integer id, IView view) throws Exception {
         throw new NotImplementedException("Method not implemented");
     }
 
     @Override
-    protected ResponseEntity<MessageResource<NewUserSkillDto>> delete(Integer id) throws Exception {
+    protected ResponseEntity<MessageResource<UserSkillDto>> delete(Integer id) throws Exception {
         throw new NotImplementedException("Method not implemented");
     }
 

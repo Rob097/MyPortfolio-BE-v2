@@ -5,9 +5,9 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
-import com.myprojects.myportfolio.core.dao.NewUser;
+import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.mappers.UserMapper;
-import com.myprojects.myportfolio.core.dto.NewUserDto;
+import com.myprojects.myportfolio.core.dto.UserDto;
 import com.myprojects.myportfolio.core.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@RestController("newUserController")
-@RequestMapping("${core-module-basic-path}" + "/new/users")
+@RestController("UserController")
+@RequestMapping("${core-module-basic-path}" + "/users")
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class UserController extends BaseController<NewUser, NewUserDto> {
+public class UserController extends BaseController<User, UserDto> {
 
     private final UserService userService;
 
@@ -43,13 +43,13 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
     /***********************/
 
     @GetMapping(path = "/slug/{slug}")
-    public ResponseEntity<MessageResource<NewUserDto>> get(
+    public ResponseEntity<MessageResource<UserDto>> get(
             @PathVariable("slug") String slug,
             @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        NewUser user = userService.findBy(findByEquals(NewUser.FIELDS.SLUG.name(), slug));
+        User user = userService.findBy(findByEquals(User.FIELDS.SLUG.name(), slug));
 
         return this.buildSuccessResponse(userMapper.mapToDto(user), view);
     }
@@ -62,7 +62,7 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
 
     @PatchMapping(path = "/{id}")
     @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
-    public ResponseEntity<MessageResource<NewUserDto>> patch(
+    public ResponseEntity<MessageResource<UserDto>> patch(
             @PathVariable("id") Integer id,
             @RequestBody List<PatchOperation> operations
     ) throws Exception {
@@ -70,7 +70,7 @@ public class UserController extends BaseController<NewUser, NewUserDto> {
 
         boolean isToUpdate = false;
 
-        NewUser user = userService.findById(id);
+        User user = userService.findById(id);
 
         for (PatchOperation operation : operations) {
             if (operation.getPath().matches("^/firstName") && operation.getOp() == PatchOperation.Op.replace) {

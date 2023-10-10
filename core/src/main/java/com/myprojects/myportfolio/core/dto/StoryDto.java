@@ -3,7 +3,7 @@ package com.myprojects.myportfolio.core.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
-import com.myprojects.myportfolio.core.dto.skills.NewSkillDto;
+import com.myprojects.myportfolio.core.dto.skills.SkillDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class NewStoryDto extends AuditableDto {
+public class StoryDto extends AuditableDto {
 
     @Serial
     private static final long serialVersionUID = -5591758414212539206L;
@@ -44,6 +44,6 @@ public class NewStoryDto extends AuditableDto {
     Set<Integer> experiencesIds;
 
     @JsonView(Verbose.class)
-    Set<NewSkillDto> skills;
+    Set<SkillDto> skills;
 
 }

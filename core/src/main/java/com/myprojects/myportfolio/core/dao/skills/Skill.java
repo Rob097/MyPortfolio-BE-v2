@@ -18,8 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_skills")
-public class NewSkill extends BaseDao {
+@Table(name = "skills")
+public class Skill extends BaseDao {
 
     @Serial
     private static final long serialVersionUID = 865539761537827369L;
@@ -36,11 +36,11 @@ public class NewSkill extends BaseDao {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "new_skill_category_fk"
+                    name = "skill_category_fk"
             )
     )
     @JsonBackReference
-    private NewSkillCategory category;
+    private SkillCategory category;
 
     /**
      * @Create&Update: When creating, updating a Skill, users are ignored.
@@ -53,7 +53,7 @@ public class NewSkill extends BaseDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewUserSkill> users = new HashSet<>();
+    private Set<UserSkill> users = new HashSet<>();
 
     @PrePersist
     public void categoryCheckPersist() {

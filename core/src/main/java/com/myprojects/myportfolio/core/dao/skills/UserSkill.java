@@ -1,7 +1,7 @@
 package com.myprojects.myportfolio.core.dao.skills;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.myprojects.myportfolio.core.dao.NewUser;
+import com.myprojects.myportfolio.core.dao.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * NewUserSkill Is a composite relational entity that represents the many-to-many relationship between NewUser and NewSkill.
+ * UserSkill Is a composite relational entity that represents the many-to-many relationship between User and Skill.
  * When creating or updating, you have to indicate an already existing userId and skillId.
  * When deleting, the record is deleted by the composite key.
  */
@@ -23,10 +23,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@IdClass(NewUserSkillPK.class)
+@IdClass(UserSkillPK.class)
 @Entity
-@Table(name = "new_user_skills")
-public class NewUserSkill implements Serializable {
+@Table(name = "user_skills")
+public class UserSkill implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -7991529850180063512L;
@@ -43,13 +43,13 @@ public class NewUserSkill implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     @JsonBackReference
-    private NewUser user;
+    private User user;
 
     @MapsId("skillId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skill_id", nullable = false, insertable = false, updatable = false)
     @JsonBackReference
-    private NewSkill skill;
+    private Skill skill;
 
     @Column(name = "is_main")
     private Boolean isMain;
@@ -57,28 +57,28 @@ public class NewUserSkill implements Serializable {
     @Column(name = "order_id")
     private Integer orderId;
 
-    public void setUser(NewUser user) {
+    public void setUser(User user) {
         this.user = user;
         this.userId = user.getId();
     }
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-        this.user = NewUser.builder().id(userId).build();
+        this.user = User.builder().id(userId).build();
     }
 
-    public void setSkill(NewSkill skill) {
+    public void setSkill(Skill skill) {
         this.skill = skill;
         this.skillId = skill.getId();
     }
 
     public void setSkillId(Integer skillId) {
         this.skillId = skillId;
-        this.skill = NewSkill.builder().id(skillId).build();
+        this.skill = Skill.builder().id(skillId).build();
     }
 
-    public NewUserSkillPK getId() {
-        return NewUserSkillPK.builder()
+    public UserSkillPK getId() {
+        return UserSkillPK.builder()
                 .userId(userId)
                 .skillId(skillId)
                 .build();
@@ -109,7 +109,7 @@ public class NewUserSkill implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NewUserSkill that = (NewUserSkill) o;
+        UserSkill that = (UserSkill) o;
 
         if (!Objects.equals(userId, that.userId)) return false;
         return Objects.equals(skillId, that.skillId);

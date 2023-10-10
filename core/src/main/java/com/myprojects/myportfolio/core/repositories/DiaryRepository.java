@@ -1,8 +1,8 @@
 package com.myprojects.myportfolio.core.repositories;
 
-import com.myprojects.myportfolio.core.dao.NewDiary;
+import com.myprojects.myportfolio.core.dao.Diary;
 import org.springframework.stereotype.Repository;
 
-@Repository(value="newDiaryRepository")
-public interface DiaryRepository extends BaseRepository<NewDiary, Integer> {
+@Repository(value = "DiaryRepository")
+public interface DiaryRepository extends BaseRepository<Diary, Integer> {
 }

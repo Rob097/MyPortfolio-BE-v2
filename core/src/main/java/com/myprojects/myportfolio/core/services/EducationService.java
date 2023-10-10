@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.core.dao.NewEducation;
+import com.myprojects.myportfolio.core.dao.Education;
 import com.myprojects.myportfolio.core.repositories.EducationRepository;
 import com.myprojects.myportfolio.core.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,8 @@ import java.util.List;
 
 @Slf4j
 @Transactional
-@Service(value = "newEducationService")
-public class EducationService extends BaseService<NewEducation> implements EducationServiceI {
+@Service(value = "EducationService")
+public class EducationService extends BaseService<Education> implements EducationServiceI {
 
     private final EducationRepository educationRepository;
 
@@ -29,9 +29,9 @@ public class EducationService extends BaseService<NewEducation> implements Educa
     }
 
     @Override
-    public NewEducation findBy(Specification<NewEducation> specification) {
+    public Education findBy(Specification<Education> specification) {
 
-        List<NewEducation> all = this.educationRepository.findAll(specification);
+        List<Education> all = this.educationRepository.findAll(specification);
         if (!all.isEmpty()) {
             return all.get(0);
         }
@@ -50,7 +50,7 @@ public class EducationService extends BaseService<NewEducation> implements Educa
      * @return the created education
      */
     @Override
-    public NewEducation save(NewEducation education) {
+    public Education save(Education education) {
         Validate.notNull(education, fieldMissing("education"));
         Validate.notNull(education.getUserId(), fieldMissing("User Id"));
 
@@ -85,7 +85,7 @@ public class EducationService extends BaseService<NewEducation> implements Educa
      * @return the updated education
      */
     @Override
-    public NewEducation update(NewEducation education) {
+    public Education update(Education education) {
         Validate.notNull(education, fieldMissing("education"));
 
         // Check if the entity does not exist

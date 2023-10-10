@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.core.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
+import com.myprojects.myportfolio.core.dto.skills.SkillDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,19 +16,24 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class NewDiaryDto extends AuditableDto {
+public class ProjectDto extends AuditableDto {
 
     @Serial
-    private static final long serialVersionUID = -8754716684648310747L;
+    private static final long serialVersionUID = -2469764529940394128L;
 
-    @NotNull(message = "Diary: User Id cannot be null", groups = OnUpdate.class)
+    @NotNull(message = "Project: User Id cannot be null", groups = OnUpdate.class)
     Integer userId;
+    String slug;
+
+    @NotNull(message = "Project: Title cannot be null")
     String title;
+
     String description;
-    Boolean isMain;
 
     @Valid
     @JsonView(Verbose.class)
-    Set<NewStoryDto> stories;
+    Set<StoryDto> stories;
 
+    @JsonView(Verbose.class)
+    Set<SkillDto> skills;
 }

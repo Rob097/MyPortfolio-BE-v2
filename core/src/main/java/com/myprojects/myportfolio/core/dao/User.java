@@ -3,7 +3,7 @@ package com.myprojects.myportfolio.core.dao;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.enums.Sex;
-import com.myprojects.myportfolio.core.dao.skills.NewUserSkill;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,8 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"slug"})})
-public class NewUser extends SlugDao {
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"slug"})})
+public class User extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = -7807186737167318556L;
@@ -96,7 +96,7 @@ public class NewUser extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewDiary> diaries = new HashSet<>();
+    private Set<Diary> diaries = new HashSet<>();
 
     /**
      * @Owner: User is the owner of the relationship.
@@ -112,7 +112,7 @@ public class NewUser extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewProject> projects = new HashSet<>();
+    private Set<Project> projects = new HashSet<>();
 
     /**
      * @Owner: User is the owner of the relationship.
@@ -128,7 +128,7 @@ public class NewUser extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewEducation> educations = new HashSet<>();
+    private Set<Education> educations = new HashSet<>();
 
     /**
      * @Owner: User is the owner of the relationship.
@@ -144,11 +144,11 @@ public class NewUser extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    private Set<NewExperience> experiences = new HashSet<>();
+    private Set<Experience> experiences = new HashSet<>();
 
     /**
      * @Owner: User is the owner of the relationship.
-     * @Create&Update: When creating or updating a user, you can create or update the relation NewUserSkill.
+     * @Create&Update: When creating or updating a user, you can create or update the relation UserSkill.
      *                 You have to specify the skill id and, in the update, also the user id.
      * @Delete: When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
      */
@@ -159,7 +159,7 @@ public class NewUser extends SlugDao {
             fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default
-    private Set<NewUserSkill> skills = new HashSet<>();
+    private Set<UserSkill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {
@@ -194,13 +194,13 @@ public class NewUser extends SlugDao {
         }
     }
 
-    public NewUser(Integer id, String email) {
+    public User(Integer id, String email) {
         this.id = id;
         this.email = email;
         this.setSlug("");
     }
 
-    public NewUser(Integer id, String email, String slug) {
+    public User(Integer id, String email, String slug) {
         this.id = id;
         this.email = email;
         this.setSlug(slug);

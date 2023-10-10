@@ -1,9 +1,9 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.core.dao.NewEducation;
+import com.myprojects.myportfolio.core.dao.Education;
 import org.springframework.data.jpa.domain.Specification;
 
-public interface EducationServiceI extends BaseServiceI<NewEducation> {
+public interface EducationServiceI extends BaseServiceI<Education> {
 
-    NewEducation findBy(Specification<NewEducation> specification);
+    Education findBy(Specification<Education> specification);
 }

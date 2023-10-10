@@ -3,8 +3,8 @@ package com.myprojects.myportfolio.core.controllers;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
-import com.myprojects.myportfolio.core.dao.NewExperience;
-import com.myprojects.myportfolio.core.dto.NewExperienceDto;
+import com.myprojects.myportfolio.core.dao.Experience;
+import com.myprojects.myportfolio.core.dto.ExperienceDto;
 import com.myprojects.myportfolio.core.mappers.ExperienceMapper;
 import com.myprojects.myportfolio.core.services.ExperienceServiceI;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController("newExperienceController")
-@RequestMapping("${core-module-basic-path}" + "/new/experiences")
-public class ExperienceController extends BaseController<NewExperience, NewExperienceDto> {
+@RestController("ExperienceController")
+@RequestMapping("${core-module-basic-path}" + "/experiences")
+public class ExperienceController extends BaseController<Experience, ExperienceDto> {
 
     private final ExperienceServiceI experienceService;
 
@@ -33,13 +33,13 @@ public class ExperienceController extends BaseController<NewExperience, NewExper
     /** Methods, if not overridden above, are implemented in super class. */
 
     @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource<NewExperienceDto>> get(
+    public ResponseEntity<MessageResource<ExperienceDto>> get(
             @PathVariable("slug") String slug,
             @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        NewExperience experience = experienceService.findBy(findByEquals(NewExperience.FIELDS.SLUG.name(), slug));
+        Experience experience = experienceService.findBy(findByEquals(Experience.FIELDS.SLUG.name(), slug));
 
         return this.buildSuccessResponse(experienceMapper.mapToDto(experience), view);
     }

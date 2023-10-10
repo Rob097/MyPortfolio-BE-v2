@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -20,8 +20,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_experiences", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
-public class NewExperience extends SlugDao {
+@Table(name = "experiences", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
+public class Experience extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = 6813981328660668957L;
@@ -83,27 +83,27 @@ public class NewExperience extends SlugDao {
             updatable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "new_user_experience_fk"
+                    name = "user_experience_fk"
             )
     )
     @JsonBackReference
     @Builder.Default
-    private NewUser user = new NewUser();
+    private User user = new User();
 
     /**
-     * @Owner: NewExperience is the owner of the relationship.
+     * @Owner: Experience is the owner of the relationship.
      * @Create: When Creating a new Experience or Updating an existing experience is possible to create a new story or connect an existing story.
      * @Update: When Updating an experience, the already connected stories are left untouched.
      * @Delete: When Deleting an experience, the stories are not deleted but the relationship is deleted.
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "new_experience_stories",
+            name = "experience_stories",
             joinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
     @JsonManagedReference
     @Builder.Default
-    private Set<NewStory> stories = new HashSet<>();
+    private Set<Story> stories = new HashSet<>();
 
     /**
      * @Create: When creating an experience, we can specify a list of ALREADY EXISTING skills
@@ -115,11 +115,11 @@ public class NewExperience extends SlugDao {
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "new_experience_skills",
+            name = "experience_skills",
             joinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    private Set<NewSkill> skills = new HashSet<>();
+    private Set<Skill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {

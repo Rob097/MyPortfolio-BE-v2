@@ -12,7 +12,7 @@ import java.io.Serial;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class NewSkillDto extends BaseDto {
+public class SkillDto extends BaseDto {
 
     @Serial
     private static final long serialVersionUID = -908019145564415308L;
@@ -22,6 +22,6 @@ public class NewSkillDto extends BaseDto {
 
     @Valid
     @NotNull(message = "Skill: category cannot be null")
-    NewSkillCategoryDto category;
+    SkillCategoryDto category;
 
 }

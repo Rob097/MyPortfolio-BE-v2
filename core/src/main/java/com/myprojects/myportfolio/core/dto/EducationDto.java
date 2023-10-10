@@ -2,9 +2,8 @@ package com.myprojects.myportfolio.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
-import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
-import com.myprojects.myportfolio.core.dto.skills.NewSkillDto;
+import com.myprojects.myportfolio.core.dto.skills.SkillDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,26 +17,28 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class NewExperienceDto extends AuditableDto {
+public class EducationDto extends AuditableDto {
 
     @Serial
-    private static final long serialVersionUID = -2352783680197655762L;
+    private static final long serialVersionUID = -1216538670421106118L;
 
     @NotNull(message = "Education: User Id cannot be null", groups = OnUpdate.class)
     Integer userId;
 
     String slug;
 
-    @NotNull(message = "Experience: Title cannot be null")
-    String title;
+    @NotNull(message = "Education: Field cannot be null")
+    String field;
 
-    EmploymentTypeEnum employmentType;
+    @NotNull(message = "Education: School cannot be null")
+    String school;
 
-    String companyName;
+    @NotNull(message = "Education: Degree cannot be null")
+    String degree;
 
-    String location;
+    Double grade;
 
-    @NotNull(message = "Experience: Description cannot be null")
+    @NotNull(message = "Education: Description cannot be null")
     String description;
 
     LocalDate fromDate;
@@ -45,9 +46,8 @@ public class NewExperienceDto extends AuditableDto {
 
     @Valid
     @JsonView(Verbose.class)
-    Set<NewStoryDto> stories;
+    Set<StoryDto> stories;
 
     @JsonView(Verbose.class)
-    Set<NewSkillDto> skills;
-
+    Set<SkillDto> skills;
 }

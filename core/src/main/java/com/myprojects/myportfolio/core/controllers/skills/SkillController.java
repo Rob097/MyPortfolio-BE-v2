@@ -4,9 +4,9 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.core.controllers.BaseController;
 import com.myprojects.myportfolio.core.dto.groups.OnCreate;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
-import com.myprojects.myportfolio.core.dto.skills.NewSkillDto;
+import com.myprojects.myportfolio.core.dto.skills.SkillDto;
 import com.myprojects.myportfolio.core.mappers.skills.SkillMapper;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import com.myprojects.myportfolio.core.services.skills.SkillService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -15,10 +15,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController("newSkillController")
-@RequestMapping("${core-module-basic-path}" + "/new/skills")
+@RestController("SkillController")
+@RequestMapping("${core-module-basic-path}" + "/skills")
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class SkillController extends BaseController<NewSkill, NewSkillDto> {
+public class SkillController extends BaseController<Skill, SkillDto> {
 
     private final SkillService skillService;
 
@@ -38,39 +38,39 @@ public class SkillController extends BaseController<NewSkill, NewSkillDto> {
 
     @Override
     @PostMapping()
-    public ResponseEntity<MessageResource<NewSkillDto>> create(
-            @Validated(OnCreate.class) @RequestBody NewSkillDto entity
+    public ResponseEntity<MessageResource<SkillDto>> create(
+            @Validated(OnCreate.class) @RequestBody SkillDto entity
     ) throws Exception {
         Validate.notNull(entity, resourceMissing());
 
-        NewSkill newEntity = service.save(mapper.mapToDao(entity));
+        Skill newEntity = service.save(mapper.mapToDao(entity));
         return this.buildSuccessResponse(mapper.mapToDto(newEntity));
     }
 
     @Override
     @PutMapping(value = "/{id}")
     // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
-    public ResponseEntity<MessageResource<NewSkillDto>> update(
+    public ResponseEntity<MessageResource<SkillDto>> update(
             @PathVariable("id") Integer id,
-            @Validated(OnUpdate.class) @RequestBody NewSkillDto entity
+            @Validated(OnUpdate.class) @RequestBody SkillDto entity
     ) throws Exception {
         Validate.notNull(entity, resourceMissing());
         Validate.notNull(entity.getId(), fieldMissing("id"));
         Validate.isTrue(entity.getId().equals(id), "The request's id and the body's id are different.");
 
-        NewSkill updatedEntity = service.update(mapper.mapToDao(entity));
+        Skill updatedEntity = service.update(mapper.mapToDao(entity));
         return this.buildSuccessResponse(mapper.mapToDto(updatedEntity));
     }
 
     @Override
     @DeleteMapping(value = "/{id}")
     // TODO reactivate PreAuthorize @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
-    public ResponseEntity<MessageResource<NewSkillDto>> delete(
+    public ResponseEntity<MessageResource<SkillDto>> delete(
             @PathVariable("id") Integer id
     ) throws Exception {
         Validate.notNull(id, fieldMissing("id"));
 
-        NewSkill entityToDelete = service.findById(id);
+        Skill entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
 
         service.delete(entityToDelete);

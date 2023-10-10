@@ -1,21 +1,21 @@
 package com.myprojects.myportfolio.core.mappers;
 
-import com.myprojects.myportfolio.core.dao.NewProject;
-import com.myprojects.myportfolio.core.dto.NewProjectDto;
+import com.myprojects.myportfolio.core.dao.Project;
+import com.myprojects.myportfolio.core.dto.ProjectDto;
 import com.myprojects.myportfolio.core.mappers.skills.SkillMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {StoryMapper.class, SkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface ProjectMapper extends BaseMapper<NewProject, NewProjectDto> {
+public interface ProjectMapper extends BaseMapper<Project, ProjectDto> {
 
     @Override
     @Mapping(target = "userId", source = "user.id")
-    NewProjectDto mapToDto(NewProject entity);
+    ProjectDto mapToDto(Project entity);
 
     @Override
     @Mapping(target = "user.id", source = "userId")
-    NewProject mapToDao(NewProjectDto dto);
+    Project mapToDao(ProjectDto dto);
 
 }

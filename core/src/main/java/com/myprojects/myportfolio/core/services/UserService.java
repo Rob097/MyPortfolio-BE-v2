@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.core.dao.NewUser;
+import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
-@Service(value = "newUserService")
+@Service(value = "UserService")
 @Transactional
-public class UserService extends BaseService<NewUser> implements UserServiceI {
+public class UserService extends BaseService<User> implements UserServiceI {
 
     private final UserRepository userRepository;
 
@@ -32,9 +32,9 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
     }
 
     @Override
-    public NewUser findBy(Specification<NewUser> specification) {
+    public User findBy(Specification<User> specification) {
 
-        List<NewUser> all = this.userRepository.findAll(specification);
+        List<User> all = this.userRepository.findAll(specification);
         if (!all.isEmpty()) {
             return all.get(0);
         }
@@ -48,7 +48,7 @@ public class UserService extends BaseService<NewUser> implements UserServiceI {
     }
 
     @Override
-    public NewUser save(NewUser user) {
+    public User save(User user) {
         Validate.notNull(user, super.fieldMissing("user"));
 
         this.userRepository.findByEmail(user.getEmail()).ifPresent(existingUser -> {

@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.core.dao.NewProject;
+import com.myprojects.myportfolio.core.dao.Project;
 import com.myprojects.myportfolio.core.repositories.ProjectRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -12,8 +12,8 @@ import java.util.List;
 
 @Slf4j
 @Transactional
-@Service(value = "newProjectService")
-public class ProjectService extends BaseService<NewProject> implements ProjectServiceI {
+@Service(value = "ProjectService")
+public class ProjectService extends BaseService<Project> implements ProjectServiceI {
 
     private final ProjectRepository projectRepository;
 
@@ -28,9 +28,9 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
     }
 
     @Override
-    public NewProject findBy(Specification<NewProject> specification) {
+    public Project findBy(Specification<Project> specification) {
 
-        List<NewProject> all = this.projectRepository.findAll(specification);
+        List<Project> all = this.projectRepository.findAll(specification);
         if (!all.isEmpty()) {
             return all.get(0);
         }
@@ -49,7 +49,7 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
      * @return the created project
      */
     @Override
-    public NewProject save(NewProject project) {
+    public Project save(Project project) {
         Validate.notNull(project, fieldMissing("project"));
         Validate.notNull(project.getUserId(), fieldMissing("User Id"));
 
@@ -84,7 +84,7 @@ public class ProjectService extends BaseService<NewProject> implements ProjectSe
      * @return the updated project
      */
     @Override
-    public NewProject update(NewProject project) {
+    public Project update(Project project) {
         Validate.notNull(project, fieldMissing("project"));
 
         // Check if the entity does not exist

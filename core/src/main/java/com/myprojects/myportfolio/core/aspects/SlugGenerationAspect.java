@@ -141,15 +141,15 @@ public class SlugGenerationAspect {
      * @param entity the entity to set the repository for
      */
     private <T extends SlugDao> void setRepository(T entity) {
-        if (entity instanceof NewUser) {
+        if (entity instanceof User) {
             this.repository = this.userRepository;
-        } else if (entity instanceof NewProject) {
+        } else if (entity instanceof Project) {
             this.repository = this.projectRepository;
-        } else if (entity instanceof NewEducation) {
+        } else if (entity instanceof Education) {
             this.repository = this.educationRepository;
-        } else if (entity instanceof NewStory) {
+        } else if (entity instanceof Story) {
             this.repository = this.storyRepository;
-        } else if (entity instanceof NewExperience) {
+        } else if (entity instanceof Experience) {
             this.repository = this.experienceRepository;
         }
     }

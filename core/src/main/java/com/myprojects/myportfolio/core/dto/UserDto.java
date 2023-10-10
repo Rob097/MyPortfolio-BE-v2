@@ -3,7 +3,7 @@ package com.myprojects.myportfolio.core.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.dao.enums.Sex;
-import com.myprojects.myportfolio.core.dto.skills.NewUserSkillDto;
+import com.myprojects.myportfolio.core.dto.skills.UserSkillDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class NewUserDto extends AuditableDto {
+public class UserDto extends AuditableDto {
 
     @Serial
     private static final long serialVersionUID = 9184690121318354645L;
@@ -40,21 +40,21 @@ public class NewUserDto extends AuditableDto {
 
     @Valid
     @JsonView(Verbose.class)
-    Set<NewDiaryDto> diaries;
+    Set<DiaryDto> diaries;
 
     @Valid
     @JsonView(Verbose.class)
-    Set<NewProjectDto> projects;
+    Set<ProjectDto> projects;
 
     @Valid
     @JsonView(Verbose.class)
-    Set<NewEducationDto> educations;
+    Set<EducationDto> educations;
 
     @Valid
     @JsonView(Verbose.class)
-    Set<NewExperienceDto> experiences;
+    Set<ExperienceDto> experiences;
 
     @JsonView(Verbose.class)
-    Set<NewUserSkillDto> skills;
+    Set<UserSkillDto> skills;
 
 }

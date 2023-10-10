@@ -1,20 +1,20 @@
 package com.myprojects.myportfolio.core.mappers;
 
-import com.myprojects.myportfolio.core.dao.NewDiary;
-import com.myprojects.myportfolio.core.dto.NewDiaryDto;
+import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dto.DiaryDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {StoryMapper.class, UserMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface DiaryMapper extends BaseMapper<NewDiary, NewDiaryDto> {
+public interface DiaryMapper extends BaseMapper<Diary, DiaryDto> {
 
     @Override
     @Mapping(target = "userId", source = "user.id")
-    NewDiaryDto mapToDto(NewDiary entity);
+    DiaryDto mapToDto(Diary entity);
 
     @Override
     @Mapping(target = "user.id", source = "userId")
-    NewDiary mapToDao(NewDiaryDto dto);
+    Diary mapToDao(DiaryDto dto);
 
 }

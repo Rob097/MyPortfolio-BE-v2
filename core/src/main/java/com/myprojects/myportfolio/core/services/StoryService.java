@@ -1,8 +1,8 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
-import com.myprojects.myportfolio.core.dao.NewDiary;
-import com.myprojects.myportfolio.core.dao.NewStory;
+import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
-@Service(value = "newStoryService")
-public class StoryService extends BaseService<NewStory> implements StoryServiceI {
+@Service(value = "StoryService")
+public class StoryService extends BaseService<Story> implements StoryServiceI {
 
     private final StoryRepository storyRepository;
 
@@ -44,9 +44,9 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     }
 
     @Override
-    public NewStory findBy(Specification<NewStory> specification) {
+    public Story findBy(Specification<Story> specification) {
 
-        List<NewStory> all = this.storyRepository.findAll(specification);
+        List<Story> all = this.storyRepository.findAll(specification);
         if (!all.isEmpty()) {
             return all.get(0);
         }
@@ -55,7 +55,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     }
 
     @Override
-    public NewStory save(NewStory story) {
+    public Story save(Story story) {
         Validate.notNull(story, super.fieldMissing("story"));
         Validate.notNull(story.getDiaryId(), super.fieldMissing("Diary Id"));
 
@@ -68,7 +68,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     }
 
     @Override
-    public NewStory update(NewStory story) {
+    public Story update(Story story) {
         Validate.notNull(story, super.fieldMissing("story"));
 
         // TODO: Reactivate once tests are finished.
@@ -79,7 +79,7 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     }
 
     @Override
-    public void delete(NewStory story) {
+    public void delete(Story story) {
         Validate.notNull(story, super.fieldMissing("story"));
 
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
@@ -92,13 +92,13 @@ public class StoryService extends BaseService<NewStory> implements StoryServiceI
     /*** Private Methods **/
     /**********************/
 
-    private void isDiaryOfCurrentUser(NewStory story) {
-        NewDiary diary = diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id: " + story.getDiary().getId()));
+    private void isDiaryOfCurrentUser(Story story) {
+        Diary diary = diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id: " + story.getDiary().getId()));
         if (!utilsService.hasId(diary.getUser().getId()))
             throw new IllegalArgumentException("You are not allowed to edit someone else's diary's stories.");
     }
 
-    private void loadStoryRelations(NewStory story) {
+    private void loadStoryRelations(Story story) {
         story.setDiary(
                 diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id."))
         );

@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.services;
 
-import com.myprojects.myportfolio.core.dao.NewExperience;
+import com.myprojects.myportfolio.core.dao.Experience;
 import com.myprojects.myportfolio.core.repositories.ExperienceRepository;
 import com.myprojects.myportfolio.core.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,8 @@ import java.util.List;
 
 @Slf4j
 @Transactional
-@Service(value = "newExperienceService")
-public class ExperienceService extends BaseService<NewExperience> implements ExperienceServiceI {
+@Service(value = "ExperienceService")
+public class ExperienceService extends BaseService<Experience> implements ExperienceServiceI {
 
     private final ExperienceRepository experienceRepository;
 
@@ -29,9 +29,9 @@ public class ExperienceService extends BaseService<NewExperience> implements Exp
     }
 
     @Override
-    public NewExperience findBy(Specification<NewExperience> specification) {
+    public Experience findBy(Specification<Experience> specification) {
 
-        List<NewExperience> all = this.experienceRepository.findAll(specification);
+        List<Experience> all = this.experienceRepository.findAll(specification);
         if (!all.isEmpty()) {
             return all.get(0);
         }
@@ -50,7 +50,7 @@ public class ExperienceService extends BaseService<NewExperience> implements Exp
      * @return the created experience
      */
     @Override
-    public NewExperience save(NewExperience experience) {
+    public Experience save(Experience experience) {
         Validate.notNull(experience, fieldMissing("experience"));
         Validate.notNull(experience.getUserId(), fieldMissing("User Id"));
 
@@ -85,7 +85,7 @@ public class ExperienceService extends BaseService<NewExperience> implements Exp
      * @return the updated experience
      */
     @Override
-    public NewExperience update(NewExperience experience) {
+    public Experience update(Experience experience) {
         Validate.notNull(experience, fieldMissing("experience"));
 
         // Check if the entity does not exist

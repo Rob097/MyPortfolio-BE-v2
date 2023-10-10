@@ -1,18 +1,18 @@
 package com.myprojects.myportfolio.core.controllers;
 
-import com.myprojects.myportfolio.core.dao.NewDiary;
+import com.myprojects.myportfolio.core.dao.Diary;
 import com.myprojects.myportfolio.core.mappers.DiaryMapper;
-import com.myprojects.myportfolio.core.dto.NewDiaryDto;
+import com.myprojects.myportfolio.core.dto.DiaryDto;
 import com.myprojects.myportfolio.core.services.DiaryServiceI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RestController("newDiaryController")
-@RequestMapping("${core-module-basic-path}" + "/new/diaries")
+@RestController("DiaryController")
+@RequestMapping("${core-module-basic-path}" + "/diaries")
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class DiaryController extends BaseController<NewDiary, NewDiaryDto> {
+public class DiaryController extends BaseController<Diary, DiaryDto> {
 
     private final DiaryServiceI diaryService;
 

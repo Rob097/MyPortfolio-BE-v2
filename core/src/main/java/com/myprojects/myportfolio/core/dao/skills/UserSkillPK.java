@@ -6,7 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * This class is a composite primary key for the NewUserSkill entity.
+ * This class is a composite primary key for the UserSkill entity.
  * It's composed of the userId and the skillId.
  */
 @Builder
@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewUserSkillPK implements Serializable {
+public class UserSkillPK implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 3004133355114394067L;
@@ -28,7 +28,7 @@ public class NewUserSkillPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NewUserSkillPK that = (NewUserSkillPK) o;
+        UserSkillPK that = (UserSkillPK) o;
 
         if (!userId.equals(that.userId)) return false;
         return skillId.equals(that.skillId);

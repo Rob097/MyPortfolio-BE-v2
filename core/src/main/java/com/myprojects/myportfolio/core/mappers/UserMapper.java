@@ -1,14 +1,14 @@
 package com.myprojects.myportfolio.core.mappers;
 
-import com.myprojects.myportfolio.core.dao.NewUser;
+import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.mappers.skills.UserSkillMapper;
-import com.myprojects.myportfolio.core.dto.NewUserDto;
+import com.myprojects.myportfolio.core.dto.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {DiaryMapper.class, ProjectMapper.class, EducationMapper.class, ExperienceMapper.class, UserSkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface UserMapper extends BaseMapper<NewUser, NewUserDto> {
+public interface UserMapper extends BaseMapper<User, UserDto> {
 
     @Override
     @Mapping(target = "address.nationality", source = "nationality")
@@ -17,7 +17,7 @@ public interface UserMapper extends BaseMapper<NewUser, NewUserDto> {
     @Mapping(target = "address.city", source = "city")
     @Mapping(target = "address.cap", source = "cap")
     @Mapping(target = "address.address", source = "address")
-    NewUserDto mapToDto(NewUser dao);
+    UserDto mapToDto(User dao);
 
     @Override
     @Mapping(target = "nationality", source = "address.nationality")
@@ -26,6 +26,6 @@ public interface UserMapper extends BaseMapper<NewUser, NewUserDto> {
     @Mapping(target = "city", source = "address.city")
     @Mapping(target = "cap", source = "address.cap")
     @Mapping(target = "address", source = "address.address")
-    NewUser mapToDao(NewUserDto dto);
+    User mapToDao(UserDto dto);
 
 }

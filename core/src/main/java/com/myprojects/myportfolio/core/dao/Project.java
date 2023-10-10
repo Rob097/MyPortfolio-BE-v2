@@ -3,7 +3,7 @@ package com.myprojects.myportfolio.core.dao;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
-import com.myprojects.myportfolio.core.dao.skills.NewSkill;
+import com.myprojects.myportfolio.core.dao.skills.Skill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,8 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "new_projects", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "slug" }) })
-public class NewProject extends SlugDao {
+@Table(name = "projects", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "slug" }) })
+public class Project extends SlugDao {
 
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
@@ -57,27 +57,27 @@ public class NewProject extends SlugDao {
             updatable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "new_user_project_fk"
+                    name = "user_project_fk"
             )
     )
     @JsonBackReference
     @Builder.Default
-    private NewUser user = new NewUser();
+    private User user = new User();
 
     /**
-     * @Owner: NewProject is the owner of the relationship.
+     * @Owner: Project is the owner of the relationship.
      * @Create: When Creating a new Project or Updating an existing project is possible to create a new story or connect an existing story.
      * @Update: When Updating a project, the already connected stories are left untouched.
      * @Delete: When Deleting a project, the stories are not deleted but the relationship is deleted.
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "new_project_stories",
+            name = "project_stories",
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
     @JsonManagedReference
     @Builder.Default
-    private Set<NewStory> stories = new HashSet<>();
+    private Set<Story> stories = new HashSet<>();
 
     /**
      * @Create: When creating a project, we can specify a list of ALREADY EXISTING skills (the ID must be present)
@@ -89,11 +89,11 @@ public class NewProject extends SlugDao {
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "new_project_skills",
+            name = "project_skills",
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    private Set<NewSkill> skills = new HashSet<>();
+    private Set<Skill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {
