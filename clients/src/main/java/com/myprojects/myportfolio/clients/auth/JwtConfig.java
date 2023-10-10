@@ -27,9 +27,9 @@ public class JwtConfig {
     private final String internalAuthorizationHeader = "Internal-Authorization";
 
     /* CONSTANTS */
-    public static List<String> ALLOWED_ORIGINS = Arrays.asList("http://localhost:8083", "http://localhost:4200", "https://myportfolio-6a771.web.app");
-    public static List<String> ALLOW_METHODS = Arrays.asList("OPTIONS", "GET", "POST", "PUT", "DELETE");
-    public static List<String> ALLOW_HEADERS = Arrays.asList("*");
+    public static List<String> ALLOWED_ORIGINS = List.of("http://localhost:8083", "http://localhost:4200", "https://myportfolio-6a771.web.app");
+    public static List<String> ALLOW_METHODS = List.of("OPTIONS", "GET", "POST", "PUT", "DELETE");
+    public static List<String> ALLOW_HEADERS = List.of("*");
 
     public JwtConfig() {
     }

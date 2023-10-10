@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Component
+@SuppressWarnings("unchecked")
 public class JwtTokenVerifier {
 
     private final SecretKey secretKey;
@@ -57,9 +58,10 @@ public class JwtTokenVerifier {
 
                 String token = internalAuthorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
                 try {
-                    jwtConfig.isInvalid(token);
+                    if (jwtConfig.isInvalid(token))
+                        throw new ExpiredJwtException(null, null, "Authorization header is expired");
                 } catch (ExpiredJwtException e) {
-                    message = "Authorization header is expired";
+                    message = e.getMessage();
                 }
 
                 Jws<Claims> claimsJws = Jwts.parserBuilder()
