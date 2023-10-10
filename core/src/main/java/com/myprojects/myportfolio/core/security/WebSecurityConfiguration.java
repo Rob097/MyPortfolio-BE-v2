@@ -1,12 +1,13 @@
 package com.myprojects.myportfolio.core.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ import static org.springframework.http.HttpMethod.OPTIONS;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
     private final JwtTokenValidation jwtTokenValidation;
 
@@ -24,8 +25,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.jwtTokenValidation = jwtTokenValidation;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .formLogin().disable()
@@ -42,7 +43,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/core/new/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(jwtTokenValidation, UsernamePasswordAuthenticationFilter.class)
-        ;
+                .addFilterBefore(jwtTokenValidation, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 }
