@@ -12,7 +12,7 @@ import com.myprojects.myportfolio.dto.SignINResponse;
 import com.myprojects.myportfolio.dto.SignUPRequest;
 import com.myprojects.myportfolio.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.mapper.SignUPMapper;
-import com.myprojects.myportfolio.service.AuthenticationUserService;
+import com.myprojects.myportfolio.service.AuthenticationUserServiceI;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -30,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
+import javax.inject.Provider;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,13 +42,13 @@ import java.util.List;
 @RequestMapping("${auth-module-basic-path}")
 public class AuthenticationUserController {
 
-    private final AuthenticationUserService applicationUserService;
+    private final AuthenticationUserServiceI applicationUserService;
 
     private final SignUPMapper signUPMapper;
 
     private final CoreUserMapper coreUserMapper;
 
-    private final AuthenticationManager authenticationManager;
+    private final Provider<AuthenticationManager> authenticationManagerProvider;
 
     private final JwtConfig jwtConfig;
 
@@ -56,11 +57,11 @@ public class AuthenticationUserController {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthenticationUserController(AuthenticationUserService applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder) {
+    public AuthenticationUserController(AuthenticationUserServiceI applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, Provider<AuthenticationManager> authenticationManagerProvider,/*AuthenticationManager authenticationManager,*/ JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder) {
         this.applicationUserService = applicationUserService;
         this.signUPMapper = signUPMapper;
         this.coreUserMapper = coreUserMapper;
-        this.authenticationManager = authenticationManager;
+        this.authenticationManagerProvider = authenticationManagerProvider;
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
         this.passwordEncoder = passwordEncoder;
@@ -69,7 +70,7 @@ public class AuthenticationUserController {
     @PostMapping("/signin")
     public ResponseEntity<SignINResponse> authenticateUser(@Valid @RequestBody SignINRequest loginRequest) {
 
-        Authentication authenticate = authenticationManager.authenticate(
+        Authentication authenticate = authenticationManagerProvider.get().authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()

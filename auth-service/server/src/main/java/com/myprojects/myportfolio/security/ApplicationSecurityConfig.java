@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.security;
 
-import com.myprojects.myportfolio.service.AuthenticationUserService;
+import com.myprojects.myportfolio.service.AuthenticationUserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,34 +11,32 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class ApplicationSecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationUserService applicationUserService;
+    private final AuthenticationUserServiceI applicationUserService;
     private final JwtTokenValidation jwtTokenValidation;
 
     @Autowired
     public ApplicationSecurityConfig(PasswordEncoder passwordEncoder,
-                                     AuthenticationUserService applicationUserService,
+                                     AuthenticationUserServiceI applicationUserService,
                                      JwtTokenValidation jwtTokenValidation) {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
         this.jwtTokenValidation = jwtTokenValidation;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .cors().configurationSource(corsConfigurationSource()).and() disabled because cors is configured only in API GATEWAY
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -52,11 +50,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .anyRequest()
                 .authenticated();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
+        return http.build();
     }
 
     @Bean
@@ -68,24 +62,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) {
+        return auth.authenticationProvider(daoAuthenticationProvider()).getOrBuild();
     }
-
-    /*CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        List<String> allowOrigins = jwtConfig.ALLOWED_ORIGINS;
-        List<String> allowMethods = jwtConfig.ALLOW_METHODS;
-        List<String> allowHeaders = jwtConfig.ALLOW_HEADERS;
-        configuration.setAllowedOrigins(allowOrigins);
-        configuration.setAllowedMethods(allowMethods);
-        configuration.setAllowedHeaders(allowHeaders);
-        //in case authentication is enabled this flag MUST be set, otherwise CORS requests will fail
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }*/
-
 }

@@ -13,7 +13,6 @@ import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ import java.util.Set;
 
 @Service(value = "applicationUserService")
 @Transactional
-public class AuthenticationUserService implements UserDetailsService {
+public class AuthenticationUserService implements AuthenticationUserServiceI {
 
     private final IAuthenticationUserRepository applicationUserRepository;
 
@@ -57,6 +56,7 @@ public class AuthenticationUserService implements UserDetailsService {
     }
 
     /**Method used to check if an id is the same as the one of the current logged-in user*/
+    @Override
     public boolean hasId(Integer id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DBUser user = this.applicationUserRepository.findByEmail(username);
@@ -64,6 +64,7 @@ public class AuthenticationUserService implements UserDetailsService {
 
     }
 
+    @Override
     public DBUser loadUserById(Integer id) {
         Validate.notNull(id, "Mandatory parameter is missing: id.");
 
@@ -71,6 +72,7 @@ public class AuthenticationUserService implements UserDetailsService {
         return user.orElseThrow(() -> new NoSuchElementException("No user found with  id: " + id));
     }
 
+    @Override
     public DBUser registerUser(DBUser userToRegister) {
         Validate.notNull(userToRegister, "No valid user to register was provided.");
 
@@ -95,6 +97,7 @@ public class AuthenticationUserService implements UserDetailsService {
 
     }
 
+    @Override
     public void deleteUser(DBUser userToDelete) {
         Validate.notNull(userToDelete, "No valid user to delete was provided.");
 
@@ -103,10 +106,7 @@ public class AuthenticationUserService implements UserDetailsService {
         userClient.delete(userToDelete.getId());
     }
 
-    public DBUser updateUser(DBUser userToUpdate) throws Exception {
-        return this.updateUser(userToUpdate, null);
-    }
-
+    @Override
     public DBUser updateUser(DBUser userToUpdate, List<PatchOperation> operations) throws Exception {
         Validate.notNull(userToUpdate, "Mandatory parameter is missing: user.");
         Validate.notNull(userToUpdate.getId(), "Mandatory parameter is missing: id user.");
@@ -115,7 +115,7 @@ public class AuthenticationUserService implements UserDetailsService {
 
         // check if I need to update the user in the Core DB
         if (operations != null) {
-            userClient.patch(userToUpdate.getId().intValue(), operations);
+            userClient.patch(userToUpdate.getId(), operations);
         }
 
         return savedUser;

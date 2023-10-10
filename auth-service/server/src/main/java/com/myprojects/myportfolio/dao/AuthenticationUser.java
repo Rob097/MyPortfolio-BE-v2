@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class AuthenticationUser implements UserDetails {
 
-    private DBUser user;
+    private final DBUser user;
     private final Set<? extends GrantedAuthority> grantedAuthorities;
     private final boolean isAccountNonExpired;
     private final boolean isAccountNonLocked;
@@ -71,7 +72,7 @@ public class AuthenticationUser implements UserDetails {
         List<String> names = new ArrayList<>();
 
         if (permissions != null && !permissions.isEmpty()) {
-            names.addAll(permissions.stream().map(el -> el.getAuthority()).collect(Collectors.toList()));
+            names.addAll(permissions.stream().map(DBPermission::getAuthority).toList());
         }
 
         return names;
@@ -83,7 +84,7 @@ public class AuthenticationUser implements UserDetails {
         List<String> names = new ArrayList<>();
 
         if (roles != null && !roles.isEmpty()) {
-            names.addAll(roles.stream().map(el -> el.getName()).collect(Collectors.toList()));
+            names.addAll(roles.stream().map(DBRole::getName).toList());
         }
 
         return names;

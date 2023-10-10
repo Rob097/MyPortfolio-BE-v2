@@ -14,10 +14,10 @@ public class SignUPMapper implements Mapper<DBUser, SignUPRequest> {
 
     @Override
     public DBUser map(SignUPRequest input, DBUser output) {
-        if(input==null){
+        if (input == null) {
             return null;
         }
-        if(output==null){
+        if (output == null) {
             output = new DBUser();
         }
 
