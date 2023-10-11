@@ -35,7 +35,7 @@ public class JwtConfig {
     }
 
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build().parseClaimsJws(token).getBody();
+        return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes())).build().parseSignedClaims((token)).getPayload();
     }
 
     private boolean isTokenExpired(String token) {

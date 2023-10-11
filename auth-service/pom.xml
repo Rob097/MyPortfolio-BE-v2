@@ -11,6 +11,10 @@
     <packaging>pom</packaging>
     <artifactId>auth-service</artifactId>
 
+    <properties>
+        <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
+    </properties>
+
     <!--  include the two module: client, server  -->
     <modules>
         <module>client</module>
@@ -25,6 +29,7 @@
                     <plugin>
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
+                        <version>${jib.maven.plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>
@@ -39,43 +44,54 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql-connector.version}</version>
         </dependency>
+
+
+        <!-- ATTENZIONE: Da togliere quando si switcha a Jakarta -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${spring-cloud-dependencies.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <version>${spring-cloud-dependencies.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+            <version>${spring-cloud-dependencies.version}</version>
         </dependency>
 
         <!-- SECURITY -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.myprojects</groupId>
             <artifactId>clients</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${myportfolio-clients.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

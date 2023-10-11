@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.assertj.core.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -63,12 +64,12 @@ public class JwtTokenVerifier {
                     message = e.getMessage();
                 }
 
-                Jws<Claims> claimsJws = Jwts.parserBuilder()
-                        .setSigningKey(secretKey)
+                Jws<Claims> claimsJws = Jwts.parser()
+                        .verifyWith(secretKey)
                         .build()
-                        .parseClaimsJws(token);
+                        .parseSignedClaims((token));
 
-                Claims body = claimsJws.getBody();
+                Claims body = claimsJws.getPayload();
 
                 String username = body.getSubject();
 

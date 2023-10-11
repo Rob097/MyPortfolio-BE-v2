@@ -11,6 +11,16 @@
     <packaging>jar</packaging>
     <artifactId>clients</artifactId>
 
+    <properties>
+        <jwt.version>0.12.2</jwt.version>
+        <jackson.version>2.13.3</jackson.version>
+        <hibernate.version>5.6.9.Final</hibernate.version>
+        <feign.version>11.8</feign.version>
+        <spring-webmvc.version>5.3.21</spring-webmvc.version>
+        <jakarta.version>3.1.0</jakarta.version>
+        <jakarta.api.version>6.0.0</jakarta.api.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -23,18 +33,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>${jwt.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>${jwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>${jwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <!-- END -->
@@ -42,22 +52,27 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-httpclient</artifactId>
+            <version>${feign.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring-webmvc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
     </dependencies>
 
