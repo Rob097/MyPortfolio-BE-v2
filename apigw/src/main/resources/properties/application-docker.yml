@@ -11,8 +11,8 @@ server:
 spring:
   config:
     import: classpath:common.yml
-  zipkin:
-    base-url: http://myzipkin:9411
+  #zipkin:
+  #  base-url: http://myzipkin:9411
 
 eureka:
   client:

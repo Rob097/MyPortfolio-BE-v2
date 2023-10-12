@@ -1,6 +1,10 @@
 package com.myprojects.myportfolio.core.security;
 
 import com.myprojects.myportfolio.clients.auth.JwtTokenVerifier;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,10 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +55,7 @@ public class JwtTokenValidation extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ResponseStatusException e) {
-            response.setStatus(e.getStatus().value());
+            response.setStatus(e.getBody().getStatus());
             response.getWriter().write(Objects.requireNonNull(e.getMessage()));
         }
     }

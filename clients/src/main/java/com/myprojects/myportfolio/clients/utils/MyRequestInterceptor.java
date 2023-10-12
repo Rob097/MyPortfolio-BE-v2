@@ -1,11 +1,10 @@
 package com.myprojects.myportfolio.clients.utils;
 
 import com.myprojects.myportfolio.clients.auth.JwtConfig;
+import feign.Request;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * This component is used to intercept the request between microservices via feignClients.
@@ -23,10 +22,9 @@ public class MyRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        assert requestAttributes != null;
-        String authorization = requestAttributes.getRequest().getHeader(jwtConfig.getAuthorizationHeader());
-        String internalAuthorization = requestAttributes.getRequest().getHeader(jwtConfig.getInternalAuthorizationHeader());
+        Request request = template.request();
+        String authorization = request.headers().get(jwtConfig.getAuthorizationHeader()).iterator().next();
+        String internalAuthorization = request.headers().get(jwtConfig.getInternalAuthorizationHeader()).iterator().next();
         if (null != authorization) {
             template.header(jwtConfig.getAuthorizationHeader(), authorization);
             template.header(jwtConfig.getInternalAuthorizationHeader(), internalAuthorization);

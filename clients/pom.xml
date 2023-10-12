@@ -13,19 +13,12 @@
 
     <properties>
         <jwt.version>0.12.2</jwt.version>
-        <hibernate.version>5.6.9.Final</hibernate.version>
+        <hibernate.version>6.3.1.Final</hibernate.version>
         <feign.version>12.5</feign.version>
-        <spring-webmvc.version>5.3.21</spring-webmvc.version>
+        <spring-webmvc.version>6.0.12</spring-webmvc.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- SECURITY -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

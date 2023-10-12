@@ -35,7 +35,7 @@
     <jackson.version>2.15.2</jackson.version>
 
     <!-- SPRING CLOUD -->
-    <spring-cloud.version>2021.0.8</spring-cloud.version> <!-- When switching to spring 3 upgrade it too -->
+    <spring-cloud.version>2022.0.4</spring-cloud.version>
     <zipkin.version>3.1.9</zipkin.version>
     <eureka-client.version>4.0.3</eureka-client.version>
     <sleuth.version>3.1.9</sleuth.version>
@@ -43,7 +43,7 @@
     <open-feign.version>4.0.4</open-feign.version>
 
     <!-- OTHERS -->
-    <spring-boot.version>2.7.16</spring-boot.version>
+    <spring-boot.version>3.1.4</spring-boot.version>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <lombok.version>1.18.30</lombok.version>
     <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
@@ -100,6 +100,24 @@
       <artifactId>lombok</artifactId>
       <version>${lombok.version}</version>
     </dependency>
+
+    <!--JAKARTA-->
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>

@@ -62,20 +62,22 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+            <version>${hystrix.version}</version>
+        </dependency>
+
+        <!--TODO: SOSTITUIRE ZIPKIN E SLEUTH-->
+        <!-- <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
             <version>${sleuth.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-zipkin</artifactId>
             <version>${zipkin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-            <version>${hystrix.version}</version>
-        </dependency>
+        </dependency>-->
+
     </dependencies>
 
 </project>

@@ -2,8 +2,8 @@ package com.myprojects.myportfolio.utils;
 
 import com.myprojects.myportfolio.dto.SignUPRequest;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordMatchesValidator implements ConstraintValidator<SignUPRequest.PasswordMatches, Object> {
 

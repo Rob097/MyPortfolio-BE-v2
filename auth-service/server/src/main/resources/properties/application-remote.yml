@@ -5,8 +5,8 @@ spring:
     username: 'myportfolio'
     url: jdbc:mysql://ourlists.ddns.net:33061/auth
     password: 'password'
-  zipkin:
-    base-url: http://ourlists.ddns.net:9411
+  #zipkin:
+  #  base-url: http://ourlists.ddns.net:9411
 
 eureka:
   client:

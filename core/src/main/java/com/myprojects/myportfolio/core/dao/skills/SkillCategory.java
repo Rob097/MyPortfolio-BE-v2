@@ -5,10 +5,10 @@ import com.myprojects.myportfolio.core.dao.BaseDao;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;

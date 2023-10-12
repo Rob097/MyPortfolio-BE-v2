@@ -8,7 +8,7 @@ import com.myprojects.myportfolio.core.dao.skills.Skill;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;

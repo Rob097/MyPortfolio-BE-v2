@@ -1,9 +1,9 @@
 package com.myprojects.myportfolio.clients.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -34,7 +34,7 @@ public class RouterValidator {
 
         if (route != null) {
             isMatch = openApiEndpoints.get(route).stream()
-                    .map(Enum::name)
+                    .map(HttpMethod::name)
                     .anyMatch(el -> el.equals(request.getMethod()));
         }
         return isMatch;

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.enums.Sex;
 import com.myprojects.myportfolio.core.dao.skills.UserSkill;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
@@ -188,9 +188,9 @@ public class User extends SlugDao {
             });
         }
         if (this.getSkills() != null) {
-            this.getSkills().forEach(skill -> {
-                skill.setUser(this);
-            });
+            this.getSkills().forEach(skill ->
+                    skill.setUser(this)
+            );
         }
     }
 

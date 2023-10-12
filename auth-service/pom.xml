@@ -70,16 +70,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>${eureka-client.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-            <version>${sleuth.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
-            <version>${zipkin.version}</version>
-        </dependency>
 
         <!-- SECURITY -->
         <dependency>
@@ -94,6 +84,18 @@
             <version>${myportfolio-clients.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!--TODO: SOSTITUIRE ZIPKIN E SLEUTH-->
+        <!-- <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <version>${sleuth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+            <version>${zipkin.version}</version>
+        </dependency>-->
     </dependencies>
 
 </project>

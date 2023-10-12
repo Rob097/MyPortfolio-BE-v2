@@ -14,6 +14,8 @@ import com.myprojects.myportfolio.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.mapper.SignUPMapper;
 import com.myprojects.myportfolio.service.AuthenticationUserServiceI;
 import io.jsonwebtoken.Jwts;
+import jakarta.inject.Provider;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +32,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
-import javax.inject.Provider;
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,6 +85,7 @@ public class AuthenticationUserController {
         AuthenticationUser applicationUser = (AuthenticationUser) authenticate.getPrincipal();
         DBUser dbUser = applicationUser.getDBUser();
 
+        // TODO: Controllare tutti i richiami a metodi deprecati
         String token = Jwts.builder()
                 .setSubject(authenticate.getName())
                 .claim("firstName", dbUser.getFirstName())
