@@ -120,7 +120,11 @@ public abstract class IController<R> {
     }
 
     public ResponseEntity<MessageResource<R>> buildSuccessResponse(@NotNull R element, IView view, List<Message> messages) {
-        MessageResource<R> result = new MessageResource<>(serializeElement(element, view, true), messages);
+        return this.buildSuccessResponseOfGenericType(element, view, new ArrayList<>(), true);
+    }
+
+    public <C> ResponseEntity<MessageResource<C>> buildSuccessResponseOfGenericType(@NotNull C element, IView view, List<Message> messages, boolean logErrors) {
+        MessageResource<C> result = new MessageResource<>(serializeElement(element, view, logErrors), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

@@ -17,7 +17,6 @@ import java.util.Set;
 public class DBUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(
             name = "id"
     )

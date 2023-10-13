@@ -28,4 +28,7 @@ public interface UserClient {
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<MessageResource<CoreUser>> delete(@PathVariable("id") Integer id);
 
+    @GetMapping(path = "/fromAuth/getNextId", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<MessageResource<Integer>> getNextId();
+
 }

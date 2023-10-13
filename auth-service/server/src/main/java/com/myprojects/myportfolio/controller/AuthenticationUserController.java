@@ -85,7 +85,6 @@ public class AuthenticationUserController {
         AuthenticationUser applicationUser = (AuthenticationUser) authenticate.getPrincipal();
         DBUser dbUser = applicationUser.getDBUser();
 
-        // TODO: Controllare tutti i richiami a metodi deprecati
         String token = Jwts.builder()
                 .signWith(secretKey)
                 .issuedAt(new Date())

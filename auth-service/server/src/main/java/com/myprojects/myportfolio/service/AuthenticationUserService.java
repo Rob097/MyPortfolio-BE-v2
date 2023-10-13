@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.service;
 import com.myprojects.myportfolio.clients.UserClient;
 import com.myprojects.myportfolio.clients.auth.ApplicationUserRole;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.dao.AuthenticationUser;
 import com.myprojects.myportfolio.dao.DBRole;
 import com.myprojects.myportfolio.dao.DBUser;
@@ -11,6 +12,7 @@ import com.myprojects.myportfolio.repository.IAuthenticationUserRepository;
 import com.myprojects.myportfolio.repository.IRoleRepository;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -88,13 +90,25 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
             userToRegister.setRoles(Set.of(basicRole));
         }
 
+        // Try at max 10 times to get a valid id from core and save the user both in the Core DB and in the Auth DB with the same id
+        int maxTries = 10;
+        int tries = 0;
+        ResponseEntity<MessageResource<Integer>> nextId = userClient.getNextId();
+        while (nextId == null || nextId.getBody() == null || nextId.getBody().getContent() == null || this.applicationUserRepository.findById(nextId.getBody().getContent()).isPresent()) {
+            nextId = userClient.getNextId();
+            tries++;
+            if (tries > maxTries) {
+                throw new RuntimeException("No valid id was found.");
+            }
+        }
+
+        userToRegister.setId(nextId.getBody().getContent());
         DBUser registeredUser = this.applicationUserRepository.saveAndFlush(userToRegister);
 
         // I need to update the user in the Core DB
         userClient.create(coreUserMapper.map(registeredUser));
 
         return registeredUser;
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.proxy.HibernateProxy;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,20 +22,11 @@ import java.util.Objects;
 @MappedSuperclass
 public class BaseDao implements Serializable {
 
-    // @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", strategy = "com.myprojects.myportfolio.core.configAndUtils.UseExistingIdOtherwiseGenerateUsingIdentity")
-    // @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", type = com.myprojects.myportfolio.core.configAndUtils.UseExistingIdOtherwiseGenerateUsingIdentity.class)
+    @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
     @Column(name = "id", updatable = false)
     protected Integer id;
-
-    // TODO: Controllare perché non funziona nel caso l'id sia già valorizzato
-    // Use the auto-generated id if it is not null, otherwise use the id passed in.
-    public void setId(Integer id) {
-        if (id != null && this.id == null) {
-            this.id = id;
-        }
-    }
 
     public String toString() {
         return toJson();

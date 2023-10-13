@@ -6,8 +6,9 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.User;
-import com.myprojects.myportfolio.core.mappers.UserMapper;
 import com.myprojects.myportfolio.core.dto.UserDto;
+import com.myprojects.myportfolio.core.mappers.UserMapper;
+import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -28,12 +29,16 @@ public class UserController extends BaseController<User, UserDto> {
 
     private final UserMapper userMapper;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    private final UserRepository userRepository;
+
+    public UserController(UserRepository userRepository, UserService userService, UserMapper userMapper) {
         this.service = userService;
         this.mapper = userMapper;
 
         this.userService = userService;
         this.userMapper = userMapper;
+
+        this.userRepository = userRepository;
     }
 
     /** Methods, if not overridden above, are implemented in super class. */
@@ -93,6 +98,11 @@ public class UserController extends BaseController<User, UserDto> {
         }
 
         return this.buildSuccessResponse(userMapper.mapToDto(user));
+    }
+
+    @GetMapping(path = "/fromAuth/getNextId")
+    public ResponseEntity<MessageResource<Integer>> getNextId() throws Exception {
+        return this.buildSuccessResponseOfGenericType(userRepository.getNextId(), Normal.value, new ArrayList<>(), false);
     }
 
 }

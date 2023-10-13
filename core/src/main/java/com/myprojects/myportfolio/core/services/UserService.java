@@ -68,7 +68,8 @@ public class UserService extends BaseService<User> implements UserServiceI {
 
         // Save user's skills:
         user.getSkills().forEach(skill -> {
-            user.getSkills().remove(skill); // Remove the old skill from the user's list (to avoid duplicates)
+            // Remove the old skill from the user's list by skillId and userId (to avoid duplicates):
+            user.getSkills().removeIf(s -> s.getId().equals(skill.getId()));
             skill.setUser(user);
             this.userSkillService.save(skill);
         });
