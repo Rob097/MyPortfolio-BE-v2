@@ -67,7 +67,7 @@ public class UtilsService implements UtilsServiceI {
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = this.userRepository.findByEmail(username).orElse(null);
-        if (currentUser == null)
+        if (currentUser == null && !(isCreate && entity instanceof UserDto))
             return false;
 
         if (!isCreate) {

@@ -15,6 +15,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class UserSkillController extends IController<UserSkillDto> {
 
     @Override
     @PostMapping()
-//    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#entity.userId)")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#entity.userId)")
     protected ResponseEntity<MessageResource<UserSkillDto>> create(@Validated(OnCreate.class) @RequestBody UserSkillDto entity) throws Exception {
         Validate.notNull(entity, resourceMissing());
 
@@ -44,7 +45,7 @@ public class UserSkillController extends IController<UserSkillDto> {
 
     @Override
     @PutMapping()
-//    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#entity.userId)")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#entity.userId)")
     protected ResponseEntity<MessageResource<UserSkillDto>> update(Integer id, @Validated(OnUpdate.class) @RequestBody UserSkillDto entity) throws Exception {
         Validate.notNull(entity, resourceMissing());
         Validate.notNull(entity.getId(), fieldMissing("id"));
@@ -54,7 +55,7 @@ public class UserSkillController extends IController<UserSkillDto> {
     }
 
     @DeleteMapping(value = "/{userId}/skill/{skillId}")
-//    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#userId)")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#userId)")
     protected ResponseEntity<MessageResource<UserSkillDto>> delete(@PathVariable("userId") Integer userId, @PathVariable("skillId") Integer skillId) throws Exception {
         Validate.notNull(userId, fieldMissing("userId"));
         Validate.notNull(skillId, fieldMissing("skillId"));

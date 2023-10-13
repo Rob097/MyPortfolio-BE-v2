@@ -5,11 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-//@ComponentScan(basePackages = {"com.myprojects.myportfolio"})
 @EnableFeignClients(basePackages = "com.myprojects.myportfolio")
 public class AuthApplication {
 

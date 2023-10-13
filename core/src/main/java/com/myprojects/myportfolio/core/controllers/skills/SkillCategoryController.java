@@ -50,7 +50,7 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
 
     @Override
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName())")
     public ResponseEntity<MessageResource<SkillCategoryDto>> update(
             @PathVariable("id") Integer id,
             @Validated(OnUpdate.class) @RequestBody SkillCategoryDto entity
@@ -65,7 +65,7 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
 
     @Override
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName())")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName())")
     public ResponseEntity<MessageResource<SkillCategoryDto>> delete(
             @PathVariable("id") Integer id
     ) throws Exception {

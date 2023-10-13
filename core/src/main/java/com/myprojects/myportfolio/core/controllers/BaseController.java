@@ -60,7 +60,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PostMapping()
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, true)")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.name() ) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
             @Validated(OnCreate.class) @RequestBody T entity
     ) throws Exception {
@@ -72,7 +72,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
             @Validated(OnUpdate.class) @RequestBody T entity

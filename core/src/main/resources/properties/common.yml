@@ -10,9 +10,10 @@ spring:
   application:
     name: core
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+    # Setting the hibernate dialect is not needed anymore
+    #properties:
+    #  hibernate:
+    #    dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
   jackson:
@@ -22,9 +23,9 @@ logging:
   level:
     org:
       hibernate:
-        org.hibernate.Cache: "trace"
         SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        Cache: TRACE
+        type: TRACE
+        orm:
+          jdbc:
+            bind: TRACE

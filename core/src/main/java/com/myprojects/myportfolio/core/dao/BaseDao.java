@@ -22,11 +22,20 @@ import java.util.Objects;
 @MappedSuperclass
 public class BaseDao implements Serializable {
 
+    // @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", strategy = "com.myprojects.myportfolio.core.configAndUtils.UseExistingIdOtherwiseGenerateUsingIdentity")
+    // @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
     @Id
-    @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", strategy = "com.myprojects.myportfolio.core.configAndUtils.UseExistingIdOtherwiseGenerateUsingIdentity")
-    @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     protected Integer id;
+
+    // TODO: Controllare perché non funziona nel caso l'id sia già valorizzato
+    // Use the auto-generated id if it is not null, otherwise use the id passed in.
+    public void setId(Integer id) {
+        if (id != null && this.id == null) {
+            this.id = id;
+        }
+    }
 
     public String toString() {
         return toJson();

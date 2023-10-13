@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.core.configAndUtils;
 
-import org.apache.hc.core5.util.Identifiable;
+import io.jsonwebtoken.Identifiable;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;

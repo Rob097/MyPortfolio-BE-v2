@@ -87,19 +87,19 @@ public class AuthenticationUserController {
 
         // TODO: Controllare tutti i richiami a metodi deprecati
         String token = Jwts.builder()
-                .setSubject(authenticate.getName())
+                .signWith(secretKey)
+                .issuedAt(new Date())
+                .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(expirationAfterDays)))
+                .subject(authenticate.getName())
                 .claim("firstName", dbUser.getFirstName())
                 .claim("lastName", dbUser.getLastName())
                 .claim("roles", applicationUser.getRolesName())
                 .claim("authorities", applicationUser.getAuthoritiesName())
-                .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(expirationAfterDays)))
-                .signWith(secretKey)
                 .compact();
 
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
+        headers.add(jwtConfig.getAuthorizationHeader(), token);
         return ResponseEntity.ok().headers(headers).body(new SignINResponse(token));
     }
 

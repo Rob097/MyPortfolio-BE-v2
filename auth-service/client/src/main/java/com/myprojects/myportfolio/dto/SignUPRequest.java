@@ -25,8 +25,8 @@ public class SignUPRequest {
     @NotEmpty(message = "Il nome non può essere vuoto")
     private String firstName;
 
-    @NotNull(message = "Il cognnome è un campo obbligatorio")
-    @NotEmpty(message = "Il cognnome non può essere vuoto")
+    @NotNull(message = "Il cognome è un campo obbligatorio")
+    @NotEmpty(message = "Il cognome non può essere vuoto")
     private String lastName;
 
     @NotNull(message = "La password è un campo obbligatorio")

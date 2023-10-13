@@ -61,7 +61,7 @@ public class UserController extends BaseController<User, UserDto> {
     }
 
     @PatchMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole(T(ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
     public ResponseEntity<MessageResource<UserDto>> patch(
             @PathVariable("id") Integer id,
             @RequestBody List<PatchOperation> operations
