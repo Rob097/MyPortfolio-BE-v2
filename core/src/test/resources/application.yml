@@ -18,7 +18,6 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
         ##### START CACHE CONFIGURATIONS #####
         cache:
           use_query_cache: false
@@ -40,9 +39,9 @@ logging:
   level:
     org:
       hibernate:
-        org.hibernate.Cache: "trace"
         SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        Cache: TRACE
+        type: TRACE
+        orm:
+          jdbc:
+            bind: TRACE
