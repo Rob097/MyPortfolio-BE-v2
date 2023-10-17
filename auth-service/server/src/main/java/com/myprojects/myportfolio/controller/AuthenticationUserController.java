@@ -1,6 +1,6 @@
 package com.myprojects.myportfolio.controller;
 
-import com.myprojects.myportfolio.clients.auth.JwtConfig;
+import com.myprojects.myportfolio.clients.auth.AuthenticatedUserClaims;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
@@ -12,7 +12,10 @@ import com.myprojects.myportfolio.dto.SignINResponse;
 import com.myprojects.myportfolio.dto.SignUPRequest;
 import com.myprojects.myportfolio.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.mapper.SignUPMapper;
+import com.myprojects.myportfolio.security.JwtConfig;
 import com.myprojects.myportfolio.service.AuthenticationUserServiceI;
+import com.myprojects.myportfolio.service.JwtServiceI;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.inject.Provider;
 import jakarta.validation.Valid;
@@ -56,8 +59,10 @@ public class AuthenticationUserController {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final JwtServiceI jwtService;
+
     @Autowired
-    public AuthenticationUserController(AuthenticationUserServiceI applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, Provider<AuthenticationManager> authenticationManagerProvider,/*AuthenticationManager authenticationManager,*/ JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder) {
+    public AuthenticationUserController(AuthenticationUserServiceI applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, Provider<AuthenticationManager> authenticationManagerProvider, JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder, JwtServiceI jwtService) {
         this.applicationUserService = applicationUserService;
         this.signUPMapper = signUPMapper;
         this.coreUserMapper = coreUserMapper;
@@ -65,6 +70,35 @@ public class AuthenticationUserController {
         this.jwtConfig = jwtConfig;
         this.secretKey = secretKey;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestParam(name = "token") String token) {
+        try {
+            jwtService.validateToken(token);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            log.error("Error while validating token", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/authorities")
+    public ResponseEntity<AuthenticatedUserClaims> getAuthorities(@RequestParam(name = "token") String token) {
+        try {
+            AuthenticatedUserClaims authenticatedUserClaims = jwtService.getAuthorities(token);
+            return ResponseEntity.ok(authenticatedUserClaims);
+        } catch (IllegalStateException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            log.error("Error while validating token", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/signin")
@@ -98,7 +132,7 @@ public class AuthenticationUserController {
 
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(jwtConfig.getAuthorizationHeader(), token);
+        headers.add(HttpHeaders.AUTHORIZATION, token);
         return ResponseEntity.ok().headers(headers).body(new SignINResponse(token));
     }
 

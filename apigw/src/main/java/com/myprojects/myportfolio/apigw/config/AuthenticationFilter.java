@@ -1,40 +1,60 @@
 package com.myprojects.myportfolio.apigw.config;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+import com.myprojects.myportfolio.apigw.services.AuthServiceI;
+import com.myprojects.myportfolio.clients.auth.SecurityConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@RefreshScope
+import java.util.Objects;
+
+@Slf4j
 @Component
 public class AuthenticationFilter implements GatewayFilter {
 
-    private final JwtConfig jwtConfig;
+    private final RouterValidator routerValidator;
 
-    public AuthenticationFilter(JwtConfig jwtConfig) {
+    private final SecurityConstants jwtConfig;
+
+    private final AuthServiceI authClient;
+
+    public AuthenticationFilter(RouterValidator routerValidator, SecurityConstants jwtConfig, AuthServiceI authClient) {
+        this.routerValidator = routerValidator;
         this.jwtConfig = jwtConfig;
+        this.authClient = authClient;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-        ServerHttpRequest request = exchange.getRequest();
-        request.getHeaders();
-        String authorizationHeader = request.getHeaders().getFirst(jwtConfig.getAuthorizationHeader());
+        if (!routerValidator.isHttpServletRequestSecured.test(exchange.getRequest())) {
 
-        if(StringUtils.isBlank(authorizationHeader))
-            authorizationHeader = jwtConfig.getTokenPrefix() + "not authenticated but coming from load balancer";
+            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                throw new RuntimeException("Missing Authorization header");
+            }
 
-        // Set internal authorization header in order to make sure that every request pass through the api gateway (load balancer)
-        exchange.getRequest().mutate()
-                .header(jwtConfig.getInternalAuthorizationHeader(), authorizationHeader)
-                .build();
+            String token = Objects.requireNonNull(exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0);
+            if (token != null && token.startsWith(jwtConfig.getTokenPrefix())) {
+                token = token.replace(jwtConfig.getTokenPrefix(), "");
+            }
+
+            return authClient.getAuthenticatedUserClaims(token)
+                    .flatMap(responseEntity -> {
+
+                        // Stringify responseEntity as json and set it to the header
+                        exchange.getRequest().mutate().headers(httpHeaders ->
+                                httpHeaders.add(jwtConfig.getAuthenticatedUserClaimsHeader(), responseEntity.toString())
+                        );
+
+                        return chain.filter(exchange);
+                    });
+        }
 
         return chain.filter(exchange);
-
     }
+
 }

@@ -62,7 +62,7 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
     public boolean hasId(Integer id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DBUser user = this.applicationUserRepository.findByEmail(username);
-        return user.getId().equals(id);
+        return user!=null && user.getId()!=null && user.getId().equals(id);
 
     }
 

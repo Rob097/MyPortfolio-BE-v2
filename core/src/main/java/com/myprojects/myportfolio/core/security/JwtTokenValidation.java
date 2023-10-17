@@ -1,10 +1,13 @@
 package com.myprojects.myportfolio.core.security;
 
-import com.myprojects.myportfolio.clients.auth.JwtTokenVerifier;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myprojects.myportfolio.clients.auth.AuthenticatedUserClaims;
+import com.myprojects.myportfolio.clients.auth.SecurityConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,7 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,34 +24,34 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenValidation extends OncePerRequestFilter {
 
-    private final JwtTokenVerifier jwtTokenVerifier;
+    private final SecurityConstants securityConstants;
 
-    public JwtTokenValidation(JwtTokenVerifier jwtTokenVerifier) {
-        this.jwtTokenVerifier = jwtTokenVerifier;
+    public JwtTokenValidation(SecurityConstants securityConstants) {
+        this.securityConstants = securityConstants;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try {
 
-            List<String> authorities = this.jwtTokenVerifier.validateToken(request);
-            if (authorities != null && !authorities.isEmpty()) {
+            // Get the header "AuthenticatedUserClaims" from the request
+            String claimsHeader = request.getHeader(securityConstants.getAuthenticatedUserClaimsHeader());
 
-                String username = authorities.get(0);
-                authorities.remove(0);
+            if (StringUtils.isNotBlank(claimsHeader)) {
+                AuthenticatedUserClaims authenticatedUserClaims = (new ObjectMapper()).readValue(claimsHeader, AuthenticatedUserClaims.class);
 
-                Set<SimpleGrantedAuthority> simpleGrantedRolesAndAuthorities = authorities.stream()
+                Set<SimpleGrantedAuthority> simpleGrantedRolesAndAuthorities = authenticatedUserClaims.getAuthorities().stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toSet());
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        username,
+                        authenticatedUserClaims.getUsername(),
                         null,
                         simpleGrantedRolesAndAuthorities
                 );
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
 
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
             filterChain.doFilter(request, response);
@@ -57,6 +59,8 @@ public class JwtTokenValidation extends OncePerRequestFilter {
         } catch (ResponseStatusException e) {
             response.setStatus(e.getBody().getStatus());
             response.getWriter().write(Objects.requireNonNull(e.getMessage()));
+        } catch (IOException | ServletException e) {
+            throw new RuntimeException(e);
         }
     }
 

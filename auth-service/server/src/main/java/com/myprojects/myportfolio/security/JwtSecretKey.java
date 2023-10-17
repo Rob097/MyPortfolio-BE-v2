@@ -1,4 +1,4 @@
-package com.myprojects.myportfolio.clients.auth;
+package com.myprojects.myportfolio.security;
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
