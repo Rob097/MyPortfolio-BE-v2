@@ -5,6 +5,7 @@ import com.myprojects.myportfolio.security.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @SuppressWarnings("unchecked")
 public class JwtService implements JwtServiceI {
@@ -34,6 +36,8 @@ public class JwtService implements JwtServiceI {
 
     @Override
     public AuthenticatedUserClaims getAuthorities(String token) {
+
+        log.info("Getting authorities from token");
 
         this.validateToken(token);
 

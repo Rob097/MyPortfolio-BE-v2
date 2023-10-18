@@ -20,10 +20,10 @@ public class AuthApplication {
         SpringApplication.run(AuthApplication.class, args);
     }
 
-    // TODO: Try remove this bean
+    /* TODO: Try remove this bean
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
+    }*/
 }

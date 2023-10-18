@@ -34,7 +34,13 @@ public class AuthenticationFilter implements GatewayFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
+        org.springframework.cloud.gateway.route.Route route = exchange.getAttribute(org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+        if(route!=null)
+            log.info("Incoming request for " + route.getId());
+
         if (!routerValidator.isHttpServletRequestSecured.test(exchange.getRequest())) {
+            long startTime = System.currentTimeMillis();
+            log.info("Authenticating request");
 
             if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 throw new UnauthorizedException("Missing Authorization header");
@@ -47,6 +53,7 @@ public class AuthenticationFilter implements GatewayFilter {
 
             return authClient.getAuthenticatedUserClaims(token)
                     .flatMap(responseEntity -> {
+                        log.info("Request authenticated in " + (System.currentTimeMillis() - startTime) + "ms");
 
                         // Stringify responseEntity as json and set it to the header
                         exchange.getRequest().mutate().headers(httpHeaders ->
@@ -60,6 +67,8 @@ public class AuthenticationFilter implements GatewayFilter {
                         return Mono.error(ex);
 
                     });
+        } else {
+            log.info("Request authentication not required");
         }
 
         return chain.filter(exchange);
