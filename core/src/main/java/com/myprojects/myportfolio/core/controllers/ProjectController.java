@@ -42,7 +42,7 @@ public class ProjectController extends BaseController<Project, ProjectDto> {
 
         Project project = projectService.findBy(findByEquals(Project.FIELDS.SLUG.name(), slug));
 
-        return this.buildSuccessResponse(projectMapper.mapToDto(project), view);
+        return this.buildSuccessResponse(projectMapper.mapToDto(project, view), view);
     }
 
 }

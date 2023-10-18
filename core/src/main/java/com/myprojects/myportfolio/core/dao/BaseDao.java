@@ -49,6 +49,9 @@ public class BaseDao implements Serializable {
     @PreRemove
     public void removeRelationships() {/*Method gets overridden.*/ }
 
+    /** Method overridden by all subClasses to clear irs relations before mapping to dto */
+    public void clearRelationships() {/*Method gets overridden.*/ }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

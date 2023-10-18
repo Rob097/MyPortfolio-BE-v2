@@ -1,8 +1,12 @@
 package com.myprojects.myportfolio.core.mappers;
 
+import com.myprojects.myportfolio.clients.general.views.IView;
+import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.mappers.skills.UserSkillMapper;
 import com.myprojects.myportfolio.core.dto.UserDto;
+import jakarta.annotation.Nullable;
+import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
@@ -11,13 +15,13 @@ import org.mapstruct.NullValueMappingStrategy;
 public interface UserMapper extends BaseMapper<User, UserDto> {
 
     @Override
-    @Mapping(target = "address.nationality", source = "nationality")
-    @Mapping(target = "address.nation", source = "nation")
-    @Mapping(target = "address.province", source = "province")
-    @Mapping(target = "address.city", source = "city")
-    @Mapping(target = "address.cap", source = "cap")
-    @Mapping(target = "address.address", source = "address")
-    UserDto mapToDto(User dao);
+    @Mapping(target = "address.nationality", source = "dao.nationality")
+    @Mapping(target = "address.nation", source = "dao.nation")
+    @Mapping(target = "address.province", source = "dao.province")
+    @Mapping(target = "address.city", source = "dao.city")
+    @Mapping(target = "address.cap", source = "dao.cap")
+    @Mapping(target = "address.address", source = "dao.address")
+    UserDto mapToDto(User dao, IView view);
 
     @Override
     @Mapping(target = "nationality", source = "address.nationality")

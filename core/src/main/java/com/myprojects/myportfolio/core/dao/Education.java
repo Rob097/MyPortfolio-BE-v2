@@ -12,6 +12,8 @@ import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Setter
 @Getter
@@ -20,6 +22,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "educations", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
+@Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Education extends SlugDao {
 
     @Serial
@@ -88,6 +91,7 @@ public class Education extends SlugDao {
     )
     @JsonBackReference
     @Builder.Default
+    @Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
     private User user = new User();
 
     /**
@@ -103,6 +107,7 @@ public class Education extends SlugDao {
             inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
     /**
@@ -119,6 +124,7 @@ public class Education extends SlugDao {
             joinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
+    @Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override
@@ -137,6 +143,12 @@ public class Education extends SlugDao {
         if (this.getUser() != null) {
             this.getUser().getEducations().remove(this);
         }
+    }
+
+    @Override
+    public void clearRelationships() {
+        this.stories = null;
+        this.skills = null;
     }
 
     //////////////////////

@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.mappers;
 
+import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.dao.*;
 import com.myprojects.myportfolio.core.dto.StoryDto;
 import com.myprojects.myportfolio.core.mappers.skills.SkillMapper;
@@ -12,11 +13,11 @@ import org.mapstruct.NullValueMappingStrategy;
 public interface StoryMapper extends BaseMapper<Story, StoryDto> {
 
     @Override
-    @Mapping(target = "diaryId", source = "diary.id")
-    @Mapping(target = "projectsIds", source = "projects", qualifiedByName = "daoToId")
-    @Mapping(target = "educationsIds", source = "educations", qualifiedByName = "daoToId")
-    @Mapping(target = "experiencesIds", source = "experiences", qualifiedByName = "daoToId")
-    StoryDto mapToDto(Story entity);
+    @Mapping(target = "diaryId", source = "entity.diary.id")
+    @Mapping(target = "projectsIds", source = "entity.projects", qualifiedByName = "daoToId")
+    @Mapping(target = "educationsIds", source = "entity.educations", qualifiedByName = "daoToId")
+    @Mapping(target = "experiencesIds", source = "entity.experiences", qualifiedByName = "daoToId")
+    StoryDto mapToDto(Story entity, IView view);
 
     @Override
     @Mapping(target = "diary.id", source = "diaryId")

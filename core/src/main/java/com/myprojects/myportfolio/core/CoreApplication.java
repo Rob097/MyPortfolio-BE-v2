@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-@SpringBootApplication(scanBasePackages = {"com.myprojects.myportfolio" }, exclude= {UserDetailsServiceAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.myprojects.myportfolio"}, exclude = {UserDetailsServiceAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
 @EnableFeignClients(basePackages = "com.myprojects.myportfolio")
 @EnableDiscoveryClient
 @EnableCaching

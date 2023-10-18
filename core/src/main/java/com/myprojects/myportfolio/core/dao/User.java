@@ -7,6 +7,8 @@ import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import java.io.Serial;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"slug"})})
+@Cache(region = "users", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends SlugDao {
 
     @Serial
@@ -96,6 +99,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "diaries", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Diary> diaries = new HashSet<>();
 
     /**
@@ -112,6 +116,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Project> projects = new HashSet<>();
 
     /**
@@ -128,6 +133,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "educations", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Education> educations = new HashSet<>();
 
     /**
@@ -144,6 +150,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Experience> experiences = new HashSet<>();
 
     /**
@@ -159,6 +166,7 @@ public class User extends SlugDao {
             fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "userSkills", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<UserSkill> skills = new HashSet<>();
 
     @Override
@@ -192,6 +200,15 @@ public class User extends SlugDao {
                     skill.setUser(this)
             );
         }
+    }
+
+    @Override
+    public void clearRelationships() {
+        this.diaries = null;
+        this.projects = null;
+        this.educations = null;
+        this.experiences = null;
+        this.skills = null;
     }
 
     public User(Integer id, String email) {

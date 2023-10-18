@@ -7,10 +7,13 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
 
 @Setter
 @Getter
@@ -19,6 +22,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
+@Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Story extends SlugDao {
 
     @Serial
@@ -81,6 +85,7 @@ public class Story extends SlugDao {
     )
     @JsonBackReference
     @Builder.Default
+    @Cache(region = "diaries", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Diary diary = new Diary();
 
     /**
@@ -92,6 +97,7 @@ public class Story extends SlugDao {
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
+    @Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Project> projects = new HashSet<>();
 
     /**
@@ -103,6 +109,7 @@ public class Story extends SlugDao {
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
+    @Cache(region = "educations", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Education> educations = new HashSet<>();
 
     /**
@@ -114,6 +121,7 @@ public class Story extends SlugDao {
     @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
     @JsonBackReference
     @Builder.Default
+    @Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Experience> experiences = new HashSet<>();
 
     /**
@@ -130,6 +138,7 @@ public class Story extends SlugDao {
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
+    @Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override
@@ -164,6 +173,14 @@ public class Story extends SlugDao {
         if (this.getDiary() != null) {
             this.getDiary().getStories().remove(this);
         }
+    }
+
+    @Override
+    public void clearRelationships() {
+        this.projects = null;
+        this.educations = null;
+        this.experiences = null;
+        this.skills = null;
     }
 
     //////////////////////

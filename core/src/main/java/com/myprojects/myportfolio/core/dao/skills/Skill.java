@@ -10,6 +10,8 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @SuppressWarnings("JpaEntityListenerInspection")
 @Setter
@@ -19,6 +21,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "skills")
+@Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Skill extends BaseDao {
 
     @Serial
@@ -40,6 +43,7 @@ public class Skill extends BaseDao {
             )
     )
     @JsonBackReference
+    @Cache(region = "skillsCategory", usage=CacheConcurrencyStrategy.READ_ONLY)
     private SkillCategory category;
 
     /**
@@ -53,6 +57,7 @@ public class Skill extends BaseDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "userSkills", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<UserSkill> users = new HashSet<>();
 
     @PrePersist

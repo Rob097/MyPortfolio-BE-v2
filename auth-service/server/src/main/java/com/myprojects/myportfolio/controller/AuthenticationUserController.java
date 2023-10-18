@@ -87,7 +87,7 @@ public class AuthenticationUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/{id}")
     @PreAuthorize("@applicationUserService.hasId(#id)")
     public ResponseEntity<MessageResource<CoreUser>> patch(@PathVariable("id") Integer id, @RequestBody List<PatchOperation> operations) throws Exception {
         Validate.notEmpty(operations, "No valid operation was provided.");

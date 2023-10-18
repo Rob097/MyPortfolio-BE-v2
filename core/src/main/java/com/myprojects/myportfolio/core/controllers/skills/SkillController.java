@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.controllers.skills;
 
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
+import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.controllers.BaseController;
 import com.myprojects.myportfolio.core.dto.groups.OnCreate;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
@@ -45,7 +46,7 @@ public class SkillController extends BaseController<Skill, SkillDto> {
         Validate.notNull(entity, resourceMissing());
 
         Skill newEntity = service.save(mapper.mapToDao(entity));
-        return this.buildSuccessResponse(mapper.mapToDto(newEntity));
+        return this.buildSuccessResponse(mapper.mapToDto(newEntity, Normal.value));
     }
 
     @Override
@@ -60,7 +61,7 @@ public class SkillController extends BaseController<Skill, SkillDto> {
         Validate.isTrue(entity.getId().equals(id), "The request's id and the body's id are different.");
 
         Skill updatedEntity = service.update(mapper.mapToDao(entity));
-        return this.buildSuccessResponse(mapper.mapToDto(updatedEntity));
+        return this.buildSuccessResponse(mapper.mapToDto(updatedEntity, Normal.value));
     }
 
     @Override
@@ -75,7 +76,7 @@ public class SkillController extends BaseController<Skill, SkillDto> {
         Validate.notNull(entityToDelete, noEntityFound(id));
 
         service.delete(entityToDelete);
-        return this.buildSuccessResponse(mapper.mapToDto(entityToDelete));
+        return this.buildSuccessResponse(mapper.mapToDto(entityToDelete, Normal.value));
     }
 
 }

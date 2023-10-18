@@ -43,7 +43,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
         Slice<A> entities = service.findAll(specifications, pageable);
 
-        return this.buildSuccessResponses(entities.map(mapper::mapToDto), view);
+        return this.buildSuccessResponses(entities.map((entity) -> mapper.mapToDto(entity, view)), view);
     }
 
     @Override
@@ -55,7 +55,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         Validate.notNull(id, fieldMissing("id"));
         A entity = service.findById(id);
 
-        return this.buildSuccessResponse(mapper.mapToDto(entity), view);
+        return this.buildSuccessResponse(mapper.mapToDto(entity, view), view);
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         Validate.notNull(entity, resourceMissing());
 
         A newEntity = service.save(mapper.mapToDao(entity));
-        return this.buildSuccessResponse(mapper.mapToDto(newEntity));
+        return this.buildSuccessResponse(mapper.mapToDto(newEntity, Normal.value));
     }
 
     @Override
@@ -82,7 +82,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         Validate.isTrue(entity.getId().equals(id), "The request's id and the body's id are different.");
 
         A updatedEntity = service.update(mapper.mapToDao(entity));
-        return this.buildSuccessResponse(mapper.mapToDto(updatedEntity));
+        return this.buildSuccessResponse(mapper.mapToDto(updatedEntity, Normal.value));
     }
 
     @Override
@@ -95,11 +95,11 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         A entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
 
-        if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete), false)) {
+        if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete, Normal.value), false)) {
             throw new Exception("You can't delete it because is not yours.");
         }
 
         service.delete(entityToDelete);
-        return this.buildSuccessResponse(mapper.mapToDto(entityToDelete));
+        return this.buildSuccessResponse(mapper.mapToDto(entityToDelete, Normal.value));
     }
 }

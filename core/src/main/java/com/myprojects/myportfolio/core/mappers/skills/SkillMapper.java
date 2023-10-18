@@ -1,8 +1,8 @@
 package com.myprojects.myportfolio.core.mappers.skills;
 
-import com.myprojects.myportfolio.core.mappers.BaseMapper;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
 import com.myprojects.myportfolio.core.dto.skills.SkillDto;
+import com.myprojects.myportfolio.core.mappers.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueMappingStrategy;
 

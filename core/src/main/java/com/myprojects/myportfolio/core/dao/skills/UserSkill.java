@@ -12,6 +12,8 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * UserSkill Is a composite relational entity that represents the many-to-many relationship between User and Skill.
@@ -26,6 +28,7 @@ import java.util.Objects;
 @IdClass(UserSkillPK.class)
 @Entity
 @Table(name = "user_skills")
+@Cache(region = "userSkills", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class UserSkill implements Serializable {
 
     @Serial

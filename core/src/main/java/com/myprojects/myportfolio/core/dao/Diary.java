@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Setter
 @Getter
@@ -17,6 +19,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "diaries")
+@Cache(region = "diaries", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Diary extends AuditableDao {
 
     @Serial
@@ -45,6 +48,7 @@ public class Diary extends AuditableDao {
     )
     @JsonBackReference
     @Builder.Default
+    @Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
     private User user = new User();
 
     /**
@@ -61,6 +65,7 @@ public class Diary extends AuditableDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
     @Override
@@ -80,6 +85,11 @@ public class Diary extends AuditableDao {
         if (this.getUser() != null) {
             this.getUser().getDiaries().remove(this);
         }
+    }
+
+    @Override
+    public void clearRelationships() {
+        this.stories = null;
     }
 
     //////////////////////

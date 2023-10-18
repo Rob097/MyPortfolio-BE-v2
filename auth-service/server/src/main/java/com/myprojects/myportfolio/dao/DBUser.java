@@ -1,9 +1,11 @@
 package com.myprojects.myportfolio.dao;
 
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.proxy.HibernateProxy;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
+@Cache(region = "users", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DBUser {
 
     @Id
@@ -37,6 +40,7 @@ public class DBUser {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     @ToString.Exclude
+    @Cache(region = "roles", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<DBRole> roles;
 
     @Override

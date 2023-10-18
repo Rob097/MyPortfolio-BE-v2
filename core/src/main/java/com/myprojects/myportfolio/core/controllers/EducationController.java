@@ -41,6 +41,6 @@ public class EducationController extends BaseController<Education, EducationDto>
 
         Education education = educationService.findBy(findByEquals(Education.FIELDS.SLUG.name(), slug));
 
-        return this.buildSuccessResponse(educationMapper.mapToDto(education), view);
+        return this.buildSuccessResponse(educationMapper.mapToDto(education, view), view);
     }
 }

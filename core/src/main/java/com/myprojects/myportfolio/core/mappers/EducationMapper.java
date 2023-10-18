@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.mappers;
 
+import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.dao.Education;
 import com.myprojects.myportfolio.core.dto.EducationDto;
 import com.myprojects.myportfolio.core.mappers.skills.SkillMapper;
@@ -11,8 +12,8 @@ import org.mapstruct.NullValueMappingStrategy;
 public interface EducationMapper extends BaseMapper<Education, EducationDto> {
 
     @Override
-    @Mapping(target = "userId", source = "user.id")
-    EducationDto mapToDto(Education entity);
+    @Mapping(target = "userId", source = "entity.user.id")
+    EducationDto mapToDto(Education entity, IView view);
 
     @Override
     @Mapping(target = "user.id", source = "userId")

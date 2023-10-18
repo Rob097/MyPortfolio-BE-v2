@@ -7,6 +7,19 @@ spring:
     password: 'password'
   #zipkin:
   #  base-url: http://localhost:9411
+  jpa:
+    properties:
+      hibernate:
+        ##### START CACHE CONFIGURATIONS #####
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+          redisson:
+            fallback: true
+            config: redisson-dev.yaml
+        #####  END CACHE CONFIGURATIONS  #####
 
 eureka:
   client:

@@ -58,7 +58,7 @@ public class StoryController extends BaseController<Story, StoryDto> {
 
         Story story = storyService.findBy(findByEquals(Story.FIELDS.SLUG.name(), slug));
 
-        return this.buildSuccessResponse(storyMapper.mapToDto(story), view);
+        return this.buildSuccessResponse(storyMapper.mapToDto(story, view), view);
     }
 
     @PatchMapping(path = "/{id}")
@@ -71,7 +71,7 @@ public class StoryController extends BaseController<Story, StoryDto> {
         boolean isToUpdate = false;
 
         Story story = storyService.findById(id);
-        if (!utilsService.isOfCurrentUser(mapper.mapToDto(story), false)) {
+        if (!utilsService.isOfCurrentUser(mapper.mapToDto(story, Normal.value), false)) {
             throw new Exception("You can't edit this story because is not yours.");
         }
 
@@ -128,7 +128,7 @@ public class StoryController extends BaseController<Story, StoryDto> {
             story = storyService.update(story);
         }
 
-        return this.buildSuccessResponse(storyMapper.mapToDto(story));
+        return this.buildSuccessResponse(storyMapper.mapToDto(story, Normal.value));
     }
 
 }

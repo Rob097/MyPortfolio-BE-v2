@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 public interface IView {
 
-    @Target({ ElementType.TYPE, ElementType.PARAMETER })
+    @Target({ElementType.TYPE, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @interface View {

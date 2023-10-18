@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.mappers;
 
+import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.dao.Diary;
 import com.myprojects.myportfolio.core.dto.DiaryDto;
 import org.mapstruct.Mapper;
@@ -10,8 +11,8 @@ import org.mapstruct.NullValueMappingStrategy;
 public interface DiaryMapper extends BaseMapper<Diary, DiaryDto> {
 
     @Override
-    @Mapping(target = "userId", source = "user.id")
-    DiaryDto mapToDto(Diary entity);
+    @Mapping(target = "userId", source = "entity.user.id")
+    DiaryDto mapToDto(Diary entity, IView view);
 
     @Override
     @Mapping(target = "user.id", source = "userId")

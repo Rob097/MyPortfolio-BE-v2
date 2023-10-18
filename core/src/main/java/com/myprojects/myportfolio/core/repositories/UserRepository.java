@@ -20,6 +20,7 @@ public interface UserRepository extends BaseRepository<User, Integer> {
 
     @Override
     @Query("SELECT 1 FROM User u WHERE u.slug= ?1 ")
+    //@QueryHints(@QueryHint(name = CACHEABLE, value = "true"))
     Optional<User> findBySlugConstraint(String slug, Object user);
 
     @Query(value = "select AUTO_INCREMENT from information_schema.TABLES where TABLE_SCHEMA = 'core' and TABLE_NAME = 'users'", nativeQuery = true)

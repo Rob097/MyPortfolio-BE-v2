@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.mappers;
 
+import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.dao.Experience;
 import com.myprojects.myportfolio.core.dto.ExperienceDto;
 import com.myprojects.myportfolio.core.mappers.skills.SkillMapper;
@@ -11,8 +12,8 @@ import org.mapstruct.NullValueMappingStrategy;
 public interface ExperienceMapper extends BaseMapper<Experience, ExperienceDto> {
 
     @Override
-    @Mapping(target = "userId", source = "user.id")
-    ExperienceDto mapToDto(Experience entity);
+    @Mapping(target = "userId", source = "entity.user.id")
+    ExperienceDto mapToDto(Experience entity, IView view);
 
     @Override
     @Mapping(target = "user.id", source = "userId")

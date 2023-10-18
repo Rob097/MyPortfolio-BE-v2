@@ -41,6 +41,6 @@ public class ExperienceController extends BaseController<Experience, ExperienceD
 
         Experience experience = experienceService.findBy(findByEquals(Experience.FIELDS.SLUG.name(), slug));
 
-        return this.buildSuccessResponse(experienceMapper.mapToDto(experience), view);
+        return this.buildSuccessResponse(experienceMapper.mapToDto(experience, view), view);
     }
 }

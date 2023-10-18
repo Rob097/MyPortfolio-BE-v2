@@ -1,9 +1,11 @@
 package com.myprojects.myportfolio.dao;
 
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.proxy.HibernateProxy;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "roles")
+@Cache(region = "roles", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DBRole {
 
     @Id
@@ -30,6 +33,7 @@ public class DBRole {
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
     @ToString.Exclude
+    @Cache(region = "permissions", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<DBPermission> permissions;
 
     @Override

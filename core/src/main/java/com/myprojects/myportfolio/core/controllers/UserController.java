@@ -54,9 +54,9 @@ public class UserController extends BaseController<User, UserDto> {
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        User user = userService.findBy(findByEquals(User.FIELDS.SLUG.name(), slug));
+        User user = userService.findBy(findByEquals(User.FIELDS.SLUG.getName(), slug));
 
-        return this.buildSuccessResponse(userMapper.mapToDto(user), view);
+        return this.buildSuccessResponse(userMapper.mapToDto(user, view), view);
     }
 
     @GetMapping(path = "/slugs")
@@ -65,7 +65,7 @@ public class UserController extends BaseController<User, UserDto> {
         return this.buildSuccessResponsesOfGenericType(slugs, Normal.value, new ArrayList<>(), false);
     }
 
-    @PatchMapping(path = "/{id}")
+    @PutMapping(path = "/patch/{id}")
     @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
     public ResponseEntity<MessageResource<UserDto>> patch(
             @PathVariable("id") Integer id,
@@ -97,7 +97,7 @@ public class UserController extends BaseController<User, UserDto> {
             user = userService.update(user);
         }
 
-        return this.buildSuccessResponse(userMapper.mapToDto(user));
+        return this.buildSuccessResponse(userMapper.mapToDto(user, Normal.value));
     }
 
     @GetMapping(path = "/fromAuth/getNextId")

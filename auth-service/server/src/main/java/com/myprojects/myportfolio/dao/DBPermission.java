@@ -1,10 +1,12 @@
 package com.myprojects.myportfolio.dao;
 
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "permissions")
+@Cache(region = "permissions", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DBPermission implements GrantedAuthority {
 
     @Id

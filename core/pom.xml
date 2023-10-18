@@ -12,7 +12,6 @@
     <artifactId>core</artifactId>
 
     <properties>
-        <redis-connector.version>3.23.5</redis-connector.version>
         <assertj.version>3.24.2</assertj.version>
     </properties>
 
@@ -114,7 +113,7 @@
 
         <dependency>
             <groupId>org.redisson</groupId>
-            <artifactId>redisson-hibernate-53</artifactId>
+            <artifactId>redisson-hibernate-6</artifactId>
             <version>${redis-connector.version}</version>
         </dependency>
 
