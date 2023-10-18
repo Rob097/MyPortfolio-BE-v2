@@ -21,7 +21,7 @@ services:
     ports:
       - "9411:9411"
     networks:
-      - spring
+      - spring-internal
 
   eureka-server:
     image: rob097/eureka-server:latest
@@ -31,7 +31,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - spring
+      - spring-internal
     depends_on:
       - zipkin
 
@@ -43,9 +43,9 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - spring
+      - spring-internal
 
-########################################################################################################################
+  ########################################################################################################################
 
   apigw:
     image: rob097/apigw:latest
@@ -55,7 +55,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - spring
+      - spring-external
     depends_on:
       - zipkin
       - eureka-server
@@ -68,7 +68,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - spring
+      - spring-internal
       - mysql
     depends_on:
       - zipkin
@@ -83,7 +83,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
-      - spring
+      - spring-internal
       - mysql
     depends_on:
       - zipkin
@@ -93,7 +93,10 @@ services:
 networks:
   mysql:
     driver: bridge
-  spring:
+  spring-internal:
+    driver: bridge
+    internal: true
+  spring-external:
     driver: bridge
 
 volumes:
