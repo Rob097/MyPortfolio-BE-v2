@@ -8,18 +8,27 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <artifactId>auth-service</artifactId>
 
     <properties>
         <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
     </properties>
 
-    <!--  include the two module: client, server  -->
-    <modules>
-        <module>client</module>
-        <module>server</module>
-    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.maven.plugin.version}</version>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources/properties</directory>
+            </resource>
+        </resources>
+    </build>
 
     <profiles>
         <profile>
@@ -30,11 +39,6 @@
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
                         <version>${jib.maven.plugin.version}</version>
-                        <configuration>
-                            <container>
-                                <mainClass>com.myprojects.myportfolio.AuthApplication</mainClass>
-                            </container>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

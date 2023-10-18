@@ -142,7 +142,7 @@
           <version>${jib.maven.plugin.version}</version>
           <configuration>
             <from>
-              <image>eclipse-temurin:18-alpine@sha256:a1a3834aefe988455d55380ac028e63fcd4e6477f2b6562110550fbde218d845</image>
+              <image>eclipse-temurin:21-alpine@sha256:86a08690ee24ed6c6723d8abf74aee2078faa511f69802b327792f2188d46450</image>
             </from>
             <to>
               <tags>
