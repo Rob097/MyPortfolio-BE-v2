@@ -3,16 +3,19 @@ package com.myprojects.myportfolio.clients.utils;
 import com.myprojects.myportfolio.clients.general.messages.IMessage;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +24,38 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @Slf4j
 public class ExceptionHandlerAdvice {
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<MessageResource<?>> handleUnauthorizedException(UnauthorizedException e) {
+        log.error(e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<MessageResource<?>> handleAccessDeniedException(AccessDeniedException e) {
+        log.error(e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<MessageResource<?>> handleBadCredentialsException(BadCredentialsException e) {
+        log.error(e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<MessageResource<?>> handleExpiredJwtException(ExpiredJwtException e) {
+        log.error(e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResource<>(null, new Message(e.getMessage(), IMessage.Level.ERROR)));
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageResource<?>> handleException(Exception e) {

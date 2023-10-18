@@ -4,7 +4,6 @@ import com.myprojects.myportfolio.clients.auth.AuthenticatedUserClaims;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
-import com.myprojects.myportfolio.dao.AuthenticationUser;
 import com.myprojects.myportfolio.dao.DBUser;
 import com.myprojects.myportfolio.dto.CoreUser;
 import com.myprojects.myportfolio.dto.SignINRequest;
@@ -12,12 +11,8 @@ import com.myprojects.myportfolio.dto.SignINResponse;
 import com.myprojects.myportfolio.dto.SignUPRequest;
 import com.myprojects.myportfolio.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.mapper.SignUPMapper;
-import com.myprojects.myportfolio.security.JwtConfig;
 import com.myprojects.myportfolio.service.AuthenticationUserServiceI;
 import com.myprojects.myportfolio.service.JwtServiceI;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import jakarta.inject.Provider;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
@@ -27,17 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.SecretKey;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -51,86 +39,35 @@ public class AuthenticationUserController {
 
     private final CoreUserMapper coreUserMapper;
 
-    private final Provider<AuthenticationManager> authenticationManagerProvider;
-
-    private final JwtConfig jwtConfig;
-
-    private final SecretKey secretKey;
-
     private final PasswordEncoder passwordEncoder;
 
     private final JwtServiceI jwtService;
 
     @Autowired
-    public AuthenticationUserController(AuthenticationUserServiceI applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, Provider<AuthenticationManager> authenticationManagerProvider, JwtConfig jwtConfig, SecretKey secretKey, PasswordEncoder passwordEncoder, JwtServiceI jwtService) {
+    public AuthenticationUserController(AuthenticationUserServiceI applicationUserService, SignUPMapper signUPMapper, CoreUserMapper coreUserMapper, PasswordEncoder passwordEncoder, JwtServiceI jwtService) {
         this.applicationUserService = applicationUserService;
         this.signUPMapper = signUPMapper;
         this.coreUserMapper = coreUserMapper;
-        this.authenticationManagerProvider = authenticationManagerProvider;
-        this.jwtConfig = jwtConfig;
-        this.secretKey = secretKey;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestParam(name = "token") String token) {
-        try {
-            jwtService.validateToken(token);
-            return ResponseEntity.ok().build();
-        } catch (IllegalStateException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (Exception e) {
-            log.error("Error while validating token", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        jwtService.validateToken(token);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/authorities")
     public ResponseEntity<AuthenticatedUserClaims> getAuthorities(@RequestParam(name = "token") String token) {
-        try {
-            AuthenticatedUserClaims authenticatedUserClaims = jwtService.getAuthorities(token);
-            return ResponseEntity.ok(authenticatedUserClaims);
-        } catch (IllegalStateException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (Exception e) {
-            log.error("Error while validating token", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        AuthenticatedUserClaims authenticatedUserClaims = jwtService.getAuthorities(token);
+        return ResponseEntity.ok(authenticatedUserClaims);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<SignINResponse> authenticateUser(@Valid @RequestBody SignINRequest loginRequest) {
+        String token = applicationUserService.authenticateUser(loginRequest);
 
-        Authentication authenticate = authenticationManagerProvider.get().authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        Integer expirationAfterDays = jwtConfig.getTokenExpirationAfterDays();
-        if (loginRequest.getRememberMe() != null && loginRequest.getRememberMe()) {
-            expirationAfterDays = jwtConfig.getTokenExpirationAfterDaysRememberMe();
-        }
-
-        AuthenticationUser applicationUser = (AuthenticationUser) authenticate.getPrincipal();
-        DBUser dbUser = applicationUser.getDBUser();
-
-        String token = Jwts.builder()
-                .signWith(secretKey)
-                .issuedAt(new Date())
-                .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(expirationAfterDays)))
-                .subject(authenticate.getName())
-                .claim("firstName", dbUser.getFirstName())
-                .claim("lastName", dbUser.getLastName())
-                .claim("roles", applicationUser.getRolesName())
-                .claim("authorities", applicationUser.getAuthoritiesName())
-                .compact();
-
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, token);
         return ResponseEntity.ok().headers(headers).body(new SignINResponse(token));

@@ -7,12 +7,19 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.dao.AuthenticationUser;
 import com.myprojects.myportfolio.dao.DBRole;
 import com.myprojects.myportfolio.dao.DBUser;
+import com.myprojects.myportfolio.dto.SignINRequest;
 import com.myprojects.myportfolio.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.repository.IAuthenticationUserRepository;
 import com.myprojects.myportfolio.repository.IRoleRepository;
+import com.myprojects.myportfolio.security.JwtConfig;
+import io.jsonwebtoken.Jwts;
+import jakarta.inject.Provider;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,10 +27,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import javax.crypto.SecretKey;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service(value = "applicationUserService")
 @Transactional
@@ -39,13 +45,22 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
 
     private final CoreUserMapper coreUserMapper;
 
+    private final Provider<AuthenticationManager> authenticationManagerProvider;
+
+    private final JwtConfig jwtConfig;
+
+    private final SecretKey secretKey;
+
     @Autowired
-    public AuthenticationUserService(IAuthenticationUserRepository applicationUserRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository, UserClient userClient, CoreUserMapper coreUserMapper) {
+    public AuthenticationUserService(IAuthenticationUserRepository applicationUserRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository, UserClient userClient, CoreUserMapper coreUserMapper, Provider<AuthenticationManager> authenticationManagerProvider, JwtConfig jwtConfig, SecretKey secretKey) {
         this.applicationUserRepository = applicationUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userClient = userClient;
         this.coreUserMapper = coreUserMapper;
+        this.authenticationManagerProvider = authenticationManagerProvider;
+        this.jwtConfig = jwtConfig;
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -62,7 +77,7 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
     public boolean hasId(Integer id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DBUser user = this.applicationUserRepository.findByEmail(username);
-        return user!=null && user.getId()!=null && user.getId().equals(id);
+        return user != null && user.getId() != null && user.getId().equals(id);
 
     }
 
@@ -72,6 +87,39 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
 
         Optional<DBUser> user = this.applicationUserRepository.findById(id);
         return user.orElseThrow(() -> new NoSuchElementException("No user found with  id: " + id));
+    }
+
+    @Override
+    public String authenticateUser(SignINRequest loginRequest) {
+        Authentication authenticate = authenticationManagerProvider.get().authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        Integer expirationAfterDays = jwtConfig.getTokenExpirationAfterDays();
+        if (loginRequest.getRememberMe() != null && loginRequest.getRememberMe()) {
+            expirationAfterDays = jwtConfig.getTokenExpirationAfterDaysRememberMe();
+        }
+
+        AuthenticationUser applicationUser = (AuthenticationUser) authenticate.getPrincipal();
+        DBUser dbUser = applicationUser.getDBUser();
+
+        String token = Jwts.builder()
+                .signWith(secretKey)
+                .issuedAt(new Date())
+                .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(expirationAfterDays)))
+                .subject(authenticate.getName())
+                .claim("firstName", dbUser.getFirstName())
+                .claim("lastName", dbUser.getLastName())
+                .claim("roles", applicationUser.getRolesName())
+                .claim("authorities", applicationUser.getAuthoritiesName())
+                .compact();
+
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        return token;
     }
 
     @Override

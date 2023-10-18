@@ -2,11 +2,14 @@ package com.myprojects.myportfolio.apigw.config;
 
 import com.myprojects.myportfolio.apigw.services.AuthServiceI;
 import com.myprojects.myportfolio.clients.auth.SecurityConstants;
+import com.myprojects.myportfolio.clients.utils.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -34,7 +37,7 @@ public class AuthenticationFilter implements GatewayFilter {
         if (!routerValidator.isHttpServletRequestSecured.test(exchange.getRequest())) {
 
             if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                throw new RuntimeException("Missing Authorization header");
+                throw new UnauthorizedException("Missing Authorization header");
             }
 
             String token = Objects.requireNonNull(exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0);
@@ -51,6 +54,11 @@ public class AuthenticationFilter implements GatewayFilter {
                         );
 
                         return chain.filter(exchange);
+                    })
+                    .onErrorResume(throwable -> {
+                        ResponseStatusException ex = new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are unauthorized to access this resource.");
+                        return Mono.error(ex);
+
                     });
         }
 
