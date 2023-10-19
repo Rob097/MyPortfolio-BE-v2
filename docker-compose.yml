@@ -40,9 +40,8 @@ services:
   redis:
     image: redis:latest
     container_name: myredis
-    #Ports removed to not expose the container to the public network.
-    #ports:
-    #  - "6379:6379"
+    ports:
+      - "6379:6379"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
