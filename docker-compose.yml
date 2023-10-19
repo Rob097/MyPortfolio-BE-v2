@@ -46,6 +46,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - spring-internal
+      - spring-external
 
   ########################################################################################################################
 
