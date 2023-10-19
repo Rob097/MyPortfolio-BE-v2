@@ -15,13 +15,14 @@ services:
     networks:
       - mysql
 
-  zipkin:
-    image: openzipkin/zipkin
-    container_name: myzipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - spring-internal
+  #Service removed because with Spring cloud update, is not compatible anymore.
+  #zipkin:
+  #  image: openzipkin/zipkin
+  #  container_name: myzipkin
+  #  ports:
+  #    - "9411:9411"
+  #  networks:
+  #    - spring-internal
 
   eureka-server:
     image: rob097/eureka-server:latest
@@ -33,14 +34,15 @@ services:
     networks:
       - spring-external
       - spring-internal
-    depends_on:
-      - zipkin
+    #depends_on:
+    #  - zipkin
 
   redis:
     image: redis:latest
     container_name: myredis
-    ports:
-      - "6379:6379"
+    #Ports removed to not expose the container to the public network.
+    #ports:
+    #  - "6379:6379"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
@@ -59,36 +61,38 @@ services:
       - spring-external
       - spring-internal
     depends_on:
-      - zipkin
+      #- zipkin
       - eureka-server
 
   auth-service:
     image: rob097/auth-service:latest
     container_name: auth-service
-    ports:
-      - "9004:9004"
+    #Ports removed to not expose the container to the public network. Only ApiGW accessible.
+    #ports:
+    #  - "9004:9004"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - spring-internal
       - mysql
     depends_on:
-      - zipkin
+      #- zipkin
       - mysql
       - eureka-server
 
   core:
     image: rob097/core:latest
     container_name: core
-    ports:
-      - "8080:8080"
+    #Ports removed to not expose the container to the public network. Only ApiGW accessible.
+    #ports:
+    #  - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - spring-internal
       - mysql
     depends_on:
-      - zipkin
+      #- zipkin
       - mysql
       - eureka-server
 
@@ -103,4 +107,3 @@ networks:
 
 volumes:
   mysql:
-  pgadmin:
