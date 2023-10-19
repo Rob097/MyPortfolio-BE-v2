@@ -5,7 +5,6 @@ import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,17 +28,6 @@ public class UserService extends BaseService<User> implements UserServiceI {
         this.userRepository = userRepository;
         this.diaryService = diaryService;
         this.userSkillService = userSkillService;
-    }
-
-    @Override
-    public User findBy(Specification<User> specification) {
-
-        List<User> all = this.userRepository.findAll(specification);
-        if (!all.isEmpty()) {
-            return all.get(0);
-        }
-
-        return null;
     }
 
     @Override

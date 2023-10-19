@@ -39,7 +39,7 @@ public class EducationController extends BaseController<Education, EducationDto>
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        Education education = educationService.findBy(findByEquals(Education.FIELDS.SLUG.name(), slug));
+        Education education = educationService.findBy(findByEquals(Education.FIELDS.SLUG.getName(), slug));
 
         return this.buildSuccessResponse(educationMapper.mapToDto(education, view), view);
     }

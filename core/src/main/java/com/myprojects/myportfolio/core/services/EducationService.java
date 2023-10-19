@@ -5,11 +5,8 @@ import com.myprojects.myportfolio.core.repositories.EducationRepository;
 import com.myprojects.myportfolio.core.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Slf4j
 @Transactional
@@ -26,17 +23,6 @@ public class EducationService extends BaseService<Education> implements Educatio
 
         this.educationRepository = educationRepository;
         this.storyRepository = storyRepository;
-    }
-
-    @Override
-    public Education findBy(Specification<Education> specification) {
-
-        List<Education> all = this.educationRepository.findAll(specification);
-        if (!all.isEmpty()) {
-            return all.get(0);
-        }
-
-        return null;
     }
 
     /**
@@ -102,9 +88,9 @@ public class EducationService extends BaseService<Education> implements Educatio
 
         // Load the existing stories in order to not lose them.
         educationRepository.findById(education.getId()).ifPresent(existingEducation ->
-            existingEducation.getStories().forEach(story ->
-                education.getStories().add(story)
-            )
+                existingEducation.getStories().forEach(story ->
+                        education.getStories().add(story)
+                )
         );
 
         // Connect the stories to the education

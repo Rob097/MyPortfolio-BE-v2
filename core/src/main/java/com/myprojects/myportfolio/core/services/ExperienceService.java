@@ -5,11 +5,8 @@ import com.myprojects.myportfolio.core.repositories.ExperienceRepository;
 import com.myprojects.myportfolio.core.repositories.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Slf4j
 @Transactional
@@ -26,17 +23,6 @@ public class ExperienceService extends BaseService<Experience> implements Experi
 
         this.experienceRepository = experienceRepository;
         this.storyRepository = storyRepository;
-    }
-
-    @Override
-    public Experience findBy(Specification<Experience> specification) {
-
-        List<Experience> all = this.experienceRepository.findAll(specification);
-        if (!all.isEmpty()) {
-            return all.get(0);
-        }
-
-        return null;
     }
 
     /**

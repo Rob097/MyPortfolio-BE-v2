@@ -63,6 +63,7 @@ public class AuthenticationFilter implements GatewayFilter {
                         return chain.filter(exchange);
                     })
                     .onErrorResume(throwable -> {
+                        log.warn("Request authentication failed in " + (System.currentTimeMillis() - startTime) + "ms");
                         ResponseStatusException ex = new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are unauthorized to access this resource.");
                         return Mono.error(ex);
 

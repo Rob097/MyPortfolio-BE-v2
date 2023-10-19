@@ -39,7 +39,7 @@ public class ExperienceController extends BaseController<Experience, ExperienceD
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        Experience experience = experienceService.findBy(findByEquals(Experience.FIELDS.SLUG.name(), slug));
+        Experience experience = experienceService.findBy(findByEquals(Experience.FIELDS.SLUG.getName(), slug));
 
         return this.buildSuccessResponse(experienceMapper.mapToDto(experience, view), view);
     }

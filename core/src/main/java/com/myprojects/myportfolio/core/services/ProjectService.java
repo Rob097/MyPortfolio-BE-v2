@@ -4,11 +4,8 @@ import com.myprojects.myportfolio.core.dao.Project;
 import com.myprojects.myportfolio.core.repositories.ProjectRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Slf4j
 @Transactional
@@ -25,17 +22,6 @@ public class ProjectService extends BaseService<Project> implements ProjectServi
 
         this.projectRepository = projectRepository;
         this.storyService = storyService;
-    }
-
-    @Override
-    public Project findBy(Specification<Project> specification) {
-
-        List<Project> all = this.projectRepository.findAll(specification);
-        if (!all.isEmpty()) {
-            return all.get(0);
-        }
-
-        return null;
     }
 
     /**

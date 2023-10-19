@@ -56,7 +56,7 @@ public class StoryController extends BaseController<Story, StoryDto> {
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        Story story = storyService.findBy(findByEquals(Story.FIELDS.SLUG.name(), slug));
+        Story story = storyService.findBy(findByEquals(Story.FIELDS.SLUG.getName(), slug));
 
         return this.buildSuccessResponse(storyMapper.mapToDto(story, view), view);
     }

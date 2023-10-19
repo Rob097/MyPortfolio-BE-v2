@@ -40,7 +40,7 @@ public class ProjectController extends BaseController<Project, ProjectDto> {
     ) throws Exception {
         Validate.notNull(slug, fieldMissing("slug"));
 
-        Project project = projectService.findBy(findByEquals(Project.FIELDS.SLUG.name(), slug));
+        Project project = projectService.findBy(findByEquals(Project.FIELDS.SLUG.getName(), slug));
 
         return this.buildSuccessResponse(projectMapper.mapToDto(project, view), view);
     }

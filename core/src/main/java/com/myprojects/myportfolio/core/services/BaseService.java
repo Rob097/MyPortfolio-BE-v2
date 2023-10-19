@@ -2,14 +2,17 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.clients.general.specifications.CustomSpecification;
 import com.myprojects.myportfolio.core.dao.BaseDao;
+import com.myprojects.myportfolio.core.dao.SlugDao;
 import com.myprojects.myportfolio.core.repositories.BaseRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> {
@@ -27,6 +30,17 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         Validate.notNull(pageable, fieldMissing("pageble"));
 
         return repository.findAll(specification, pageable);
+    }
+
+    @Override
+    public T findBy(Specification<T> specification) {
+
+        List<T> all = repository.findAll(specification);
+        if (!all.isEmpty()) {
+            return all.get(0);
+        }
+
+        throw new EntityNotFoundException("Entity not found");
     }
 
     @Override
@@ -54,6 +68,10 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         Validate.notNull(t.getId(), fieldMissing("id"));
         checkIfEntityDoesNotExist(t.getId());
 
+        if(t instanceof SlugDao) {
+            checkIfSlugAlreadyExists((SlugDao) t);
+        }
+
         return repository.save(t);
     }
 
@@ -77,6 +95,14 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         if (id == null || repository.findById(id).isEmpty()) {
             throw new IllegalArgumentException("Entity does not exist" + (id != null ? (" with id: " + id) : "."));
         }
+    }
+
+    protected void checkIfSlugAlreadyExists(SlugDao slugDao) {
+        repository.findBySlug(slugDao.getSlug()).ifPresent(bySlug -> {
+            if (!bySlug.getId().equals(slugDao.getId())) {
+                throw new IllegalArgumentException("Entity already exists with slug: " + slugDao.getSlug());
+            }
+        });
     }
 
     protected String fieldMissing(String field) {

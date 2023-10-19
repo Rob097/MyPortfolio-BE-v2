@@ -4,14 +4,12 @@ import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.dao.Diary;
 import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,17 +39,6 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         this.educationRepository = educationRepository;
         this.experienceRepository = experienceRepository;
         this.utilsService = utilsService;
-    }
-
-    @Override
-    public Story findBy(Specification<Story> specification) {
-
-        List<Story> all = this.storyRepository.findAll(specification);
-        if (!all.isEmpty()) {
-            return all.get(0);
-        }
-
-        return null;
     }
 
     @Override
