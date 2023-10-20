@@ -96,6 +96,15 @@ public class EducationService extends BaseService<Education> implements Educatio
         // Connect the stories to the education
         education.completeRelationships();
 
+        // if education.getMainStoryId() is not null, check if it's a story connected to the education:
+        if (education.getMainStoryId() != null) {
+            boolean isMainStoryConnectedToExperience = education.getStories().stream()
+                    .anyMatch(story -> story.getId().equals(education.getMainStoryId()));
+            if (!isMainStoryConnectedToExperience) {
+                throw new IllegalArgumentException("The main story is not connected to the education");
+            }
+        }
+
         return educationRepository.save(education);
 
     }

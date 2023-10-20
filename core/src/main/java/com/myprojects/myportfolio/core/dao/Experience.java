@@ -43,6 +43,7 @@ public class Experience extends SlugDao {
         EMPLOYMENT_TYPE("employmentType"),
         COMPANY_NAME("companyName"),
         LOCATION("location"),
+        MAIN_STORY_ID("mainStoryId"),
         ;
 
         private final String name;
@@ -73,6 +74,8 @@ public class Experience extends SlugDao {
     // End Date (If null, still on course)
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
+
+    private Integer mainStoryId;
 
     /**
      * @Create: When Creating an Experience, we need to pass an existing userId.

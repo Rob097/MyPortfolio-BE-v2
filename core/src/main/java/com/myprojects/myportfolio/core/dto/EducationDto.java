@@ -44,6 +44,8 @@ public class EducationDto extends AuditableDto {
     LocalDate fromDate;
     LocalDate toDate;
 
+    Integer mainStoryId;
+
     @Valid
     @JsonView(Verbose.class)
     Set<StoryDto> stories;

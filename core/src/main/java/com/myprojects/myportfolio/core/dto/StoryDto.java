@@ -30,7 +30,6 @@ public class StoryDto extends AuditableDto {
     String description;
     LocalDate fromDate;
     LocalDate toDate;
-    Boolean isPrimaryStory;
     String firstRelevantSection;
     String secondRelevantSection;
 

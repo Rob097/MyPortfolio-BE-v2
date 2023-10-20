@@ -47,7 +47,9 @@ public class User extends SlugDao {
         ADDRESS("address"),
         SEX("sex"),
         TITLE("title"),
-        DESCRIPTION("description");
+        DESCRIPTION("description"),
+        MAIN_STORY_ID("mainStoryId"),
+        ;
 
         private final String name;
     }
@@ -83,6 +85,8 @@ public class User extends SlugDao {
     private String title;
 
     private String description;
+
+    private Integer mainStoryId;
 
     /**
      * @Owner: User is the owner of the relationship.
@@ -221,6 +225,10 @@ public class User extends SlugDao {
         this.id = id;
         this.email = email;
         this.setSlug(slug);
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
 
 }

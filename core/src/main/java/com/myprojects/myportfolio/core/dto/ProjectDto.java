@@ -30,6 +30,8 @@ public class ProjectDto extends AuditableDto {
 
     String description;
 
+    Integer mainStoryId;
+
     @Valid
     @JsonView(Verbose.class)
     Set<StoryDto> stories;

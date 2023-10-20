@@ -40,7 +40,6 @@ public class Story extends SlugDao {
         DESCRIPTION("description"),
         FROMDATE("fromDate"),
         TODATE("toDate"),
-        ISPRIMARYSTORY("isPrimaryStory"),
         FIRSTRELEVANTSECTION("firstRelevantSection"),
         SECONDRELEVANTSECTION("secondRelevantSection");
 
@@ -59,9 +58,6 @@ public class Story extends SlugDao {
 
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
-
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean isPrimaryStory;
 
     @Column(columnDefinition = "TEXT")
     private String firstRelevantSection;

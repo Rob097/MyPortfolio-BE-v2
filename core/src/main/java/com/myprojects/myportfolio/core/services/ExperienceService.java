@@ -96,6 +96,15 @@ public class ExperienceService extends BaseService<Experience> implements Experi
         // Connect the stories to the experience
         experience.completeRelationships();
 
+        // if experience.getMainStoryId() is not null, check if it's a story connected to the experience:
+        if (experience.getMainStoryId() != null) {
+            boolean isMainStoryConnectedToExperience = experience.getStories().stream()
+                    .anyMatch(story -> story.getId().equals(experience.getMainStoryId()));
+            if (!isMainStoryConnectedToExperience) {
+                throw new IllegalArgumentException("The main story is not connected to the experience");
+            }
+        }
+
         return experienceRepository.save(experience);
 
     }

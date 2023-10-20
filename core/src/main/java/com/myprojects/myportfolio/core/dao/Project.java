@@ -36,6 +36,7 @@ public class Project extends SlugDao {
         SLUG("slug"),
         TITLE("title"),
         DESCRIPTION("description"),
+        MAIN_STORY_ID("mainStoryId"),
         ;
 
         private final String name;
@@ -47,6 +48,8 @@ public class Project extends SlugDao {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
+
+    private Integer mainStoryId;
 
     /**
      * @Create: When Creating a Project, we need to pass an existing userId.

@@ -37,6 +37,7 @@ public class UserDto extends AuditableDto {
     Sex sex;
     String title;
     String description;
+    Integer mainStoryId;
 
     @Valid
     @JsonView(Verbose.class)

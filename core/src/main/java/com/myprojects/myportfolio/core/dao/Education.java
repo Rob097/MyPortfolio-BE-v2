@@ -42,6 +42,7 @@ public class Education extends SlugDao {
         DEGREE("degree"),
         GRADE("grade"),
         DESCRIPTION("description"),
+        MAIN_STORY_ID("mainStoryId"),
         ;
 
         private final String name;
@@ -73,6 +74,8 @@ public class Education extends SlugDao {
 
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
+
+    private Integer mainStoryId;
 
     /**
      * @Create: When Creating an Education, we need to pass an existing userId.

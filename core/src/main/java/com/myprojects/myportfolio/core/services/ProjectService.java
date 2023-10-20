@@ -95,6 +95,15 @@ public class ProjectService extends BaseService<Project> implements ProjectServi
         // Connect the stories to the project
         project.completeRelationships();
 
+        // if project.getMainStoryId() is not null, check if it's a story connected to the project:
+        if (project.getMainStoryId() != null) {
+            boolean isMainStoryConnectedToExperience = project.getStories().stream()
+                    .anyMatch(story -> story.getId().equals(project.getMainStoryId()));
+            if (!isMainStoryConnectedToExperience) {
+                throw new IllegalArgumentException("The main story is not connected to the project");
+            }
+        }
+
         return projectRepository.save(project);
 
     }

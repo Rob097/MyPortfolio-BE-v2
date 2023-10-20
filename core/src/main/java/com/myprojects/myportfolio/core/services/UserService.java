@@ -1,14 +1,18 @@
 package com.myprojects.myportfolio.core.services;
 
+import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
+import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service(value = "UserService")
@@ -19,14 +23,20 @@ public class UserService extends BaseService<User> implements UserServiceI {
 
     private final DiaryServiceI diaryService;
 
+    private final UtilsServiceI utilsService;
+
+    private final StoryServiceI storyService;
+
     private final UserSkillService userSkillService;
 
-    public UserService(UserRepository userRepository, DiaryServiceI diaryService, UserSkillService userSkillService) {
+    public UserService(UserRepository userRepository, DiaryServiceI diaryService, UtilsServiceI utilsService, StoryServiceI storyService, UserSkillService userSkillService) {
         super();
         this.repository = userRepository;
 
         this.userRepository = userRepository;
         this.diaryService = diaryService;
+        this.utilsService = utilsService;
+        this.storyService = storyService;
         this.userSkillService = userSkillService;
     }
 
@@ -63,6 +73,21 @@ public class UserService extends BaseService<User> implements UserServiceI {
         });
 
         return user;
+    }
+
+    @Override
+    public User update(User user) {
+        Validate.notNull(user, super.fieldMissing("user"));
+
+        // if user.getMainStoryId() is not null, check if it's a story of the user:
+        if (user.getMainStoryId() != null) {
+            Story mainStory = storyService.findById(user.getMainStoryId());
+            if(!mainStory.getDiary().getUser().getId().equals(user.getId())){
+                throw new IllegalArgumentException("Story with id " + user.getMainStoryId() + " is not a story of the user " + user.getFullName());
+            }
+        }
+
+        return super.update(user);
     }
 
     /**********************/
