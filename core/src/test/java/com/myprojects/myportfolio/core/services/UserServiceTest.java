@@ -59,7 +59,6 @@ class UserServiceTest extends BaseTest {
         Story story = new Story();
         story.setTitle("Test Story");
         story.setDescription("Test Description");
-        story.setIsPrimaryStory(true);
         stories.add(story);
 
         Set<Diary> diaries = new HashSet<>();

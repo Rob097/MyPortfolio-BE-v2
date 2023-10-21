@@ -78,23 +78,19 @@ public class StoryController extends BaseController<Story, StoryDto> {
         for (PatchOperation operation : operations) {
             if (operation.getPath().matches("^/diary") && operation.getOp() == PatchOperation.Op.replace) {
                 Diary oldDiary = story.getDiary();
-                diaryService.removeStoriesFromDiary(oldDiary.getId(), new Integer[]{story.getId()});
+                diaryService.removeStoriesFromEntity(oldDiary.getId(), new Integer[]{story.getId()});
 
                 Diary newDiary = diaryService.findById(Integer.parseInt(operation.getValue()));
                 newDiary.getStories().add(story);
                 story.setDiary(newDiary);
                 isToUpdate = true;
-            } else if (operation.getPath().matches("^/project")) {
-                Project project = projectService.findById(Integer.parseInt(operation.getValue()));
+            } else if (operation.getPath().matches("^/project") && operation.getOp() == PatchOperation.Op.replace) {
+                Project oldProject = story.getProject();
+                projectService.removeStoriesFromEntity(oldProject.getId(), new Integer[]{story.getId()});
 
-                if (operation.getOp() == PatchOperation.Op.add) {
-                    project.getStories().add(story);
-                    story.getProjects().add(project);
-                } else if (operation.getOp() == PatchOperation.Op.remove) {
-                    project.getStories().remove(story);
-                    story.getProjects().remove(project);
-                }
-
+                Project newProject = projectService.findById(Integer.parseInt(operation.getValue()));
+                newProject.getStories().add(story);
+                story.setProject(newProject);
                 isToUpdate = true;
             } else if (operation.getPath().matches("^/education")) {
                 Education education = educationService.findById(Integer.parseInt(operation.getValue()));

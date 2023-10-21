@@ -20,7 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "diaries")
 @Cache(region = "diaries", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Diary extends AuditableDao {
+public class Diary extends AuditableDao implements WithStoriesDao {
 
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
@@ -30,6 +30,8 @@ public class Diary extends AuditableDao {
     private String description;
 
     private Boolean isMain;
+
+    private Integer mainStoryId;
 
     /**
      * @Create: When Creating a Diary, we need to pass an existing userId.
@@ -53,8 +55,10 @@ public class Diary extends AuditableDao {
 
     /**
      * @Owner: Diary is the owner of the relationship.
-     * @Create: When creating or updating a diary you can only create new stories. You can't connect existing stories or remove existing stories that are already connected.
-     * @Update: This is because is a responsibility of the story itself or of the current diary of the story to decide which diary is the owner.
+     * @Create&Update: When creating or updating a diary you can only create new stories. You can't connect existing stories or remove existing stories that are already connected.
+     *                 This is because is a responsibility of the story itself or of the current diary of the story to decide which diary is the owner.
+     *                 However, you can update existing stories that are already connected to the entity.
+     * @Update: When Updating a diary, the already connected stories are updated but not removed if not passed.
      * @Delete: When deleting a diary, the stories ARE DELETED because the diary is the owner of the story itself.
      */
     @OneToMany(

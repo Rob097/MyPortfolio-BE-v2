@@ -12,7 +12,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> {
@@ -23,6 +22,11 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
 
     public BaseService() {
         this.specification = new CustomSpecification<>();
+    }
+
+    public BaseService(BaseRepository<T, Integer> repository) {
+        this();
+        this.repository = repository;
     }
 
     @Override
@@ -68,7 +72,7 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
         Validate.notNull(t.getId(), fieldMissing("id"));
         checkIfEntityDoesNotExist(t.getId());
 
-        if(t instanceof SlugDao) {
+        if (t instanceof SlugDao) {
             checkIfSlugAlreadyExists((SlugDao) t);
         }
 

@@ -54,7 +54,6 @@ public class ProjectServiceTest extends BaseTest {
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
         story.setToDate(LocalDate.now());
-        story.setIsPrimaryStory(true);
         story.setFirstRelevantSection("Test Section");
         story.setSecondRelevantSection("Test Section");
         stories.add(story);
@@ -178,7 +177,6 @@ public class ProjectServiceTest extends BaseTest {
             newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
-            newStory.setIsPrimaryStory(true);
             newStory.setFirstRelevantSection(" Section");
             newStory.setSecondRelevantSection(" Section");
             this.projectWithRelations.getStories().add(newStory);
@@ -200,7 +198,7 @@ public class ProjectServiceTest extends BaseTest {
             assertEquals(newTitle, updatedProject.getTitle());
             assertEquals(this.projectWithRelations.getStories().size(), updatedProject.getStories().size());
             assertEquals(this.projectWithRelations.getSkills().size(), updatedProject.getSkills().size());
-            assertNotEquals(newStoryTitle, updatedProject.getStories().iterator().next().getTitle());
+            assertEquals(newStoryTitle, updatedProject.getStories().iterator().next().getTitle());
             assertNotEquals(newSkillName, updatedProject.getSkills().iterator().next().getName());
 
 

@@ -87,14 +87,24 @@ public class Story extends SlugDao {
     /**
      * @Owner: Project is the owner of the relationship.
      * @Create: When creating a story, we have to specify an already existing projectId
-     * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
+     * @Update: When updating a story, we have to specify an already existing projectId
+     *          If we don't specify a projectId, the relationship is removed
      * @Delete: When deleting a story, the relation with the project is deleted
      */
-    @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "project_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "project_story_fk"
+            )
+    )
     @JsonBackReference
-    @Builder.Default
     @Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
-    private Set<Project> projects = new HashSet<>();
+    private Project project;
+
+    // Defines the order of the story in the project
+    private Integer orderInProject;
 
     /**
      * @Owner: Education is the owner of the relationship.
@@ -139,9 +149,6 @@ public class Story extends SlugDao {
 
     @Override
     public void completeRelationships() {
-        this.getProjects().forEach(project ->
-                project.getStories().add(this)
-        );
         this.getEducations().forEach(education ->
                 education.getStories().add(this)
         );
@@ -153,13 +160,15 @@ public class Story extends SlugDao {
                 this.getDiary().setStories(new HashSet<>());
             this.getDiary().getStories().add(this);
         }
+        if (this.getProject() != null) {
+            if (this.getProject().getStories() == null)
+                this.getProject().setStories(new HashSet<>());
+            this.getProject().getStories().add(this);
+        }
     }
 
     @Override
     public void removeRelationships() {
-        this.getProjects().forEach(project ->
-                project.getStories().remove(this)
-        );
         this.getEducations().forEach(education ->
                 education.getStories().remove(this)
         );
@@ -169,11 +178,13 @@ public class Story extends SlugDao {
         if (this.getDiary() != null) {
             this.getDiary().getStories().remove(this);
         }
+        if(this.getProject()!=null) {
+            this.getProject().getStories().remove(this);
+        }
     }
 
     @Override
     public void clearRelationships() {
-        this.projects = null;
         this.educations = null;
         this.experiences = null;
         this.skills = null;
@@ -187,5 +198,19 @@ public class Story extends SlugDao {
         if (this.getDiary() == null)
             return null;
         return this.getDiary().getId();
+    }
+
+    public Integer getProjectId() {
+        if (this.getProject() == null)
+            return -1;
+        return this.getProject().getId();
+    }
+
+    public Integer getEntityId(Class<?> clazz) {
+        if (clazz.equals(Diary.class))
+            return this.getDiaryId();
+        if (clazz.equals(Project.class))
+            return this.getProjectId();
+        return null;
     }
 }

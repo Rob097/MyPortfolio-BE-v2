@@ -33,8 +33,8 @@ public class StoryDto extends AuditableDto {
     String firstRelevantSection;
     String secondRelevantSection;
 
-    @JsonView(Verbose.class)
-    Set<Integer> projectsIds;
+    Integer projectId;
+    Integer orderInProject;
 
     @JsonView(Verbose.class)
     Set<Integer> educationsIds;

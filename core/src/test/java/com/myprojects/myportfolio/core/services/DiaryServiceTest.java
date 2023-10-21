@@ -53,7 +53,6 @@ public class DiaryServiceTest extends BaseTest {
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
         story.setToDate(LocalDate.now());
-        story.setIsPrimaryStory(true);
         story.setFirstRelevantSection("Test Section");
         story.setSecondRelevantSection("Test Section");
         stories.add(story);
@@ -167,7 +166,6 @@ public class DiaryServiceTest extends BaseTest {
             newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
-            newStory.setIsPrimaryStory(true);
             newStory.setFirstRelevantSection(" Section");
             newStory.setSecondRelevantSection(" Section");
             this.diaryWithRelations.getStories().add(newStory);
@@ -260,7 +258,7 @@ public class DiaryServiceTest extends BaseTest {
 
             // Remove the stories
             Story story = this.diaryWithRelations.getStories().iterator().next();
-            this.diaryService.removeStoriesFromDiary(this.diaryWithRelations.getId(), new Integer[]{1});
+            this.diaryService.removeStoriesFromEntity(this.diaryWithRelations.getId(), new Integer[]{1});
             this.diary.getStories().add(story);
             story.setDiary(this.diary);
             this.diaryService.update(this.diary);

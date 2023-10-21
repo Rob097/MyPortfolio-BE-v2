@@ -3,6 +3,7 @@ package com.myprojects.myportfolio.core.mappers;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.core.dao.Diary;
 import com.myprojects.myportfolio.core.dto.DiaryDto;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;

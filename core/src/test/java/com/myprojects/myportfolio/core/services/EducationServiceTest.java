@@ -59,7 +59,6 @@ public class EducationServiceTest extends BaseTest {
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
         story.setToDate(LocalDate.now());
-        story.setIsPrimaryStory(true);
         story.setFirstRelevantSection("Test Section");
         story.setSecondRelevantSection("Test Section");
         stories.add(story);
@@ -193,7 +192,6 @@ public class EducationServiceTest extends BaseTest {
             newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
-            newStory.setIsPrimaryStory(true);
             newStory.setFirstRelevantSection(" Section");
             newStory.setSecondRelevantSection(" Section");
             this.educationWithRelations.getStories().add(newStory);

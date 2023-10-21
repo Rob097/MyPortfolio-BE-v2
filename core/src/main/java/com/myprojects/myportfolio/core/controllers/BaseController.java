@@ -4,6 +4,7 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
+import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.dao.BaseDao;
 import com.myprojects.myportfolio.core.dto.BaseDto;
@@ -95,7 +96,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
         A entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
 
-        if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete, Normal.value), false)) {
+        if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete, Verbose.value), false)) {
             throw new Exception("You can't delete it because is not yours.");
         }
 

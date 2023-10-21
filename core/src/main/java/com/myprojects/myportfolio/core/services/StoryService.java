@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dao.Project;
 import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,10 +47,12 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         Validate.notNull(story, super.fieldMissing("story"));
         Validate.notNull(story.getDiaryId(), super.fieldMissing("Diary Id"));
 
+        loadStoryRelations(story);
+
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
         isDiaryOfCurrentUser(story);
-
-        loadStoryRelations(story);
+        if(story.getProject()!=null && story.getProject().getId()!=null)
+            isProjectOfStoryUser(story);
 
         return super.save(story);
     }
@@ -58,8 +61,12 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
     public Story update(Story story) {
         Validate.notNull(story, super.fieldMissing("story"));
 
+        loadStoryRelations(story);
+
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
         isDiaryOfCurrentUser(story);
+        if(story.getProject()!=null && story.getProject().getId()!=null)
+            isProjectOfStoryUser(story);
 
         return super.update(story);
     }
@@ -84,14 +91,18 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
             throw new IllegalArgumentException("You are not allowed to edit someone else's diary's stories.");
     }
 
+    private void isProjectOfStoryUser(Story story) {
+        Project project = projectRepository.findById(story.getProject().getId()).orElseThrow(() -> new EntityNotFoundException("No project found with id: " + story.getProject().getId()));
+        if (!project.getUser().getId().equals(story.getDiary().getUserId()))
+            throw new IllegalArgumentException("You are not allowed to connect the story to a someone else's project.");
+    }
+
     private void loadStoryRelations(Story story) {
         story.setDiary(
                 diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id."))
         );
-        story.setProjects(
-                story.getProjects().stream()
-                        .map(project -> projectRepository.findById(project.getId()).orElseThrow(() -> new EntityNotFoundException("No project found with id.")))
-                        .collect(Collectors.toSet())
+        story.setProject(
+                story.getProject()!=null && story.getProject().getId()!=null ? projectRepository.findById(story.getProject().getId()).orElseThrow(() -> new EntityNotFoundException("No project found with id.")) : null
         );
         story.setEducations(
                 story.getEducations().stream()

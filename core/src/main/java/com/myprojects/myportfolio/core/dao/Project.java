@@ -22,7 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "projects", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "slug" }) })
 @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Project extends SlugDao {
+public class Project extends SlugDao implements WithStoriesDao {
 
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;
@@ -73,15 +73,17 @@ public class Project extends SlugDao {
 
     /**
      * @Owner: Project is the owner of the relationship.
-     * @Create: When Creating a new Project or Updating an existing project is possible to create a new story or connect an existing story.
-     * @Update: When Updating a project, the already connected stories are left untouched.
+     * @Create: When Creating a new Project or Updating an existing project you can only create new stories.
+     *          This is because is a responsibility of the story itself to decide which project to associate to.
+     *          However, you can update existing stories that are already connected to the entity.
+     * @Update: When Updating a project, the already connected stories are updated but not removed if not passed.
      * @Delete: When Deleting a project, the stories are not deleted but the relationship is deleted.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "project_stories",
-            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
     @JsonManagedReference
     @Builder.Default
     @Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
@@ -106,7 +108,9 @@ public class Project extends SlugDao {
 
     @Override
     public void completeRelationships() {
-        this.getStories().forEach(story -> story.getProjects().add(this));
+        if(this.getStories()!=null) {
+            this.getStories().forEach(story -> story.setProject(this));
+        }
         if (this.getUser() != null) {
             if (this.getUser().getProjects() == null)
                 this.getUser().setProjects(new HashSet<>());
@@ -116,7 +120,9 @@ public class Project extends SlugDao {
 
     @Override
     public void removeRelationships() {
-        this.getStories().forEach(story -> story.getProjects().remove(this));
+        if(this.getStories()!=null) {
+            this.getStories().forEach(story -> story.setProject(null));
+        }
         if (this.getUser() != null) {
             this.getUser().getProjects().remove(this);
         }

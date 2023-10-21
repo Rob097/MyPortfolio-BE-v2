@@ -25,6 +25,7 @@ public class DiaryDto extends AuditableDto {
     String title;
     String description;
     Boolean isMain;
+    Integer mainStoryId;
 
     @Valid
     @JsonView(Verbose.class)
