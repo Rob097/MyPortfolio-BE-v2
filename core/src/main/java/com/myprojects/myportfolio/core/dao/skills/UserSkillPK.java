@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This class is a composite primary key for the UserSkill entity.
@@ -30,14 +31,14 @@ public class UserSkillPK implements Serializable {
 
         UserSkillPK that = (UserSkillPK) o;
 
-        if (!userId.equals(that.userId)) return false;
-        return skillId.equals(that.skillId);
+        if (!Objects.equals(userId, that.userId)) return false;
+        return Objects.equals(skillId, that.skillId);
     }
 
     @Override
     public int hashCode() {
-        int result = userId.hashCode();
-        result = 31 * result + skillId.hashCode();
+        int result = userId != null ? userId.hashCode() : 0;
+        result = 31 * result + (skillId != null ? skillId.hashCode() : 0);
         return result;
     }
 }

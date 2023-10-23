@@ -141,16 +141,17 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
         // Try at max 10 times to get a valid id from core and save the user both in the Core DB and in the Auth DB with the same id
         int maxTries = 10;
         int tries = 0;
-        ResponseEntity<MessageResource<Integer>> nextId = userClient.getNextId();
-        while (nextId == null || nextId.getBody() == null || nextId.getBody().getContent() == null || this.applicationUserRepository.findById(nextId.getBody().getContent()).isPresent()) {
-            nextId = userClient.getNextId();
+        int nextId = getNextValidId();
+
+        while (this.applicationUserRepository.findById(nextId).isPresent()) {
+            nextId = getNextValidId();
             tries++;
             if (tries > maxTries) {
                 throw new RuntimeException("No valid id was found.");
             }
         }
 
-        userToRegister.setId(nextId.getBody().getContent());
+        userToRegister.setId(nextId);
         DBUser registeredUser = this.applicationUserRepository.saveAndFlush(userToRegister);
 
         // I need to update the user in the Core DB
@@ -182,5 +183,20 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
 
         return savedUser;
 
+    }
+
+    /**********************/
+    /*** Private Methods **/
+    /**********************/
+
+    // Define a method to get the next valid id from core
+    private int getNextValidId() {
+        ResponseEntity<MessageResource<Integer>> nextIdRes = userClient.getNextId();
+
+        if (nextIdRes == null || nextIdRes.getBody() == null || nextIdRes.getBody().getContent() == null) {
+            throw new RuntimeException("Impossible to get a valid id from core");
+        }
+
+        return nextIdRes.getBody().getContent();
     }
 }

@@ -36,11 +36,11 @@ public class StoryDto extends AuditableDto {
     Integer projectId;
     Integer orderInProject;
 
-    @JsonView(Verbose.class)
-    Set<Integer> educationsIds;
+    Integer educationId;
+    Integer orderInEducation;
 
-    @JsonView(Verbose.class)
-    Set<Integer> experiencesIds;
+    Integer experienceId;
+    Integer orderInExperience;
 
     @JsonView(Verbose.class)
     Set<SkillDto> skills;

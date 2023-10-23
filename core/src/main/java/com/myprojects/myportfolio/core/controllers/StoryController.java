@@ -93,28 +93,20 @@ public class StoryController extends BaseController<Story, StoryDto> {
                 story.setProject(newProject);
                 isToUpdate = true;
             } else if (operation.getPath().matches("^/education")) {
-                Education education = educationService.findById(Integer.parseInt(operation.getValue()));
+                Education oldEducation = story.getEducation();
+                educationService.removeStoriesFromEntity(oldEducation.getId(), new Integer[]{story.getId()});
 
-                if (operation.getOp() == PatchOperation.Op.add) {
-                    education.getStories().add(story);
-                    story.getEducations().add(education);
-                } else if (operation.getOp() == PatchOperation.Op.remove) {
-                    education.getStories().remove(story);
-                    story.getEducations().remove(education);
-                }
-
+                Education newEducation = educationService.findById(Integer.parseInt(operation.getValue()));
+                newEducation.getStories().add(story);
+                story.setEducation(newEducation);
                 isToUpdate = true;
             } else if (operation.getPath().matches("^/experience")) {
-                Experience experience = experienceService.findById(Integer.parseInt(operation.getValue()));
+                Experience oldExperience = story.getExperience();
+                experienceService.removeStoriesFromEntity(oldExperience.getId(), new Integer[]{story.getId()});
 
-                if (operation.getOp() == PatchOperation.Op.add) {
-                    experience.getStories().add(story);
-                    story.getExperiences().add(experience);
-                } else if (operation.getOp() == PatchOperation.Op.remove) {
-                    experience.getStories().remove(story);
-                    story.getExperiences().remove(experience);
-                }
-
+                Experience newExperience = experienceService.findById(Integer.parseInt(operation.getValue()));
+                newExperience.getStories().add(story);
+                story.setExperience(newExperience);
                 isToUpdate = true;
             }
 

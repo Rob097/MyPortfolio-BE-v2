@@ -21,6 +21,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuperBuilder
 @Entity
 @Table(name = "skills")
+@SequenceGenerator(name = "skill_gen", sequenceName = "skill_seq", allocationSize = 1)
 @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Skill extends BaseDao {
 

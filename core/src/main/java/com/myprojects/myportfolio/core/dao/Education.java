@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import jakarta.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Setter
 @Getter
@@ -22,8 +22,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuperBuilder
 @Entity
 @Table(name = "educations", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
+@SequenceGenerator(name = "education_gen", sequenceName = "education_seq", allocationSize = 1)
 @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Education extends SlugDao {
+public class Education extends SlugDao implements WithStoriesDao {
 
     @Serial
     private static final long serialVersionUID = 1569828648829514030L;
@@ -94,23 +95,25 @@ public class Education extends SlugDao {
     )
     @JsonBackReference
     @Builder.Default
-    @Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "users", usage = CacheConcurrencyStrategy.READ_ONLY)
     private User user = new User();
 
     /**
      * @Owner: Education is the owner of the relationship.
-     * @Create: When Creating a new Education or Updating an existing education is possible to create a new story or connect an existing story.
-     * @Update: When Updating an education, the already connected stories are left untouched.
+     * @Create: When Creating a new Education or Updating an existing education you can only create new stories.
+     *          This is because is a responsibility of the story itself to decide which education to associate to.
+     *          However, you can update existing stories that are already connected to the entity.
+     * @Update: When Updating an education, the already connected stories are updated but not removed if not passed.
      * @Delete: When Deleting an education, the stories are not deleted but the relationship is deleted.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "education_stories",
-            joinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
+    @OneToMany(
+            mappedBy = "education",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
     /**
@@ -127,12 +130,14 @@ public class Education extends SlugDao {
             joinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    @Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {
-        this.getStories().forEach(story -> story.getEducations().add(this));
+        if (this.getStories() != null) {
+            this.getStories().forEach(story -> story.setEducation(this));
+        }
         if (this.getUser() != null) {
             if (this.getUser().getEducations() == null)
                 this.getUser().setEducations(new HashSet<>());
@@ -142,7 +147,9 @@ public class Education extends SlugDao {
 
     @Override
     public void removeRelationships() {
-        this.getStories().forEach(story -> story.getEducations().remove(this));
+        if (this.getStories() != null) {
+            this.getStories().forEach(story -> story.setEducation(null));
+        }
         if (this.getUser() != null) {
             this.getUser().getEducations().remove(this);
         }

@@ -1,17 +1,13 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
-import com.myprojects.myportfolio.core.dao.Diary;
-import com.myprojects.myportfolio.core.dao.Project;
-import com.myprojects.myportfolio.core.dao.Story;
+import com.myprojects.myportfolio.core.dao.*;
 import com.myprojects.myportfolio.core.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -51,8 +47,12 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
 
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
         isDiaryOfCurrentUser(story);
-        if(story.getProject()!=null && story.getProject().getId()!=null)
+        if (story.getProject() != null && story.getProject().getId() != null)
             isProjectOfStoryUser(story);
+        if (story.getEducation() != null && story.getEducation().getId() != null)
+            isEducationOfStoryUser(story);
+        if (story.getExperience() != null && story.getExperience().getId() != null)
+            isExperienceOfStoryUser(story);
 
         return super.save(story);
     }
@@ -65,8 +65,12 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
 
         // Important, we need to check that the diary_id passed is actually a diary of the current user.
         isDiaryOfCurrentUser(story);
-        if(story.getProject()!=null && story.getProject().getId()!=null)
+        if (story.getProject() != null && story.getProject().getId() != null)
             isProjectOfStoryUser(story);
+        if (story.getEducation() != null && story.getEducation().getId() != null)
+            isEducationOfStoryUser(story);
+        if (story.getExperience() != null && story.getExperience().getId() != null)
+            isExperienceOfStoryUser(story);
 
         return super.update(story);
     }
@@ -97,22 +101,30 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
             throw new IllegalArgumentException("You are not allowed to connect the story to a someone else's project.");
     }
 
+    private void isEducationOfStoryUser(Story story) {
+        Education education = educationRepository.findById(story.getEducation().getId()).orElseThrow(() -> new EntityNotFoundException("No education found with id: " + story.getEducation().getId()));
+        if (!education.getUser().getId().equals(story.getDiary().getUserId()))
+            throw new IllegalArgumentException("You are not allowed to connect the story to a someone else's education.");
+    }
+
+    private void isExperienceOfStoryUser(Story story) {
+        Experience experience = experienceRepository.findById(story.getExperience().getId()).orElseThrow(() -> new EntityNotFoundException("No experience found with id: " + story.getExperience().getId()));
+        if (!experience.getUser().getId().equals(story.getDiary().getUserId()))
+            throw new IllegalArgumentException("You are not allowed to connect the story to a someone else's experience.");
+    }
+
     private void loadStoryRelations(Story story) {
         story.setDiary(
                 diaryRepository.findById(story.getDiary().getId()).orElseThrow(() -> new EntityNotFoundException("No diary found with id."))
         );
         story.setProject(
-                story.getProject()!=null && story.getProject().getId()!=null ? projectRepository.findById(story.getProject().getId()).orElseThrow(() -> new EntityNotFoundException("No project found with id.")) : null
+                story.getProject() != null && story.getProject().getId() != null ? projectRepository.findById(story.getProject().getId()).orElseThrow(() -> new EntityNotFoundException("No project found with id.")) : null
         );
-        story.setEducations(
-                story.getEducations().stream()
-                        .map(education -> educationRepository.findById(education.getId()).orElseThrow(() -> new EntityNotFoundException("No education found with id.")))
-                        .collect(Collectors.toSet())
+        story.setEducation(
+                story.getEducation() != null && story.getEducation().getId() != null ? educationRepository.findById(story.getEducation().getId()).orElseThrow(() -> new EntityNotFoundException("No education found with id.")) : null
         );
-        story.setExperiences(
-                story.getExperiences().stream()
-                        .map(experience -> experienceRepository.findById(experience.getId()).orElseThrow(() -> new EntityNotFoundException("No experience found with id.")))
-                        .collect(Collectors.toSet())
+        story.setExperience(
+                story.getExperience() != null && story.getExperience().getId() != null ? experienceRepository.findById(story.getExperience().getId()).orElseThrow(() -> new EntityNotFoundException("No experience found with id.")) : null
         );
     }
 

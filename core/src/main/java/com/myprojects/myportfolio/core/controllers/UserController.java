@@ -70,7 +70,7 @@ public class UserController extends BaseController<User, UserDto> {
     public ResponseEntity<MessageResource<UserDto>> patch(
             @PathVariable("id") Integer id,
             @RequestBody List<PatchOperation> operations
-    ) throws Exception {
+    ) {
         Validate.notEmpty(operations, "No valid operation was provided.");
 
         boolean isToUpdate = false;
@@ -101,8 +101,10 @@ public class UserController extends BaseController<User, UserDto> {
     }
 
     @GetMapping(path = "/fromAuth/getNextId")
-    public ResponseEntity<MessageResource<Integer>> getNextId() throws Exception {
-        return this.buildSuccessResponseOfGenericType(userRepository.getNextId(), Normal.value, new ArrayList<>(), false);
+    public ResponseEntity<MessageResource<Integer>> getNextId() {
+        Integer nextId = userRepository.getNextId();
+        userRepository.incrementNextId();
+        return this.buildSuccessResponseOfGenericType(nextId, Normal.value, new ArrayList<>(), false);
     }
 
 }

@@ -2,13 +2,15 @@ package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
+import com.myprojects.myportfolio.core.configAndUtils.UserCustomSeqGen;
 import com.myprojects.myportfolio.core.dao.enums.Sex;
 import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serial;
 import java.util.HashSet;
@@ -21,6 +23,15 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"slug"})})
+@GenericGenerator(
+        name = "default_gen",
+        type = UserCustomSeqGen.class,
+        parameters = {
+                @org.hibernate.annotations.Parameter(name = "sequence_name", value = "user_seq"),
+                @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
+                @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+        }
+)
 @Cache(region = "users", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends SlugDao {
 
@@ -103,7 +114,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "diaries", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "diaries", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Diary> diaries = new HashSet<>();
 
     /**
@@ -120,7 +131,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Project> projects = new HashSet<>();
 
     /**
@@ -137,7 +148,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "educations", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Education> educations = new HashSet<>();
 
     /**
@@ -154,7 +165,7 @@ public class User extends SlugDao {
     )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Experience> experiences = new HashSet<>();
 
     /**
@@ -170,7 +181,7 @@ public class User extends SlugDao {
             fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "userSkills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "userSkills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<UserSkill> skills = new HashSet<>();
 
     @Override

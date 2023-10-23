@@ -5,16 +5,16 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import jakarta.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Setter
 @Getter
@@ -23,8 +23,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuperBuilder
 @Entity
 @Table(name = "experiences", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
+@SequenceGenerator(name = "experience_gen", sequenceName = "experience_seq", allocationSize = 1)
 @Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Experience extends SlugDao {
+public class Experience extends SlugDao implements WithStoriesDao {
 
     @Serial
     private static final long serialVersionUID = 6813981328660668957L;
@@ -94,23 +95,25 @@ public class Experience extends SlugDao {
     )
     @JsonBackReference
     @Builder.Default
-    @Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "users", usage = CacheConcurrencyStrategy.READ_ONLY)
     private User user = new User();
 
     /**
      * @Owner: Experience is the owner of the relationship.
-     * @Create: When Creating a new Experience or Updating an existing experience is possible to create a new story or connect an existing story.
-     * @Update: When Updating an experience, the already connected stories are left untouched.
+     * @Create: When Creating a new Experience or Updating an existing experience you can only create new stories.
+     *          This is because is a responsibility of the story itself to decide which experience to associate to.
+     *          However, you can update existing stories that are already connected to the entity.
+     * @Update: When Updating an experience, the already connected stories are updated but not removed if not passed.
      * @Delete: When Deleting an experience, the stories are not deleted but the relationship is deleted.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "experience_stories",
-            joinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"))
+    @OneToMany(
+            mappedBy = "experience",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
     /**
@@ -127,12 +130,14 @@ public class Experience extends SlugDao {
             joinColumns = @JoinColumn(name = "experience_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    @Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {
-        this.getStories().forEach(story -> story.getExperiences().add(this));
+        if (this.getStories() != null) {
+            this.getStories().forEach(story -> story.setExperience(this));
+        }
         if (this.getUser() != null) {
             if (this.getUser().getExperiences() == null)
                 this.getUser().setExperiences(new HashSet<>());
@@ -142,7 +147,9 @@ public class Experience extends SlugDao {
 
     @Override
     public void removeRelationships() {
-        this.getStories().forEach(story -> story.getExperiences().remove(this));
+        if (this.getStories() != null) {
+            this.getStories().forEach(story -> story.setExperience(null));
+        }
         if (this.getUser() != null) {
             this.getUser().getExperiences().remove(this);
         }

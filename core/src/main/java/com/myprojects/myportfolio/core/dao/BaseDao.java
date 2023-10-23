@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
@@ -23,8 +22,7 @@ import java.util.Objects;
 public class BaseDao implements Serializable {
 
     @Id
-    @GenericGenerator(name = "UseExistingIdOtherwiseGenerateUsingIdentity", type = com.myprojects.myportfolio.core.configAndUtils.UseExistingIdOtherwiseGenerateUsingIdentity.class)
-    @GeneratedValue(generator = "UseExistingIdOtherwiseGenerateUsingIdentity")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")
     @Column(name = "id", updatable = false)
     protected Integer id;
 

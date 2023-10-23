@@ -19,6 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuperBuilder
 @Entity
 @Table(name = "diaries")
+@SequenceGenerator(name = "diary_gen", sequenceName = "diary_seq", allocationSize = 1)
 @Cache(region = "diaries", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Diary extends AuditableDao implements WithStoriesDao {
 

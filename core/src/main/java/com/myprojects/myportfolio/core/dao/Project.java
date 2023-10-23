@@ -21,6 +21,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuperBuilder
 @Entity
 @Table(name = "projects", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "slug" }) })
+@SequenceGenerator(name = "project_gen", sequenceName = "project_seq", allocationSize = 1)
 @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Project extends SlugDao implements WithStoriesDao {
 

@@ -3,17 +3,16 @@ package com.myprojects.myportfolio.core.dao;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import jakarta.persistence.*;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import org.hibernate.annotations.Cache;
 
 @Setter
 @Getter
@@ -22,6 +21,7 @@ import org.hibernate.annotations.Cache;
 @SuperBuilder
 @Entity
 @Table(name = "stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
+@SequenceGenerator(name = "story_gen", sequenceName = "story_seq", allocationSize = 1)
 @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Story extends SlugDao {
 
@@ -81,7 +81,7 @@ public class Story extends SlugDao {
     )
     @JsonBackReference
     @Builder.Default
-    @Cache(region = "diaries", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "diaries", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Diary diary = new Diary();
 
     /**
@@ -100,7 +100,7 @@ public class Story extends SlugDao {
             )
     )
     @JsonBackReference
-    @Cache(region = "projects", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Project project;
 
     // Defines the order of the story in the project
@@ -109,26 +109,46 @@ public class Story extends SlugDao {
     /**
      * @Owner: Education is the owner of the relationship.
      * @Create: When creating a story, we have to specify an already existing educationId
-     * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
+     * @Update: When updating a story, we have to specify an already existing educationId
+     *          If we don't specify a educationId, the relationship is removed
      * @Delete: When deleting a story, the relation with the education is deleted
      */
-    @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "education_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "education_story_fk"
+            )
+    )
     @JsonBackReference
-    @Builder.Default
-    @Cache(region = "educations", usage=CacheConcurrencyStrategy.READ_ONLY)
-    private Set<Education> educations = new HashSet<>();
+    @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_ONLY)
+    private Education education;
+
+    // Defines the order of the story in the education
+    private Integer orderInEducation;
 
     /**
      * @Owner: Experience is the owner of the relationship.
      * @Create: When creating a story, we have to specify an already existing experienceId
-     * @Update: When updating a story, nothing happens to the relationship (no add, no delete)
+     * @Update: When updating a story, we have to specify an already existing experienceId
+     *          If we don't specify a experienceId, the relationship is removed
      * @Delete: When deleting a story, the relation with the experience is deleted
      */
-    @ManyToMany(mappedBy = "stories", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "experience_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "experience_story_fk"
+            )
+    )
     @JsonBackReference
-    @Builder.Default
-    @Cache(region = "experiences", usage=CacheConcurrencyStrategy.READ_ONLY)
-    private Set<Experience> experiences = new HashSet<>();
+    @Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_ONLY)
+    private Experience experience;
+
+    // Defines the order of the story in the experience
+    private Integer orderInExperience;
 
     /**
      * @Create: When creating a story, we can specify a list of ALREADY EXISTING skills
@@ -144,17 +164,11 @@ public class Story extends SlugDao {
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    @Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override
     public void completeRelationships() {
-        this.getEducations().forEach(education ->
-                education.getStories().add(this)
-        );
-        this.getExperiences().forEach(experience ->
-                experience.getStories().add(this)
-        );
         if (this.getDiary() != null) {
             if (this.getDiary().getStories() == null)
                 this.getDiary().setStories(new HashSet<>());
@@ -165,28 +179,36 @@ public class Story extends SlugDao {
                 this.getProject().setStories(new HashSet<>());
             this.getProject().getStories().add(this);
         }
+        if (this.getEducation() != null) {
+            if (this.getEducation().getStories() == null)
+                this.getEducation().setStories(new HashSet<>());
+            this.getEducation().getStories().add(this);
+        }
+        if (this.getExperience() != null) {
+            if (this.getExperience().getStories() == null)
+                this.getExperience().setStories(new HashSet<>());
+            this.getExperience().getStories().add(this);
+        }
     }
 
     @Override
     public void removeRelationships() {
-        this.getEducations().forEach(education ->
-                education.getStories().remove(this)
-        );
-        this.getExperiences().forEach(experience ->
-                experience.getStories().remove(this)
-        );
         if (this.getDiary() != null) {
             this.getDiary().getStories().remove(this);
         }
-        if(this.getProject()!=null) {
+        if (this.getProject() != null) {
             this.getProject().getStories().remove(this);
+        }
+        if (this.getEducation() != null) {
+            this.getEducation().getStories().remove(this);
+        }
+        if (this.getEducation() != null) {
+            this.getEducation().getStories().remove(this);
         }
     }
 
     @Override
     public void clearRelationships() {
-        this.educations = null;
-        this.experiences = null;
         this.skills = null;
     }
 
@@ -206,11 +228,27 @@ public class Story extends SlugDao {
         return this.getProject().getId();
     }
 
+    public Integer getEducationId() {
+        if (this.getEducation() == null)
+            return -1;
+        return this.getEducation().getId();
+    }
+
+    public Integer getExperienceId() {
+        if (this.getExperience() == null)
+            return -1;
+        return this.getExperience().getId();
+    }
+
     public Integer getEntityId(Class<?> clazz) {
         if (clazz.equals(Diary.class))
             return this.getDiaryId();
         if (clazz.equals(Project.class))
             return this.getProjectId();
+        if (clazz.equals(Education.class))
+            return this.getEducationId();
+        if (clazz.equals(Experience.class))
+            return this.getExperienceId();
         return null;
     }
 }

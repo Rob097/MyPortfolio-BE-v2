@@ -2,18 +2,15 @@ package com.myprojects.myportfolio.core.dao.skills;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.dao.BaseDao;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Setter
 @Getter
@@ -22,6 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuperBuilder
 @Entity
 @Table(name = "skills_category")
+@SequenceGenerator(name = "skill_category_gen", sequenceName = "skill_category_seq", allocationSize = 1)
 @Cache(region = "skillsCategory", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SkillCategory extends BaseDao {
 
