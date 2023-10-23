@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.dao.*;
+import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,21 +50,17 @@ public class StoryServiceTest extends BaseTest {
 
         Project project = Project.builder().id(1).build();
 
-        Set<Education> educations = new HashSet<>();
-        /*Education education = new Education();
+        Education education = new Education();
         education.setField("Test Field");
         education.setSchool("Test School");
         education.setDegree("Test Degree");
-        education.setDescription("Test Description");*/
-        educations.add(Education.builder().id(1).build());
+        education.setDescription("Test Description");
 
-        Set<Experience> experiences = new HashSet<>();
-        /*Experience experience = new Experience();
+        Experience experience = new Experience();
         experience.setTitle("Test Title");
         experience.setCompanyName("Test Company");
         experience.setDescription("Test Description");
-        experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);*/
-        experiences.add(Experience.builder().id(1).build());
+        experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);
 
         Set<Skill> skills = new HashSet<>();
         /*Skill newSkill = new Skill();
@@ -74,8 +71,8 @@ public class StoryServiceTest extends BaseTest {
         skills.add(existingSkill);
 
         this.storyWithRelations.setProject(project);
-        this.storyWithRelations.setEducations(educations);
-        this.storyWithRelations.setExperiences(experiences);
+        this.storyWithRelations.setEducation(education);
+        this.storyWithRelations.setExperience(experience);
         this.storyWithRelations.setSkills(skills);
     }
 
@@ -132,8 +129,8 @@ public class StoryServiceTest extends BaseTest {
             assertEquals(this.storyWithRelations.getFirstRelevantSection(), createdStory.getFirstRelevantSection());
             assertEquals(this.storyWithRelations.getSecondRelevantSection(), createdStory.getSecondRelevantSection());
             assertEquals(this.storyWithRelations.getProject(), createdStory.getProject());
-            assertEquals(this.storyWithRelations.getEducations().size(), createdStory.getEducations().size());
-            assertEquals(this.storyWithRelations.getExperiences().size(), createdStory.getExperiences().size());
+            assertEquals(this.storyWithRelations.getEducation(), createdStory.getEducation());
+            assertEquals(this.storyWithRelations.getExperience(), createdStory.getExperience());
             assertEquals(this.storyWithRelations.getSkills().size(), createdStory.getSkills().size());
 
         } catch (Exception e) {
@@ -182,8 +179,8 @@ public class StoryServiceTest extends BaseTest {
             this.storyWithRelations.setTitle(newTitle);
             this.storyWithRelations.setDiary(Diary.builder().id(2).build());
             this.storyWithRelations.setProject(Project.builder().id(2).build());
-            this.storyWithRelations.getEducations().add(Education.builder().id(2).build());
-            this.storyWithRelations.getExperiences().add(Experience.builder().id(2).build());
+            this.storyWithRelations.setEducation(Education.builder().id(2).build());
+            this.storyWithRelations.setExperience(Experience.builder().id(2).build());
             this.storyWithRelations.getSkills().add(Skill.builder().id(2).build());
 
             // Update the story
@@ -200,8 +197,8 @@ public class StoryServiceTest extends BaseTest {
             assertEquals(newTitle, updatedStory.getTitle());
             assertEquals(this.storyWithRelations.getDiary().getId(), updatedStory.getDiary().getId());
             assertEquals(this.storyWithRelations.getProject().getId(), updatedStory.getProject().getId());
-            assertEquals(1, updatedStory.getEducations().size());
-            assertEquals(1, updatedStory.getExperiences().size());
+            assertEquals(this.storyWithRelations.getEducation().getId(), updatedStory.getEducation().getId());
+            assertEquals(this.storyWithRelations.getExperience().getId(), updatedStory.getExperience().getId());
             assertEquals(this.storyWithRelations.getSkills().size(), updatedStory.getSkills().size());
 
         } catch (Exception e) {
