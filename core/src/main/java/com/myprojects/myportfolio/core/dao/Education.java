@@ -22,7 +22,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "educations", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
-@SequenceGenerator(name = "education_gen", sequenceName = "education_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "education_seq", allocationSize = 1)
 @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Education extends SlugDao implements WithStoriesDao {
 

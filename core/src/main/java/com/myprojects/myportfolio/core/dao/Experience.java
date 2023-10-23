@@ -23,7 +23,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "experiences", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
-@SequenceGenerator(name = "experience_gen", sequenceName = "experience_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "experience_seq", allocationSize = 1)
 @Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Experience extends SlugDao implements WithStoriesDao {
 

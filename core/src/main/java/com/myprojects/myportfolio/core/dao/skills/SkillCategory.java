@@ -19,7 +19,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "skills_category")
-@SequenceGenerator(name = "skill_category_gen", sequenceName = "skill_category_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "skill_category_seq", allocationSize = 1)
 @Cache(region = "skillsCategory", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SkillCategory extends BaseDao {
 

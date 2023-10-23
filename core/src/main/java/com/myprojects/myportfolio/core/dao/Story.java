@@ -21,7 +21,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
-@SequenceGenerator(name = "story_gen", sequenceName = "story_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "story_seq", allocationSize = 1)
 @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Story extends SlugDao {
 
