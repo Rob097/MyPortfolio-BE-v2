@@ -1,13 +1,6 @@
 package com.myprojects.myportfolio.auth.controller;
 
 import com.myprojects.myportfolio.auth.dao.DBUser;
-import com.myprojects.myportfolio.clients.auth.AuthenticatedUserClaims;
-import com.myprojects.myportfolio.clients.general.PatchOperation;
-import com.myprojects.myportfolio.clients.general.messages.Message;
-import com.myprojects.myportfolio.clients.general.messages.MessageResource;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-
 import com.myprojects.myportfolio.auth.dto.CoreUser;
 import com.myprojects.myportfolio.auth.dto.SignINRequest;
 import com.myprojects.myportfolio.auth.dto.SignINResponse;
@@ -16,11 +9,16 @@ import com.myprojects.myportfolio.auth.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.auth.mapper.SignUPMapper;
 import com.myprojects.myportfolio.auth.service.AuthenticationUserServiceI;
 import com.myprojects.myportfolio.auth.service.JwtServiceI;
+import com.myprojects.myportfolio.clients.auth.AuthenticatedUserClaims;
+import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.messages.Message;
+import com.myprojects.myportfolio.clients.general.messages.MessageResource;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,7 +72,7 @@ public class AuthenticationUserController {
         return ResponseEntity.ok().headers(headers).body(new SignINResponse(token));
     }
 
-    @PostMapping(path = "/signup", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/signup")
     public ResponseEntity<MessageResource<CoreUser>> create(@RequestBody @Valid SignUPRequest user) {
         Validate.notNull(user, "No valid resource was provided.");
         List<Message> messages = new ArrayList<>();
@@ -142,7 +140,7 @@ public class AuthenticationUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{id}")
     @PreAuthorize("@applicationUserService.hasId(#id)")
     public ResponseEntity<MessageResource<CoreUser>> delete(@PathVariable("id") Integer id) {
         Validate.notNull(id, "No valid parameters were provided.");

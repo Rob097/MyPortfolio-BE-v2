@@ -18,15 +18,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ExperienceDto extends AuditableDto {
+public class ExperienceDto extends SlugDto {
 
     @Serial
     private static final long serialVersionUID = -2352783680197655762L;
 
     @NotNull(message = "Education: User Id cannot be null", groups = OnUpdate.class)
     Integer userId;
-
-    String slug;
 
     @NotNull(message = "Experience: Title cannot be null")
     String title;

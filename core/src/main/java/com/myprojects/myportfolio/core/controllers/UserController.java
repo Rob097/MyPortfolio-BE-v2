@@ -23,7 +23,7 @@ import java.util.List;
 @RestController("UserController")
 @RequestMapping("${core-module-basic-path}" + "/users")
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class UserController extends BaseController<User, UserDto> {
+public class UserController extends UserRelatedBaseController<User, UserDto> {
 
     private final UserService userService;
 
@@ -32,8 +32,7 @@ public class UserController extends BaseController<User, UserDto> {
     private final UserRepository userRepository;
 
     public UserController(UserRepository userRepository, UserService userService, UserMapper userMapper) {
-        this.service = userService;
-        this.mapper = userMapper;
+        super(userService, userMapper);
 
         this.userService = userService;
         this.userMapper = userMapper;

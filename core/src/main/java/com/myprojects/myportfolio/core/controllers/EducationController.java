@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController("EducationController")
 @RequestMapping("${core-module-basic-path}" + "/educations")
-public class EducationController extends BaseController<Education, EducationDto> {
+public class EducationController extends UserRelatedBaseController<Education, EducationDto> {
 
     private final EducationServiceI educationService;
 
     private final EducationMapper educationMapper;
 
     public EducationController(EducationServiceI educationService, EducationMapper educationMapper) {
-        this.service = educationService;
-        this.mapper = educationMapper;
+        super(educationService, educationMapper);
 
         this.educationService = educationService;
         this.educationMapper = educationMapper;

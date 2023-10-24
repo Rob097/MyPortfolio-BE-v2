@@ -4,7 +4,6 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
-import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.dao.BaseDao;
 import com.myprojects.myportfolio.core.dto.BaseDto;
@@ -19,16 +18,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 public abstract class BaseController<A extends BaseDao, T extends BaseDto> extends IController<T> {
 
-    protected BaseServiceI<A> service;
+    private final BaseServiceI<A> service;
 
-    protected BaseMapper<A, T> mapper;
+    private final BaseMapper<A, T> mapper;
+
+    public BaseController(BaseServiceI<A> service, BaseMapper<A, T> mapper) {
+        this.service = service;
+        this.mapper = mapper;
+    }
 
     @Autowired
     protected UtilsServiceI utilsService;
@@ -61,7 +64,6 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PostMapping()
-    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.name() ) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
             @Validated(OnCreate.class) @RequestBody T entity
     ) throws Exception {
@@ -73,7 +75,6 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
     @Override
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
             @Validated(OnUpdate.class) @RequestBody T entity
@@ -95,10 +96,6 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
 
         A entityToDelete = service.findById(id);
         Validate.notNull(entityToDelete, noEntityFound(id));
-
-        if (!utilsService.isOfCurrentUser(mapper.mapToDto(entityToDelete, Verbose.value), false)) {
-            throw new Exception("You can't delete it because is not yours.");
-        }
 
         service.delete(entityToDelete);
         return this.buildSuccessResponse(mapper.mapToDto(entityToDelete, Normal.value));

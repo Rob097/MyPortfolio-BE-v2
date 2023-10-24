@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController("ExperienceController")
 @RequestMapping("${core-module-basic-path}" + "/experiences")
-public class ExperienceController extends BaseController<Experience, ExperienceDto> {
+public class ExperienceController extends UserRelatedBaseController<Experience, ExperienceDto> {
 
     private final ExperienceServiceI experienceService;
 
     private final ExperienceMapper experienceMapper;
 
     public ExperienceController(ExperienceServiceI experienceService, ExperienceMapper experienceMapper) {
-        this.service = experienceService;
-        this.mapper = experienceMapper;
+        super(experienceService, experienceMapper);
 
         this.experienceService = experienceService;
         this.experienceMapper = experienceMapper;

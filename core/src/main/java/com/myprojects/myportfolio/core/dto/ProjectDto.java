@@ -16,14 +16,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ProjectDto extends AuditableDto {
+public class ProjectDto extends SlugDto {
 
     @Serial
     private static final long serialVersionUID = -2469764529940394128L;
 
     @NotNull(message = "Project: User Id cannot be null", groups = OnUpdate.class)
     Integer userId;
-    String slug;
 
     @NotNull(message = "Project: Title cannot be null")
     String title;

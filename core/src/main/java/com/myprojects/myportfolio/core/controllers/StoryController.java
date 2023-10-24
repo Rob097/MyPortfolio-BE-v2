@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController("StoryController")
 @RequestMapping("${core-module-basic-path}" + "/stories")
-public class StoryController extends BaseController<Story, StoryDto> {
+public class StoryController extends UserRelatedBaseController<Story, StoryDto> {
 
     private final StoryServiceI storyService;
 
@@ -34,8 +34,7 @@ public class StoryController extends BaseController<Story, StoryDto> {
     private final ExperienceServiceI experienceService;
 
     public StoryController(StoryServiceI storyService, StoryMapper storyMapper, DiaryServiceI diaryService, ProjectServiceI projectService, EducationServiceI educationService, ExperienceServiceI experienceService) {
-        this.service = storyService;
-        this.mapper = storyMapper;
+        super(storyService, storyMapper);
 
         this.storyService = storyService;
         this.storyMapper = storyMapper;
@@ -71,7 +70,7 @@ public class StoryController extends BaseController<Story, StoryDto> {
         boolean isToUpdate = false;
 
         Story story = storyService.findById(id);
-        if (!utilsService.isOfCurrentUser(mapper.mapToDto(story, Normal.value), false)) {
+        if (!utilsService.isOfCurrentUser(storyMapper.mapToDto(story, Normal.value), false)) {
             throw new Exception("You can't edit this story because is not yours.");
         }
 

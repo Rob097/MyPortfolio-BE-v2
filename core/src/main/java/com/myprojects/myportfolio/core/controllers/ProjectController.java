@@ -17,15 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController("ProjectController")
 @RequestMapping("${core-module-basic-path}" + "/projects")
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class ProjectController extends BaseController<Project, ProjectDto> {
+public class ProjectController extends UserRelatedBaseController<Project, ProjectDto> {
 
     private final ProjectServiceI projectService;
 
     private final ProjectMapper projectMapper;
 
     public ProjectController(ProjectServiceI projectService, ProjectMapper projectMapper) {
-        this.service = projectService;
-        this.mapper = projectMapper;
+        super(projectService, projectMapper);
 
         this.projectService = projectService;
         this.projectMapper = projectMapper;

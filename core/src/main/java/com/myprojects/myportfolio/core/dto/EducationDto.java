@@ -17,15 +17,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class EducationDto extends AuditableDto {
+public class EducationDto extends SlugDto {
 
     @Serial
     private static final long serialVersionUID = -1216538670421106118L;
 
     @NotNull(message = "Education: User Id cannot be null", groups = OnUpdate.class)
     Integer userId;
-
-    String slug;
 
     @NotNull(message = "Education: Field cannot be null")
     String field;

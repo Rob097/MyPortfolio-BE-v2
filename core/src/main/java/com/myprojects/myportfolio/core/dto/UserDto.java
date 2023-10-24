@@ -16,12 +16,10 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserDto extends AuditableDto {
+public class UserDto extends SlugDto {
 
     @Serial
     private static final long serialVersionUID = 9184690121318354645L;
-
-    String slug;
 
     @NotNull(message = "User: First name cannot be null")
     String firstName;

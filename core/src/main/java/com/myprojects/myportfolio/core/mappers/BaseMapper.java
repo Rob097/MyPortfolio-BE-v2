@@ -16,7 +16,7 @@ public interface BaseMapper<A extends BaseDao, T extends BaseDto> {
     A mapToDao(T dto);
 
     default T mapToDto(A entity) {
-        return mapToDto(entity, Normal.value);
+        return mapToDto(entity, Verbose.value);
     }
 
     @BeforeMapping

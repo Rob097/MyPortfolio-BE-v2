@@ -1,16 +1,13 @@
 package com.myprojects.myportfolio.core.controllers.skills;
 
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
-import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.controllers.BaseController;
-import com.myprojects.myportfolio.core.dto.groups.OnCreate;
-import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
-import com.myprojects.myportfolio.core.mappers.skills.SkillCategoryMapper;
 import com.myprojects.myportfolio.core.dao.skills.SkillCategory;
+import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
 import com.myprojects.myportfolio.core.dto.skills.SkillCategoryDto;
+import com.myprojects.myportfolio.core.mappers.skills.SkillCategoryMapper;
 import com.myprojects.myportfolio.core.services.skills.SkillCategoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.Validate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -26,9 +23,11 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
 
     private final SkillCategoryMapper skillCategoryMapper;
 
+    public final boolean isPostAuthorized = true;
+    public final boolean isPutAuthorized = true;
+
     public SkillCategoryController(SkillCategoryService skillCategoryService, SkillCategoryMapper skillCategoryMapper) {
-        this.service = skillCategoryService;
-        this.mapper = skillCategoryMapper;
+        super(skillCategoryService, skillCategoryMapper);
 
         this.skillCategoryService = skillCategoryService;
         this.skillCategoryMapper = skillCategoryMapper;
@@ -37,31 +36,14 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
     /** Methods, if not overridden above, are implemented in super class. */
 
     // SKILL CATEGORY CAN BE CREATED BY ANYONE BUT UPDATED AND DELETED ONLY BY SYS_ADMIN
-
-    @Override
-    @PostMapping()
-    public ResponseEntity<MessageResource<SkillCategoryDto>> create(
-            @Validated(OnCreate.class) @RequestBody SkillCategoryDto entity
-    ) throws Exception {
-        Validate.notNull(entity, resourceMissing());
-
-        SkillCategory newEntity = service.save(mapper.mapToDao(entity));
-        return this.buildSuccessResponse(mapper.mapToDto(newEntity, Normal.value));
-    }
-
     @Override
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName())")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.name())")
     public ResponseEntity<MessageResource<SkillCategoryDto>> update(
             @PathVariable("id") Integer id,
             @Validated(OnUpdate.class) @RequestBody SkillCategoryDto entity
     ) throws Exception {
-        Validate.notNull(entity, resourceMissing());
-        Validate.notNull(entity.getId(), fieldMissing("id"));
-        Validate.isTrue(entity.getId().equals(id), "The request's id and the body's id are different.");
-
-        SkillCategory updatedEntity = service.update(mapper.mapToDao(entity));
-        return this.buildSuccessResponse(mapper.mapToDto(updatedEntity, Normal.value));
+        return super.update(id, entity);
     }
 
     @Override
@@ -70,13 +52,7 @@ public class SkillCategoryController extends BaseController<SkillCategory, Skill
     public ResponseEntity<MessageResource<SkillCategoryDto>> delete(
             @PathVariable("id") Integer id
     ) throws Exception {
-        Validate.notNull(id, fieldMissing("id"));
-
-        SkillCategory entityToDelete = service.findById(id);
-        Validate.notNull(entityToDelete, noEntityFound(id));
-
-        service.delete(entityToDelete);
-        return this.buildSuccessResponse(mapper.mapToDto(entityToDelete, Normal.value));
+        return super.delete(id);
     }
 
 }
