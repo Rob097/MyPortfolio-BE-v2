@@ -213,7 +213,7 @@ public class EducationServiceTest extends BaseTest {
             assertEquals(newSchool, updatedEducation.getSchool());
             assertEquals(this.educationWithRelations.getStories().size(), updatedEducation.getStories().size());
             assertEquals(this.educationWithRelations.getSkills().size(), updatedEducation.getSkills().size());
-            assertNotEquals(newStoryTitle, updatedEducation.getStories().iterator().next().getTitle());
+            assertEquals(newStoryTitle, updatedEducation.getStories().iterator().next().getTitle());
             assertNotEquals(newSkillName, updatedEducation.getSkills().iterator().next().getName());
 
 

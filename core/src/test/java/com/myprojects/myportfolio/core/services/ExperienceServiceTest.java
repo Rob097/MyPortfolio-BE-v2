@@ -214,7 +214,7 @@ public class ExperienceServiceTest extends BaseTest {
             assertEquals(newTitle, updatedExperience.getTitle());
             assertEquals(this.experienceWithRelations.getStories().size(), updatedExperience.getStories().size());
             assertEquals(this.experienceWithRelations.getSkills().size(), updatedExperience.getSkills().size());
-            assertNotEquals(newStoryTitle, updatedExperience.getStories().iterator().next().getTitle());
+            assertEquals(newStoryTitle, updatedExperience.getStories().iterator().next().getTitle());
             assertNotEquals(newSkillName, updatedExperience.getSkills().iterator().next().getName());
 
 
