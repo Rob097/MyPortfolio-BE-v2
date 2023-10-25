@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Transactional
 @Service(value = "EducationService")
@@ -22,6 +24,11 @@ public class EducationService extends WithStoriesService<Education> implements E
 
         this.educationRepository = educationRepository;
         this.storyRepository = storyRepository;
+    }
+
+    @Override
+    public List<String> findSlugsByUserId(Integer userId) {
+        return educationRepository.findSlugsByUserId(userId).orElseThrow(() -> new RuntimeException("No educations found for user id: " + userId));
     }
 
     /**********************/

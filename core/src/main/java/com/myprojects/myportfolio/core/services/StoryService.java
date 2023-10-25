@@ -9,6 +9,8 @@ import org.apache.commons.lang.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Transactional
 @Service(value = "StoryService")
@@ -36,6 +38,11 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         this.educationRepository = educationRepository;
         this.experienceRepository = experienceRepository;
         this.utilsService = utilsService;
+    }
+
+    @Override
+    public List<String> findSlugsByUserId(Integer userId) {
+        return storyRepository.findSlugsByUserId(userId).orElseThrow(() -> new RuntimeException("No stories found for user id: " + userId));
     }
 
     @Override

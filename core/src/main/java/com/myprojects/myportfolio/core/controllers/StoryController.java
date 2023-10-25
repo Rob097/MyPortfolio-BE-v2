@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.controllers;
 
 import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
+import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.*;
@@ -10,10 +11,10 @@ import com.myprojects.myportfolio.core.mappers.StoryMapper;
 import com.myprojects.myportfolio.core.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -48,7 +49,7 @@ public class StoryController extends UserRelatedBaseController<Story, StoryDto> 
      * Methods, if not overridden above, are implemented in super class.
      */
 
-    @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/slug/{slug}")
     public ResponseEntity<MessageResource<StoryDto>> get(
             @PathVariable("slug") String slug,
             @RequestParam(name = "view", required = false, defaultValue = Normal.name) IView view
@@ -58,6 +59,15 @@ public class StoryController extends UserRelatedBaseController<Story, StoryDto> 
         Story story = storyService.findBy(findByEquals(Story.FIELDS.SLUG.getName(), slug));
 
         return this.buildSuccessResponse(storyMapper.mapToDto(story, view), view);
+    }
+
+    @GetMapping(path = "/slugs/{userId}")
+    public ResponseEntity<MessageResources<String>> getUserStoriesSlugs(
+            @PathVariable("userId") Integer userId
+    ) {
+        Validate.notNull(userId, fieldMissing("userId"));
+
+        return this.buildSuccessResponsesOfGenericType(storyService.findSlugsByUserId(userId), Normal.value, new ArrayList<>(), false);
     }
 
     @PatchMapping(path = "/{id}")

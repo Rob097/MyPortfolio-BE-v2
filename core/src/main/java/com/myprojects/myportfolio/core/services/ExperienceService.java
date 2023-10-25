@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Transactional
 @Service(value = "ExperienceService")
@@ -22,6 +24,11 @@ public class ExperienceService extends WithStoriesService<Experience> implements
 
         this.experienceRepository = experienceRepository;
         this.storyRepository = storyRepository;
+    }
+
+    @Override
+    public List<String> findSlugsByUserId(Integer userId) {
+        return experienceRepository.findSlugsByUserId(userId).orElseThrow(() -> new RuntimeException("No experiences found for user id: " + userId));
     }
 
     /**********************/
