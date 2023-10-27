@@ -113,6 +113,7 @@ public class Experience extends SlugDao implements WithStoriesDao {
     )
     @JsonManagedReference
     @Builder.Default
+    @OrderBy("orderInProject ASC, updatedAt DESC")
     @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
