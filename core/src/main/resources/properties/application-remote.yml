@@ -2,9 +2,9 @@ spring:
   config:
     import: classpath:common.yml
   datasource:
-    username: 'root'
-    url: jdbc:mysql://ourlists.ddns.net:33061/core
-    password: 'root_password'
+    username: 'avnadmin'
+    url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/core
+    password: 'AVNS_cs8aE3TK20w-bQLF6vk'
   #zipkin:
   #  base-url: http://ourlists.ddns.net:9411
   jpa:

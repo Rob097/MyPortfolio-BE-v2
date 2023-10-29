@@ -2,9 +2,9 @@ spring:
   config:
     import: classpath:common.yml
   datasource:
-    username: 'myportfolio'
-    url: jdbc:mysql://mysql:3306/auth
-    password: 'password'
+    username: 'avnadmin'
+    url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/auth
+    password: 'AVNS_cs8aE3TK20w-bQLF6vk'
   #zipkin:
   #  base-url: http://myzipkin:9411
   jpa:

@@ -10,9 +10,9 @@ spring:
   application:
     name: core
   datasource:
-    username: 'myportfolio'
-    url: jdbc:mysql://mysql:3306/core
-    password: 'password'
+    username: 'avnadmin'
+    url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/core
+    password: 'AVNS_cs8aE3TK20w-bQLF6vk'
   jpa:
     properties:
       hibernate:
