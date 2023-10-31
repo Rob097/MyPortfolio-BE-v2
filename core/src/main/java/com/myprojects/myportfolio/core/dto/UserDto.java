@@ -33,8 +33,8 @@ public class UserDto extends SlugDto {
     Integer age;
     AddressDto address;
     Sex sex;
-    String title;
-    String description;
+    String profession;
+    String presentation;
     Integer mainStoryId;
 
     @Valid

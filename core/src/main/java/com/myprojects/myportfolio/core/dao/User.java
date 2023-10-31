@@ -57,8 +57,8 @@ public class User extends SlugDao {
         CAP("cap"),
         ADDRESS("address"),
         SEX("sex"),
-        TITLE("title"),
-        DESCRIPTION("description"),
+        PROFESSION("profession"),
+        PRESENTATION("presentation"),
         MAIN_STORY_ID("mainStoryId"),
         ;
 
@@ -93,9 +93,9 @@ public class User extends SlugDao {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private String title;
+    private String profession;
 
-    private String description;
+    private String presentation;
 
     private Integer mainStoryId;
 

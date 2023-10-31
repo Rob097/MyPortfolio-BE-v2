@@ -39,8 +39,8 @@ class UserServiceTest extends BaseTest {
         newUser.setPhone("+391111111111");
         newUser.setAge(26);
         newUser.setSex(Sex.FEMALE);
-        newUser.setTitle("Test Title");
-        newUser.setDescription("Test Description");
+        newUser.setProfession("Test Title");
+        newUser.setPresentation("Test Description");
         newUser.setAddress("Test Address");
         newUser.setCity("Test City");
         newUser.setNationality("Italian");
@@ -131,8 +131,8 @@ class UserServiceTest extends BaseTest {
             assertEquals(this.user.getPhone(), createdUser.getPhone());
             assertEquals(this.user.getAge(), createdUser.getAge());
             assertEquals(this.user.getSex(), createdUser.getSex());
-            assertEquals(this.user.getTitle(), createdUser.getTitle());
-            assertEquals(this.user.getDescription(), createdUser.getDescription());
+            assertEquals(this.user.getProfession(), createdUser.getProfession());
+            assertEquals(this.user.getPresentation(), createdUser.getPresentation());
             assertEquals(this.user.getAddress(), createdUser.getAddress());
             assertEquals(this.user.getCity(), createdUser.getCity());
             assertEquals(this.user.getNationality(), createdUser.getNationality());
@@ -170,8 +170,8 @@ class UserServiceTest extends BaseTest {
             assertEquals(this.userWithRelations.getPhone(), createdUser.getPhone());
             assertEquals(this.userWithRelations.getAge(), createdUser.getAge());
             assertEquals(this.userWithRelations.getSex(), createdUser.getSex());
-            assertEquals(this.userWithRelations.getTitle(), createdUser.getTitle());
-            assertEquals(this.userWithRelations.getDescription(), createdUser.getDescription());
+            assertEquals(this.userWithRelations.getProfession(), createdUser.getProfession());
+            assertEquals(this.userWithRelations.getPresentation(), createdUser.getPresentation());
             assertEquals(this.userWithRelations.getAddress(), createdUser.getAddress());
             assertEquals(this.userWithRelations.getCity(), createdUser.getCity());
             assertEquals(this.userWithRelations.getNationality(), createdUser.getNationality());
