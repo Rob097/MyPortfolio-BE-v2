@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -28,6 +29,10 @@ public class ProjectDto extends SlugDto {
     String title;
 
     String description;
+
+    @NotNull(message = "Project: From Date cannot be null")
+    LocalDate fromDate;
+    LocalDate toDate;
 
     Integer mainStoryId;
 

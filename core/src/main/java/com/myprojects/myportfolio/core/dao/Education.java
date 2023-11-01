@@ -70,7 +70,7 @@ public class Education extends SlugDao implements WithStoriesDao {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "DATE")
+    @Column(nullable = false, columnDefinition = "DATE DEFAULT (CURRENT_DATE)")
     private LocalDate fromDate;
 
     @Column(columnDefinition = "DATE")

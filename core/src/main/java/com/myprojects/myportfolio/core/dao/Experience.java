@@ -69,7 +69,7 @@ public class Experience extends SlugDao implements WithStoriesDao {
     private String location;
 
     // Start Date
-    @Column(columnDefinition = "DATE")
+    @Column(nullable = false, columnDefinition = "DATE DEFAULT (CURRENT_DATE)")
     private LocalDate fromDate;
 
     // End Date (If null, still on course)

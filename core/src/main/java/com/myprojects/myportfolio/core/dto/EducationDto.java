@@ -39,6 +39,7 @@ public class EducationDto extends SlugDto {
     @NotNull(message = "Education: Description cannot be null")
     String description;
 
+    @NotNull(message = "Education: From Date cannot be null")
     LocalDate fromDate;
     LocalDate toDate;
 

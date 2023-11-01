@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
 import java.io.Serial;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.Cache;
@@ -35,6 +36,8 @@ public class Project extends SlugDao implements WithStoriesDao {
         CREATEDAT("createdAt"),
         UPDATEDAT("updatedAt"),
         SLUG("slug"),
+        FROMDATE("fromDate"),
+        TODATE("toDate"),
         TITLE("title"),
         DESCRIPTION("description"),
         MAIN_STORY_ID("mainStoryId"),
@@ -49,6 +52,14 @@ public class Project extends SlugDao implements WithStoriesDao {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
+
+    // Start Date not null default today
+    @Column(nullable = false, columnDefinition = "DATE DEFAULT (CURRENT_DATE)")
+    private LocalDate fromDate;
+
+    // End Date (If null, still on course)
+    @Column(columnDefinition = "DATE")
+    private LocalDate toDate;
 
     private Integer mainStoryId;
 

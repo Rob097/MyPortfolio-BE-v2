@@ -38,6 +38,7 @@ public class ExperienceDto extends SlugDto {
     @NotNull(message = "Experience: Description cannot be null")
     String description;
 
+    @NotNull(message = "Experience: From Date cannot be null")
     LocalDate fromDate;
     LocalDate toDate;
 
