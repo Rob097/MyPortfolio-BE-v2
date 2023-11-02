@@ -36,6 +36,7 @@ public class UserDto extends SlugDto {
     String profession;
     String presentation;
     Integer mainStoryId;
+    String customizations;
 
     @Valid
     @JsonView(Verbose.class)

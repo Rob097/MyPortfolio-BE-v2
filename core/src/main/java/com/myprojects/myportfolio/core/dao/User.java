@@ -1,6 +1,8 @@
 package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.configAndUtils.UserCustomSeqGen;
 import com.myprojects.myportfolio.core.dao.enums.Sex;
@@ -60,6 +62,7 @@ public class User extends SlugDao {
         PROFESSION("profession"),
         PRESENTATION("presentation"),
         MAIN_STORY_ID("mainStoryId"),
+        CUSTOMIZATIONS("customizations"),
         ;
 
         private final String name;
@@ -98,6 +101,8 @@ public class User extends SlugDao {
     private String presentation;
 
     private Integer mainStoryId;
+
+    private String customizations;
 
     /**
      * @Owner: User is the owner of the relationship.
@@ -240,6 +245,48 @@ public class User extends SlugDao {
 
     public String getFullName() {
         return this.firstName + " " + this.lastName;
+    }
+
+    //////////////////////////////////////////////////
+    // CUSTOMIZATIONS UTILITY METHODS
+    //////////////////////////////////////////////////
+
+    // add element to the json customizations
+    public void addToCustomizations(String key, String value) {
+        if (this.customizations == null) {
+            this.customizations = "{}";
+        }
+        JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
+        json.addProperty(key, value);
+        customizations = json.toString();
+    }
+
+    // remove element from the json customizations
+    public void removeFromCustomizations(String key) {
+        if (this.customizations == null) {
+            this.customizations = "{}";
+        }
+        JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
+        json.remove(key);
+        customizations = json.toString();
+    }
+
+    // get element from the json customizations as string
+    public String getStringFromCustomizations(String key) {
+        if (this.customizations == null) {
+            this.customizations = "{}";
+        }
+        JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
+        return json.get(key).getAsString();
+    }
+
+    // get element from the json customizations as Boolean
+    public Boolean getBooleanFromCustomizations(String key) {
+        if (this.customizations == null) {
+            this.customizations = "{}";
+        }
+        JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
+        return json.get(key).getAsBoolean();
     }
 
 }
