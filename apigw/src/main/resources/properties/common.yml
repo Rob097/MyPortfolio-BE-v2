@@ -19,6 +19,10 @@ spring:
               - PUT
               - DELETE
             allowedHeaders: "*"
+            exposedHeaders:
+              - "IS-EMPTY"
+              - "IS-LAST"
+              - "NUMBER"
 
 clients:
   auth:
