@@ -29,6 +29,7 @@ public class CustomSpecification<T> implements Specification<T> {
 
             List<Predicate> orPredicates = new ArrayList<>();
             for (String field : fields) {
+                System.out.println(field);
                 orPredicates.add(applyFiltersToField(root, criteriaBuilder, field));
             }
 
