@@ -25,7 +25,7 @@ public class CustomSpecification<T> implements Specification<T> {
         try {
 
             // If the key contains a space, we need to apply the filters to all the fields
-            String[] fields = criteria.getKey().split("\\s+");
+            String[] fields = criteria.getKey().split(" ");
 
             List<Predicate> orPredicates = new ArrayList<>();
             for (String field : fields) {
