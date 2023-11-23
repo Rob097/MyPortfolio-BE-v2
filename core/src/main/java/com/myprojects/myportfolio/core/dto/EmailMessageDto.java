@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmailMessageDto {
 
+    private Integer userId;
+    private String to;
+    private String language = "it";
     private String name;
     private String email;
     private String subject;

@@ -3,10 +3,13 @@ package com.myprojects.myportfolio.core.controllers;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.Normal;
+import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.dto.EmailMessageDto;
 import com.myprojects.myportfolio.core.services.EmailServiceI;
+import com.myprojects.myportfolio.core.services.UserServiceI;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +24,12 @@ import java.util.List;
 @RequestMapping("${core-module-basic-path}" + "/email")
 public class EmailController extends SimpleController<EmailMessageDto> {
 
+    private final UserServiceI userService;
+
     private final EmailServiceI emailService;
 
-    public EmailController(EmailServiceI emailService) {
+    public EmailController(UserServiceI userService, EmailServiceI emailService) {
+        this.userService = userService;
         this.emailService = emailService;
     }
 
@@ -31,11 +37,22 @@ public class EmailController extends SimpleController<EmailMessageDto> {
     public ResponseEntity<MessageResources<String>> send(
             @RequestBody EmailMessageDto emailMessageDto
     ) {
+
+        String to = emailMessageDto.getTo();
+
+        if (StringUtils.isBlank(to)) {
+            User user = userService.findById(emailMessageDto.getUserId());
+            if (user == null || user.getEmail() == null) {
+                throw new RuntimeException("User not found");
+            }
+            to = user.getEmail();
+        }
+
         try {
             if (emailMessageDto.getIsHtml() != null && emailMessageDto.getIsHtml()) {
-                emailService.sendHtmlEmail(emailMessageDto.getEmail(), emailMessageDto.getSubject(), emailMessageDto.getMessage());
+                emailService.sendHtmlEmail(to, emailMessageDto);
             } else {
-                emailService.sendEmail(emailMessageDto.getEmail(), emailMessageDto.getSubject(), emailMessageDto.getMessage());
+                emailService.sendEmail(to, emailMessageDto);
             }
         } catch (MessagingException e) {
             log.error("Error sending email", e);
