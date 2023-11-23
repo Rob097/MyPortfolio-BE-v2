@@ -37,6 +37,7 @@ public class WebSecurityConfiguration {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(OPTIONS).permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/core/users/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/core/email/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/core/**").permitAll()
                 .anyRequest().authenticated());
 

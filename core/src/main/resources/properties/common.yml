@@ -18,6 +18,17 @@ spring:
       ddl-auto: update
   jackson:
     default-property-inclusion: non_null
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dellantonio47@gmail.com
+    password: "pqqzctjlfkitskmb" #TODO: Consider using a vault for storing secrets
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:
