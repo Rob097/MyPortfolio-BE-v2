@@ -17,7 +17,7 @@ public class RouterValidator {
             "/api/auth/signup", List.of(HttpMethod.POST),
             "/api/auth/validate", List.of(HttpMethod.GET),
             "/api/core/users", List.of(HttpMethod.POST, HttpMethod.GET),
-            "/api/core/email", List.of(HttpMethod.POST),
+            "/api/core/email/send", List.of(HttpMethod.POST),
             "/api/core", List.of(HttpMethod.GET)
     );
 
