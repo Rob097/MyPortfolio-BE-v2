@@ -1,13 +1,16 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.dto.EmailMessageDto;
+import com.myprojects.myportfolio.core.dto.RecaptchaVerificationResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -18,11 +21,29 @@ public class EmailService implements EmailServiceI {
 
     private final JavaMailSender mailSender;
 
+    @Value("${google.recaptcha.url}")
+    private String recaptchaUrl;
+
+    @Value("${google.recaptcha.secret}")
+    private String recaptchaSecret;
+
     @Value("${spring.mail.username}")
     private String fromAddress;
 
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
+    }
+
+    @Override
+    public boolean verifyRecaptcha(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        String fullUri = recaptchaUrl + "?secret=" + recaptchaSecret + "&response=" + token;
+
+        ResponseEntity<RecaptchaVerificationResponse> responseEntity =
+                restTemplate.postForEntity(fullUri, null, RecaptchaVerificationResponse.class);
+
+        RecaptchaVerificationResponse responseBody = responseEntity.getBody();
+        return responseBody != null && responseBody.isSuccess();
     }
 
     @Override
@@ -37,7 +58,7 @@ public class EmailService implements EmailServiceI {
         message.setSubject(emailMessageDto.getSubject());
 
         String content;
-        if(emailMessageDto.getLanguage().equals("it")) {
+        if (emailMessageDto.getLanguage().equals("it")) {
             content = "Messaggio ricevuto da: \n\n" +
                     "Nome: " + emailMessageDto.getName() + "\n\n" +
                     "Email: " + emailMessageDto.getEmail() + "\n\n" +
@@ -64,7 +85,7 @@ public class EmailService implements EmailServiceI {
         message.setSubject(emailMessageDto.getSubject());
 
         String body;
-        if(emailMessageDto.getLanguage().equals("IT")) {
+        if (emailMessageDto.getLanguage().equals("IT")) {
             body = "<h1>Messaggio ricevuto da: </h1>" +
                     "<p>Nome: " + emailMessageDto.getName() + "</p>" +
                     "<p>Email: " + emailMessageDto.getEmail() + "</p>" +

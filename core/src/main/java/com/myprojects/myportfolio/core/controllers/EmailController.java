@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.controllers;
 
 import com.myprojects.myportfolio.clients.general.messages.Message;
+import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.User;
@@ -11,10 +12,7 @@ import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +31,21 @@ public class EmailController extends SimpleController<EmailMessageDto> {
         this.emailService = emailService;
     }
 
+    @GetMapping(path = "/validate")
+    public ResponseEntity<MessageResource<Boolean>> validate(
+            @RequestParam String token
+    ) {
+        return ResponseEntity.ok(new MessageResource<>(emailService.verifyRecaptcha(token), List.of()));
+    }
+
     @PostMapping(path = "/send")
     public ResponseEntity<MessageResources<String>> send(
             @RequestBody EmailMessageDto emailMessageDto
     ) {
+
+        if (!emailService.verifyRecaptcha(emailMessageDto.getRecaptchaToken())) {
+            return ResponseEntity.badRequest().body(new MessageResources<>(null, List.of(new Message("Invalid recaptcha"))));
+        }
 
         String to = emailMessageDto.getTo();
 

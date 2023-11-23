@@ -17,5 +17,6 @@ public class EmailMessageDto {
     private String subject;
     private String message;
     private Boolean isHtml;
+    private String recaptchaToken;
 
 }

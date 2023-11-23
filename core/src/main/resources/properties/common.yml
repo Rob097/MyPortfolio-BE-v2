@@ -40,3 +40,8 @@ logging:
         orm:
           jdbc:
             bind: TRACE
+
+google:
+  recaptcha:
+    url: https://www.google.com/recaptcha/api/siteverify
+    secret: 6LcN4hkpAAAAADud5_Q7jkx8bQ2EeTf5eLKdDClC
