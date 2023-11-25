@@ -9,6 +9,7 @@ public interface IMessage {
 		TRACE,
 		DEBUG,
 		INFO,
+		SUCCESS,
 		WARNING,
 		ERROR,
 		FATAL

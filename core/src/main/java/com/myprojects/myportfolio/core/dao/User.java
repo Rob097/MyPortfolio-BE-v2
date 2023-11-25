@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.configAndUtils.UserCustomSeqGen;
@@ -251,6 +252,19 @@ public class User extends SlugDao {
     // CUSTOMIZATIONS UTILITY METHODS
     //////////////////////////////////////////////////
 
+    @Getter
+    public enum CustomizationsKeysEnum {
+        PROFILE_IMAGE("profileImage"),
+        CURRICULUM_VITAE("CV"),
+        ;
+
+        private final String key;
+
+        CustomizationsKeysEnum(String key) {
+            this.key = key;
+        }
+    }
+
     // add element to the json customizations
     public void addToCustomizations(String key, String value) {
         if (this.customizations == null) {
@@ -277,7 +291,11 @@ public class User extends SlugDao {
             this.customizations = "{}";
         }
         JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
-        return json.get(key).getAsString();
+        JsonElement jsonElement = json.get(key);
+        if (jsonElement == null) {
+            return null;
+        }
+        return jsonElement.getAsString();
     }
 
     // get element from the json customizations as Boolean

@@ -1,11 +1,14 @@
 package com.myprojects.myportfolio.core.controllers;
 
 import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.messages.IMessage;
+import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.User;
+import com.myprojects.myportfolio.core.dto.FileTypeEnum;
 import com.myprojects.myportfolio.core.dto.UserDto;
 import com.myprojects.myportfolio.core.mappers.UserMapper;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
@@ -15,8 +18,10 @@ import org.apache.commons.lang.Validate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +45,33 @@ public class UserController extends UserRelatedBaseController<User, UserDto> {
         this.userRepository = userRepository;
     }
 
-    /** Methods, if not overridden above, are implemented in super class. */
+    /** Methods, if not overridden under, are implemented in super class. */
+
+    // Form Data API that receives the id of the user and the language in the path, and the file and the fileType in the body.
+    @PatchMapping(path = "/{id}/uploadFile/{language}")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
+    public ResponseEntity<MessageResources<String>> uploadFile(
+            @PathVariable("id") Integer id,
+            @PathVariable("language") String language,
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam("fileType") String fileType
+    ) throws Exception {
+        Validate.notNull(id, fieldMissing("id"));
+        Validate.notEmpty(files, fieldMissing("files"));
+        Validate.notNull(fileType, fieldMissing("fileType"));
+
+        FileTypeEnum fileTypeEnum = FileTypeEnum.valueOf(fileType);
+        List<String> urls = userService.uploadFiles(Arrays.stream(files).toList(), id, fileTypeEnum, language);
+
+        Message message;
+        if (urls != null && !urls.isEmpty()) {
+            message = new Message("File uploaded successfully.", IMessage.Level.SUCCESS);
+        } else {
+            message = new Message("File not uploaded.", IMessage.Level.ERROR);
+        }
+
+        return this.buildSuccessResponsesOfGenericType(urls, Normal.value, List.of(message), false);
+    }
 
     /***********************/
     /*** Override Methods **/
