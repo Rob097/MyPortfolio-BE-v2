@@ -20,11 +20,15 @@ import java.util.List;
 @Slf4j
 @RestController("EmailController")
 @RequestMapping("${core-module-basic-path}" + "/email")
+@SuppressWarnings("FieldCanBeLocal")
 public class EmailController extends SimpleController<EmailMessageDto> {
 
     private final UserServiceI userService;
 
     private final EmailServiceI emailService;
+
+    private final String EMAIL_MYPORFOLIO_PLACEHOLDER = "myportfolio";
+    private final String EMAIL_MYPORFOLIO_REAL = "dellantonio47@gmail.com";
 
     public EmailController(UserServiceI userService, EmailServiceI emailService) {
         this.userService = userService;
@@ -44,7 +48,7 @@ public class EmailController extends SimpleController<EmailMessageDto> {
     ) {
 
         if (!emailService.verifyRecaptcha(emailMessageDto.getRecaptchaToken())) {
-            return ResponseEntity.badRequest().body(new MessageResources<>(null, List.of(new Message("Invalid recaptcha"))));
+            return ResponseEntity.badRequest().body(new MessageResources<>(List.of(), List.of(new Message("Invalid recaptcha"))));
         }
 
         String to = emailMessageDto.getTo();
@@ -55,6 +59,9 @@ public class EmailController extends SimpleController<EmailMessageDto> {
                 throw new RuntimeException("User not found");
             }
             to = user.getEmail();
+        } else if (to.equals(EMAIL_MYPORFOLIO_PLACEHOLDER)) {
+            to = EMAIL_MYPORFOLIO_REAL;
+            emailMessageDto.setSubject(emailMessageDto.getSubject().concat(" - Contact Us Page"));
         }
 
         try {

@@ -38,6 +38,7 @@ public class WebSecurityConfiguration {
                 .requestMatchers(OPTIONS).permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/core/users/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/core/email/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/core/feedback/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/core/**").permitAll()
                 .anyRequest().authenticated());
 
