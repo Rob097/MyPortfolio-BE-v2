@@ -30,6 +30,7 @@ public class StoryDto extends SlugDto {
 
         String title;
         String description;
+        Integer orderInStory;
     }
 
     @NotNull(message = "Story: Diary id cannot be null", groups = OnUpdate.class)

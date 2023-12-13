@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
 import jakarta.persistence.*;
@@ -65,7 +66,11 @@ public class Story extends SlugDao {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private Set<RelevantSection> relevantSections;
+    @JsonManagedReference
+    @Builder.Default
+    @OrderBy("orderInStory ASC")
+    @Cache(region = "relevantSections", usage=CacheConcurrencyStrategy.READ_ONLY)
+    private Set<RelevantSection> relevantSections = new HashSet<>();
 
     /**
      * @Create: When creating a story, we have to specify an already existing diaryId
