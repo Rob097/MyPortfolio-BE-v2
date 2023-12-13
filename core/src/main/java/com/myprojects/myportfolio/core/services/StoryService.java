@@ -79,6 +79,12 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         if (story.getExperience() != null && story.getExperience().getId() != null)
             isExperienceOfStoryUser(story);
 
+        // Manage relevant sections:
+        // for each relevant section, set story_id to this story's id
+        if(story.getRelevantSections() != null && !story.getRelevantSections().isEmpty()) {
+            story.getRelevantSections().forEach(section -> section.setStory(story));
+        }
+
         return super.update(story);
     }
 
