@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.dao.Diary;
+import com.myprojects.myportfolio.core.dao.RelevantSection;
 import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.dao.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,8 +54,12 @@ public class DiaryServiceTest extends BaseTest {
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
         story.setToDate(LocalDate.now());
-        story.setFirstRelevantSection("Test Section");
-        story.setSecondRelevantSection("Test Section");
+
+        RelevantSection relevantSection = new RelevantSection();
+        relevantSection.setTitle("Title");
+        relevantSection.setDescription("Description");
+        story.setRelevantSections(Set.of(relevantSection));
+
         stories.add(story);
 
         this.diaryWithRelations.setStories(stories);
@@ -166,8 +171,12 @@ public class DiaryServiceTest extends BaseTest {
             newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
             newStory.setToDate(LocalDate.now());
-            newStory.setFirstRelevantSection(" Section");
-            newStory.setSecondRelevantSection(" Section");
+
+            RelevantSection relevantSection = new RelevantSection();
+            relevantSection.setTitle("Title");
+            relevantSection.setDescription("Description");
+            newStory.setRelevantSections(Set.of(relevantSection));
+
             this.diaryWithRelations.getStories().add(newStory);
 
             // Update the diary
