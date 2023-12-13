@@ -40,8 +40,8 @@ public class Story extends SlugDao {
         DESCRIPTION("description"),
         FROMDATE("fromDate"),
         TODATE("toDate"),
-        FIRSTRELEVANTSECTION("firstRelevantSection"),
-        SECONDRELEVANTSECTION("secondRelevantSection");
+        RELEVANTSECTIONS("relevantSections"),
+        ;
 
         private final String name;
     }
@@ -59,11 +59,13 @@ public class Story extends SlugDao {
     @Column(columnDefinition = "DATE")
     private LocalDate toDate;
 
-    @Column(columnDefinition = "TEXT")
-    private String firstRelevantSection;
-
-    @Column(columnDefinition = "TEXT")
-    private String secondRelevantSection;
+    @OneToMany(
+            mappedBy = "story",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private Set<RelevantSection> relevantSections;
 
     /**
      * @Create: When creating a story, we have to specify an already existing diaryId
@@ -189,6 +191,9 @@ public class Story extends SlugDao {
                 this.getExperience().setStories(new HashSet<>());
             this.getExperience().getStories().add(this);
         }
+        if (this.getRelevantSections() != null) {
+            this.getRelevantSections().forEach(relevantSection -> relevantSection.setStory(this));
+        }
     }
 
     @Override
@@ -205,11 +210,15 @@ public class Story extends SlugDao {
         if (this.getEducation() != null) {
             this.getEducation().getStories().remove(this);
         }
+        if (this.getRelevantSections() != null) {
+            this.getRelevantSections().forEach(relevantSection -> relevantSection.setStory(null));
+        }
     }
 
     @Override
     public void clearRelationships() {
         this.skills = null;
+        this.relevantSections = null;
     }
 
     //////////////////////

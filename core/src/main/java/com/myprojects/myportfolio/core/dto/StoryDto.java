@@ -21,6 +21,17 @@ public class StoryDto extends SlugDto {
     @Serial
     private static final long serialVersionUID = -5591758414212539206L;
 
+    @Data
+    @NoArgsConstructor
+    @EqualsAndHashCode(callSuper = true)
+    public static class RelevantSectionDto extends BaseDto {
+        @Serial
+        private static final long serialVersionUID = -5591758414212539206L;
+
+        String title;
+        String description;
+    }
+
     @NotNull(message = "Story: Diary id cannot be null", groups = OnUpdate.class)
     Integer diaryId;
 
@@ -29,8 +40,7 @@ public class StoryDto extends SlugDto {
     String description;
     LocalDate fromDate;
     LocalDate toDate;
-    String firstRelevantSection;
-    String secondRelevantSection;
+    Set<RelevantSectionDto> relevantSections;
 
     Integer projectId;
     Integer orderInProject;
