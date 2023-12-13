@@ -38,8 +38,13 @@ public class StoryServiceTest extends BaseTest {
         newStory.setDescription("Description");
         newStory.setFromDate(LocalDate.now());
         newStory.setToDate(LocalDate.now());
-        newStory.setFirstRelevantSection("First Relevant Section");
-        newStory.setSecondRelevantSection("Second Relevant Section");
+
+        RelevantSection relevantSection = new RelevantSection();
+        relevantSection.setTitle("Title");
+        relevantSection.setDescription("Description");
+
+        newStory.setRelevantSections(Set.of(relevantSection));
+
         return newStory;
     }
 
@@ -97,8 +102,7 @@ public class StoryServiceTest extends BaseTest {
             assertEquals(this.story.getDescription(), createdStory.getDescription());
             assertEquals(this.story.getFromDate(), createdStory.getFromDate());
             assertEquals(this.story.getToDate(), createdStory.getToDate());
-            assertEquals(this.story.getFirstRelevantSection(), createdStory.getFirstRelevantSection());
-            assertEquals(this.story.getSecondRelevantSection(), createdStory.getSecondRelevantSection());
+            assertEquals(this.story.getRelevantSections(), createdStory.getRelevantSections());
 
         } catch (Exception e) {
             fail(e.getMessage());
@@ -126,8 +130,7 @@ public class StoryServiceTest extends BaseTest {
             assertEquals(this.storyWithRelations.getDescription(), createdStory.getDescription());
             assertEquals(this.storyWithRelations.getFromDate(), createdStory.getFromDate());
             assertEquals(this.storyWithRelations.getToDate(), createdStory.getToDate());
-            assertEquals(this.storyWithRelations.getFirstRelevantSection(), createdStory.getFirstRelevantSection());
-            assertEquals(this.storyWithRelations.getSecondRelevantSection(), createdStory.getSecondRelevantSection());
+            assertEquals(this.storyWithRelations.getRelevantSections(), createdStory.getRelevantSections());
             assertEquals(this.storyWithRelations.getProject(), createdStory.getProject());
             assertEquals(this.storyWithRelations.getEducation(), createdStory.getEducation());
             assertEquals(this.storyWithRelations.getExperience(), createdStory.getExperience());
