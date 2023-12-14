@@ -45,6 +45,8 @@ public class EducationDto extends SlugDto {
 
     Integer mainStoryId;
 
+    String coverImage;
+
     @Valid
     @JsonView(Verbose.class)
     Set<StoryDto> stories;

@@ -36,6 +36,8 @@ public class ProjectDto extends SlugDto {
 
     Integer mainStoryId;
 
+    String coverImage;
+
     @Valid
     @JsonView(Verbose.class)
     Set<StoryDto> stories;

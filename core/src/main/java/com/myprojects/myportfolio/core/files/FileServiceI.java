@@ -4,6 +4,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 public interface FileServiceI {
@@ -30,4 +31,6 @@ public interface FileServiceI {
     default String getCompleteFileName(String folder, String fileName, String originalFileName) {
         return folder + "/" + fileName + "." + getExtension(originalFileName);
     }
+
+    List<String> addFileToEntity(FileDto fileDto) throws IOException;
 }

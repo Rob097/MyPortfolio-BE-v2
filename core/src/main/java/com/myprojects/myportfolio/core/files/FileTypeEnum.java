@@ -1,11 +1,12 @@
-package com.myprojects.myportfolio.core.dto;
+package com.myprojects.myportfolio.core.files;
 
 import lombok.Getter;
 
 @Getter
 public enum FileTypeEnum {
-    PROFILE_IMAGE("profileImages", "%s"),
-    CURRICULUM_VITAE("cv", "%s-%s"),
+    PROFILE_IMAGE("profileImages", "%s"), // USER_ID
+    CURRICULUM_VITAE("cv", "%s-%s"), // USER_ID, LANGUAGE
+    COVER_IMAGE("coverImages", "%s-%s"), // ENTITY_TYPE, ENTITY_ID
     ;
 
     private final String folderName;

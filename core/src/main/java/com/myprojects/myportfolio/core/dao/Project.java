@@ -41,6 +41,7 @@ public class Project extends SlugDao implements WithStoriesDao {
         TITLE("title"),
         DESCRIPTION("description"),
         MAIN_STORY_ID("mainStoryId"),
+        COVER_IMAGE("coverImage"),
         ;
 
         private final String name;
@@ -62,6 +63,8 @@ public class Project extends SlugDao implements WithStoriesDao {
     private LocalDate toDate;
 
     private Integer mainStoryId;
+
+    private String coverImage;
 
     /**
      * @Create: When Creating a Project, we need to pass an existing userId.

@@ -44,6 +44,7 @@ public class Education extends SlugDao implements WithStoriesDao {
         GRADE("grade"),
         DESCRIPTION("description"),
         MAIN_STORY_ID("mainStoryId"),
+        COVER_IMAGE("coverImage"),
         ;
 
         private final String name;
@@ -77,6 +78,8 @@ public class Education extends SlugDao implements WithStoriesDao {
     private LocalDate toDate;
 
     private Integer mainStoryId;
+
+    private String coverImage;
 
     /**
      * @Create: When Creating an Education, we need to pass an existing userId.

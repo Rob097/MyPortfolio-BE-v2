@@ -44,6 +44,8 @@ public class ExperienceDto extends SlugDto {
 
     Integer mainStoryId;
 
+    String coverImage;
+
     @Valid
     @JsonView(Verbose.class)
     Set<StoryDto> stories;

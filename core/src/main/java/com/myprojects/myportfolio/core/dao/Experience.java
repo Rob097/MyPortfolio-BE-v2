@@ -45,6 +45,7 @@ public class Experience extends SlugDao implements WithStoriesDao {
         COMPANY_NAME("companyName"),
         LOCATION("location"),
         MAIN_STORY_ID("mainStoryId"),
+        COVER_IMAGE("coverImage"),
         ;
 
         private final String name;
@@ -77,6 +78,8 @@ public class Experience extends SlugDao implements WithStoriesDao {
     private LocalDate toDate;
 
     private Integer mainStoryId;
+
+    private String coverImage;
 
     /**
      * @Create: When Creating an Experience, we need to pass an existing userId.

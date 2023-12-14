@@ -8,7 +8,7 @@ import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.User;
-import com.myprojects.myportfolio.core.dto.FileTypeEnum;
+import com.myprojects.myportfolio.core.files.FileTypeEnum;
 import com.myprojects.myportfolio.core.dto.UserDto;
 import com.myprojects.myportfolio.core.mappers.UserMapper;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
@@ -46,32 +46,6 @@ public class UserController extends UserRelatedBaseController<User, UserDto> {
     }
 
     /** Methods, if not overridden under, are implemented in super class. */
-
-    // Form Data API that receives the id of the user and the language in the path, and the file and the fileType in the body.
-    @PatchMapping(path = "/{id}/uploadFile/{language}")
-    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
-    public ResponseEntity<MessageResources<String>> uploadFile(
-            @PathVariable("id") Integer id,
-            @PathVariable("language") String language,
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam("fileType") String fileType
-    ) throws Exception {
-        Validate.notNull(id, fieldMissing("id"));
-        Validate.notEmpty(files, fieldMissing("files"));
-        Validate.notNull(fileType, fieldMissing("fileType"));
-
-        FileTypeEnum fileTypeEnum = FileTypeEnum.valueOf(fileType);
-        List<String> urls = userService.uploadFiles(Arrays.stream(files).toList(), id, fileTypeEnum, language);
-
-        Message message;
-        if (urls != null && !urls.isEmpty()) {
-            message = new Message("File uploaded successfully.", IMessage.Level.SUCCESS);
-        } else {
-            message = new Message("File not uploaded.", IMessage.Level.ERROR);
-        }
-
-        return this.buildSuccessResponsesOfGenericType(urls, Normal.value, List.of(message), false);
-    }
 
     /***********************/
     /*** Override Methods **/
