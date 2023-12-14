@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class JwtTokenValidation extends OncePerRequestFilter {
 
     private final SecurityConstants securityConstants;
@@ -38,6 +40,7 @@ public class JwtTokenValidation extends OncePerRequestFilter {
             String claimsHeader = request.getHeader(securityConstants.getAuthenticatedUserClaimsHeader());
 
             if (StringUtils.isNotBlank(claimsHeader)) {
+                logger.info("AuthenticatedUserClaims header is present");
                 AuthenticatedUserClaims authenticatedUserClaims = (new ObjectMapper()).readValue(claimsHeader, AuthenticatedUserClaims.class);
 
                 Set<SimpleGrantedAuthority> simpleGrantedRolesAndAuthorities = authenticatedUserClaims.getAuthorities().stream()
@@ -50,16 +53,20 @@ public class JwtTokenValidation extends OncePerRequestFilter {
                         simpleGrantedRolesAndAuthorities
                 );
 
-
+                logger.info("Authentication set for user: " + authenticatedUserClaims.getUsername());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                logger.warn("AuthenticatedUserClaims header is missing");
             }
 
             filterChain.doFilter(request, response);
 
         } catch (ResponseStatusException e) {
+            logger.error("ResponseStatusException occurred: {}", e);
             response.setStatus(e.getBody().getStatus());
             response.getWriter().write(Objects.requireNonNull(e.getMessage()));
         } catch (IOException | ServletException e) {
+            logger.error("Exception occurred: {}", e);
             throw new RuntimeException(e);
         }
     }
