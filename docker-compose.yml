@@ -54,7 +54,7 @@ services:
     image: rob097/apigw:latest
     container_name: myapigw
     ports:
-      - "8443:8443"
+      - "443:8443"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
