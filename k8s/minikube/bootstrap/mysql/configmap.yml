@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  MYSQL_DB: "myportfolio"
+  MYSQL_ROOT_PASSWORD: "root_password"
+  MYSQL_USER: "myportfolio"
+  MYSQL_PASSWORD: "password"

@@ -1,3 +1,5 @@
+version: "3"
+
 services:
 
   mysql:
@@ -15,15 +17,6 @@ services:
     networks:
       - mysql
 
-  #Service removed because with Spring cloud update, is not compatible anymore.
-  #zipkin:
-  #  image: openzipkin/zipkin
-  #  container_name: myzipkin
-  #  ports:
-  #    - "9411:9411"
-  #  networks:
-  #    - spring-internal
-
   eureka-server:
     image: rob097/eureka-server:latest
     container_name: my-eureka-server
@@ -34,8 +27,6 @@ services:
     networks:
       - spring-external
       - spring-internal
-    #depends_on:
-    #  - zipkin
 
   redis:
     image: redis:latest
@@ -61,7 +52,6 @@ services:
       - spring-external
       - spring-internal
     depends_on:
-      #- zipkin
       - eureka-server
 
   auth-service:
@@ -76,7 +66,6 @@ services:
       - spring-internal
       - mysql
     depends_on:
-      #- zipkin
       - mysql
       - eureka-server
 
@@ -92,7 +81,6 @@ services:
       - spring-internal
       - mysql
     depends_on:
-      #- zipkin
       - mysql
       - eureka-server
 

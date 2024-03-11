@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+core-module-basic-path: "api/core"
+scheduled-cron-expression:
+  cache-eviction: "0 0 0 * * ?" # Every day at midnight
+  #cache-eviction: "0 * * ? * *" # Every minute (Only for tests)
+
+spring:
+  application:
+    name: core
+  datasource:
+    username: 'myportfolio'
+    url: jdbc:mysql://mysql:3306/core
+    password: 'password'
+  jpa:
+    properties:
+      hibernate:
+        ##### START CACHE CONFIGURATIONS #####
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+          redisson:
+            fallback: true
+            config: redisson-dev-docker.yaml
+        #####  END CACHE CONFIGURATIONS  #####
+    hibernate:
+      ddl-auto: update
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
