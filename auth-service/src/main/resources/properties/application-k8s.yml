@@ -1,9 +1,17 @@
+server:
+  port: 9004
+
+core-module-basic-path: "api/auth"
+scheduled-cron-expression:
+  cache-eviction: "0 0 0 * * ?" # Every day at midnight
+  #cache-eviction: "0 * * ? * *" # Every minute (Only for tests)
+
 spring:
-  config:
-    import: classpath:common.yml
+  application:
+    name: auth
   datasource:
     username: 'myportfolio'
-    url: jdbc:mysql://mysql:3306/auth
+    url: jdbc:mysql://mysql:33061/auth
     password: 'password'
   jpa:
     properties:
@@ -18,3 +26,21 @@ spring:
             fallback: true
             config: redisson-dev-docker.yaml
         #####  END CACHE CONFIGURATIONS  #####
+    hibernate:
+      ddl-auto: update
+  jackson:
+    default-property-inclusion: non_null
+
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

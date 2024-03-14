@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigw
+  labels:
+    app: apigw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigw
+  template:
+    metadata:
+      name: apigw
+      labels:
+        app: apigw
+    spec:
+      containers:
+        - name: apigw
+          image: rob097/apigw:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8443
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+      restartPolicy: Always

@@ -11,7 +11,7 @@ spring:
     name: core
   datasource:
     username: 'myportfolio'
-    url: jdbc:mysql://mysql:3306/core
+    url: jdbc:mysql://mysql:33061/core
     password: 'password'
   jpa:
     properties:
@@ -30,6 +30,10 @@ spring:
       ddl-auto: update
   jackson:
     default-property-inclusion: non_null
+
+eureka:
+  client:
+    enabled: false
 
 logging:
   level:

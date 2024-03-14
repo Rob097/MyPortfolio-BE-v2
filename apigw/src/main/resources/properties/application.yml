@@ -13,3 +13,12 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     fetch-registry: true
     register-with-eureka: true
+
+clients:
+  routing-prefix: "lb://"
+  auth:
+    name: AUTH-SERVICE
+    path: /api/auth
+  core:
+    name: CORE
+    path: /api/core

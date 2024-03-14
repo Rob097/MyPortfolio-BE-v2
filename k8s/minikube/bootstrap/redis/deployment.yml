@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myredis
+  labels:
+    app: myredis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myredis
+  template:
+    metadata:
+      name: myredis
+      labels:
+        app: myredis
+    spec:
+      containers:
+        - name: myredis
+          image: redis
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+      restartPolicy: Always

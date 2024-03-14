@@ -23,7 +23,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <image-prod>rob097/${project.artifactId}:${project.version}</image-prod>
-    <image-dev>rob097/${project.artifactId}-dev:${project.version}</image-dev>
+    <image-dev>rob097/${project.artifactId}:${project.version}</image-dev>
 
     <!-- PLUGINS -->
     <spring-boot.maven.plugin.version>2.7.16</spring-boot.maven.plugin.version>

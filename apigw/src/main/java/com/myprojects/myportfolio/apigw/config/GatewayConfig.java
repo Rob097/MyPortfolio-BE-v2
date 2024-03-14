@@ -14,6 +14,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableHystrix
 public class GatewayConfig {
 
+    @Value("${clients.routing-prefix}")
+    private String routingPrefix;
+
     @Value("${clients.auth.name}")
     private String authClientName;
     @Value("${clients.auth.path}")
@@ -35,11 +38,11 @@ public class GatewayConfig {
         return builder.routes()
                 .route("core-service", r -> r.path(corePath + "/**")
                         .filters(f -> f.filter(authenticationFilter))
-                        .uri("lb://" + coreClientName))
+                        .uri(routingPrefix + coreClientName))
 
                 .route("auth-service", r -> r.path(authPath + "/**")
                         .filters(f -> f.filter(authenticationFilter))
-                        .uri("lb://" + authClientName))
+                        .uri(routingPrefix + authClientName))
                 .build();
     }
 

@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: auth-service
 spec:
   selector:
-    app: mysql
+    app: auth-service
   ports:
     - protocol: TCP
-      port: 33061
-      targetPort: 3306
+      port: 9004
+      targetPort: 9004
   type: ClusterIP
