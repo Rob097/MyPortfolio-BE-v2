@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: rob097/auth-service:latest
+          image: rob097/auth-service:prod
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: k8s
+              value: k8s-prod
       restartPolicy: Always

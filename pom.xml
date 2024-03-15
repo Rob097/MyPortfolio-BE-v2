@@ -22,8 +22,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <image-prod>rob097/${project.artifactId}:${project.version}</image-prod>
-    <image-dev>rob097/${project.artifactId}:${project.version}</image-dev>
+    <image-prod>rob097/${project.artifactId}:prod</image-prod>
+    <image-dev>rob097/${project.artifactId}:dev</image-dev>
 
     <!-- PLUGINS -->
     <spring-boot.maven.plugin.version>2.7.16</spring-boot.maven.plugin.version>

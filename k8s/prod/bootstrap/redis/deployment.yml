@@ -1,27 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apigw
+  name: myredis
   labels:
-    app: apigw
+    app: myredis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: apigw
+      app: myredis
   template:
     metadata:
-      name: apigw
+      name: myredis
       labels:
-        app: apigw
+        app: myredis
     spec:
       containers:
-        - name: apigw
-          image: rob097/apigw:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8443
+        - name: myredis
+          image: redis
+          imagePullPolicy: IfNotPresent
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: k8s
+              value: k8s-prod
       restartPolicy: Always

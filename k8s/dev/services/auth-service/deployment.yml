@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: myredis
+  name: auth-service
   labels:
-    app: myredis
+    app: auth-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: myredis
+      app: auth-service
   template:
     metadata:
-      name: myredis
+      name: auth-service
       labels:
-        app: myredis
+        app: auth-service
     spec:
       containers:
-        - name: myredis
-          image: redis
-          imagePullPolicy: IfNotPresent
+        - name: auth-service
+          image: rob097/auth-service:dev
+          imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: k8s
+              value: k8s-dev
       restartPolicy: Always

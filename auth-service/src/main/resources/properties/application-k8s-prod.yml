@@ -1,0 +1,46 @@
+server:
+  port: 9004
+
+core-module-basic-path: "api/auth"
+scheduled-cron-expression:
+  cache-eviction: "0 0 0 * * ?" # Every day at midnight
+  #cache-eviction: "0 * * ? * *" # Every minute (Only for tests)
+
+spring:
+  application:
+    name: auth
+  datasource:
+    username: 'avnadmin'
+    url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/auth
+    password: 'AVNS_cs8aE3TK20w-bQLF6vk'
+  jpa:
+    properties:
+      hibernate:
+        ##### START CACHE CONFIGURATIONS #####
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+          redisson:
+            fallback: true
+            config: redisson-dev-docker.yaml
+        #####  END CACHE CONFIGURATIONS  #####
+    hibernate:
+      ddl-auto: update
+  jackson:
+    default-property-inclusion: non_null
+
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

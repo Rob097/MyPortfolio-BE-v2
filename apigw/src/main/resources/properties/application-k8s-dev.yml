@@ -1,11 +1,6 @@
 server:
   ssl:
-    enabled: true
-    key-store: classpath:springboot.jks
-    key-store-password: password
-    key-store-type: JKS
-    key-alias: springboot
-    key-password: password
+    enabled: false
   port: 8443
 
 spring:

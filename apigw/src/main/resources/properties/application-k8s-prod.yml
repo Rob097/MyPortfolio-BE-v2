@@ -1,0 +1,25 @@
+server:
+  ssl:
+    enabled: false
+  port: 8443
+
+spring:
+  config:
+    import: classpath:common.yml
+  cloud:
+    config:
+      discovery:
+        enabled: false
+
+eureka:
+  client:
+    enabled: false
+
+clients:
+  routing-prefix: "http://"
+  auth:
+    name: auth-service:9004
+    path: /api/auth
+  core:
+    name: core:8080
+    path: /api/core
