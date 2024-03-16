@@ -1,12 +1,12 @@
 spring:
   config:
     import: classpath:common.yml
+
   datasource:
     username: 'avnadmin'
     url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/auth
     password: 'AVNS_cs8aE3TK20w-bQLF6vk'
-  #zipkin:
-  #  base-url: http://ourlists.ddns.net:9411
+
   jpa:
     properties:
       hibernate:

@@ -1,18 +1,12 @@
-server:
-  port: 8080
-
-core-module-basic-path: "api/core"
-scheduled-cron-expression:
-  cache-eviction: "0 0 0 * * ?" # Every day at midnight
-  #cache-eviction: "0 * * ? * *" # Every minute (Only for tests)
-
 spring:
-  application:
-    name: core
+  config:
+    import: classpath:common.yml
+
   datasource:
     username: 'avnadmin'
     url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/core
     password: 'AVNS_cs8aE3TK20w-bQLF6vk'
+
   jpa:
     properties:
       hibernate:
@@ -26,21 +20,7 @@ spring:
             fallback: true
             config: redisson-dev-docker.yaml
         #####  END CACHE CONFIGURATIONS  #####
-    hibernate:
-      ddl-auto: update
-  jackson:
-    default-property-inclusion: non_null
 
 eureka:
   client:
     enabled: false
-
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE

@@ -1,3 +1,4 @@
+# TO LAUNCH: docker compose -f docker-compose-dev.yml up -d
 version: "3"
 
 services:
@@ -18,12 +19,12 @@ services:
       - mysql
 
   eureka-server:
-    image: rob097/eureka-server:latest
+    image: rob097/eureka-server:dev
     container_name: my-eureka-server
     ports:
       - "8761:8761"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker-dev
     networks:
       - spring-external
       - spring-internal
@@ -34,7 +35,7 @@ services:
     ports:
       - "6379:6379"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker-dev
     networks:
       - spring-internal
       - spring-external
@@ -42,12 +43,12 @@ services:
   ########################################################################################################################
 
   apigw:
-    image: rob097/apigw:latest
+    image: rob097/apigw:dev
     container_name: myapigw
     ports:
-      - "443:8443"
+      - "8443:8443"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker-dev
     networks:
       - spring-external
       - spring-internal
@@ -55,13 +56,13 @@ services:
       - eureka-server
 
   auth-service:
-    image: rob097/auth-service:latest
+    image: rob097/auth-service:dev
     container_name: auth-service
     #Ports removed to not expose the container to the public network. Only ApiGW accessible.
     #ports:
     #  - "9004:9004"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker-dev
     networks:
       - spring-internal
       - mysql
@@ -70,13 +71,13 @@ services:
       - eureka-server
 
   core:
-    image: rob097/core:latest
+    image: rob097/core:dev
     container_name: core
     #Ports removed to not expose the container to the public network. Only ApiGW accessible.
     #ports:
     #  - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=docker-dev
     networks:
       - spring-internal
       - mysql

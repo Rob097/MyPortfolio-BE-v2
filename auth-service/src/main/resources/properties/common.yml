@@ -7,10 +7,6 @@ spring:
   application:
     name: auth-service
   jpa:
-    # Setting the hibernate dialect is not needed anymore
-    #properties:
-    #  hibernate:
-    #    dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
   jackson:

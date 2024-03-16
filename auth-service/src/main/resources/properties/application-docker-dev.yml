@@ -4,7 +4,7 @@ spring:
 
   datasource:
     username: 'myportfolio'
-    url: jdbc:mysql://localhost:33061/core
+    url: jdbc:mysql://mysql:3306/auth
     password: 'password'
 
   jpa:
@@ -18,12 +18,12 @@ spring:
             factory_class: org.redisson.hibernate.RedissonRegionFactory
           redisson:
             fallback: true
-            config: redisson-dev.yaml
+            config: redisson-dev-docker.yaml
         #####  END CACHE CONFIGURATIONS  #####
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://my-eureka-server:8761/eureka
     fetch-registry: true
     register-with-eureka: true

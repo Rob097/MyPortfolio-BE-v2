@@ -1,0 +1,78 @@
+# TO LAUNCH: docker compose -f docker-compose-prod.yml up -d
+version: "3"
+
+services:
+
+  eureka-server:
+    image: rob097/eureka-server:prod
+    container_name: my-eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker-prod
+    networks:
+      - spring-external
+      - spring-internal
+
+  redis:
+    image: redis:latest
+    container_name: myredis
+    ports:
+      - "6379:6379"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker-prod
+    networks:
+      - spring-internal
+      - spring-external
+
+  ########################################################################################################################
+
+  apigw:
+    image: rob097/apigw:prod
+    container_name: myapigw
+    ports:
+      - "443:8443"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker-prod
+    networks:
+      - spring-external
+      - spring-internal
+    depends_on:
+      - eureka-server
+
+  auth-service:
+    image: rob097/auth-service:prod
+    container_name: auth-service
+    #Ports removed to not expose the container to the public network. Only ApiGW accessible.
+    #ports:
+    #  - "9004:9004"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker-prod
+    networks:
+      - spring-internal
+      - mysql
+    depends_on:
+      - eureka-server
+
+  core:
+    image: rob097/core:prod
+    container_name: core
+    #Ports removed to not expose the container to the public network. Only ApiGW accessible.
+    #ports:
+    #  - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker-prod
+    networks:
+      - spring-internal
+      - mysql
+    depends_on:
+      - eureka-server
+
+networks:
+  mysql:
+    driver: bridge
+  spring-internal:
+    driver: bridge
+    internal: true
+  spring-external:
+    driver: bridge

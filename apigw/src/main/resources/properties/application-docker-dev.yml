@@ -1,7 +1,7 @@
 server:
   ssl:
     enabled: false
-  port: 8083
+  port: 8443
 
 spring:
   config:
@@ -10,7 +10,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://my-eureka-server:8761/eureka
     fetch-registry: true
     register-with-eureka: true
 
