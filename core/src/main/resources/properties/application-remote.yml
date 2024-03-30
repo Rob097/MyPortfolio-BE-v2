@@ -3,9 +3,9 @@ spring:
     import: classpath:common.yml
 
   datasource:
-    username: 'avnadmin'
-    url: jdbc:mysql://myportfolio-my-portfolio.a.aivencloud.com:18751/core
-    password: 'AVNS_cs8aE3TK20w-bQLF6vk'
+    username: 'myportfolio'
+    url: jdbc:mysql://ourlists.ddns.net:33061/core
+    password: 'password'
 
   jpa:
     properties:

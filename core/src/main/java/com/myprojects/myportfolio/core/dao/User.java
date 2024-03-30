@@ -103,7 +103,7 @@ public class User extends SlugDao {
 
     private Integer mainStoryId;
 
-    private String customizations;
+    private String customizations = "{}";
 
     /**
      * @Owner: User is the owner of the relationship.

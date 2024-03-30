@@ -1,7 +1,7 @@
 server:
   ssl:
     enabled: false
-  port: 8083
+  port: 8443
 
 spring:
   config:

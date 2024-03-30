@@ -15,5 +15,6 @@ public class CoreUser {
     private String email;
     private String firstName;
     private String lastName;
+    private String customizations = "{}";
 
 }
