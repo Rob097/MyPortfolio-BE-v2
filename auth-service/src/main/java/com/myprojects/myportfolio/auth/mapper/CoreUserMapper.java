@@ -25,7 +25,6 @@ public class CoreUserMapper implements Mapper<CoreUser, DBUser> {
         output.setLastName(input.getLastName());
         output.setEmail(input.getEmail());
         output.setCustomizations(input.getCustomizations());
-        output.setToken(input.getToken());
 
         return output;
     }

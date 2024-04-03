@@ -74,17 +74,15 @@ public class AuthenticationUserController {
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<MessageResource<CoreUser>> create(@RequestBody @Valid SignUPRequest user) {
+    public ResponseEntity<SignINResponse> create(@RequestBody @Valid SignUPRequest user) {
         Validate.notNull(user, "No valid resource was provided.");
-        List<Message> messages = new ArrayList<>();
 
         DBUser userToRegister = signUPMapper.map(user);
+        String token = this.applicationUserService.registerUser(userToRegister);
 
-        DBUser registeredUser = this.applicationUserService.registerUser(userToRegister);
-        messages.add(new Message("User successfully registered."));
-
-        MessageResource<CoreUser> result = new MessageResource<>(coreUserMapper.map(registeredUser), messages);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, token);
+        return ResponseEntity.ok().headers(headers).body(new SignINResponse(token));
     }
 
     @PutMapping(path = "/{id}/setup")

@@ -49,9 +49,6 @@ public class DBUser {
 
     private String customizations = "{}";
 
-    @Transient
-    private String token;
-
     @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(
             name = "user_roles",

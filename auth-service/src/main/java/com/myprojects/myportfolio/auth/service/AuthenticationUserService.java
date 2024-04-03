@@ -4,6 +4,7 @@ import com.myprojects.myportfolio.auth.clients.UserClient;
 import com.myprojects.myportfolio.auth.dao.AuthenticationUser;
 import com.myprojects.myportfolio.auth.dao.DBRole;
 import com.myprojects.myportfolio.auth.dao.DBUser;
+import com.myprojects.myportfolio.auth.dto.CoreUser;
 import com.myprojects.myportfolio.auth.dto.SignINRequest;
 import com.myprojects.myportfolio.auth.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.auth.repository.IAuthenticationUserRepository;
@@ -113,6 +114,8 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
                 .issuedAt(new Date())
                 .expiration(java.sql.Date.valueOf(LocalDate.now().plusDays(expirationAfterDays)))
                 .subject(authenticate.getName())
+                .claim("id", dbUser.getId())
+                .claim("email", dbUser.getEmail())
                 .claim("firstName", dbUser.getFirstName())
                 .claim("lastName", dbUser.getLastName())
                 .claim("roles", applicationUser.getRolesName())
@@ -126,7 +129,7 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
     }
 
     @Override
-    public DBUser registerUser(DBUser userToRegister) {
+    public String registerUser(DBUser userToRegister) {
         Validate.notNull(userToRegister, "No valid user to register was provided.");
 
         DBUser user = applicationUserRepository.findByEmail(userToRegister.getEmail());
@@ -160,15 +163,15 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
         DBUser registeredUser = this.applicationUserRepository.saveAndFlush(userToRegister);
 
         // I need to update the user in the Core DB
-        userClient.create(coreUserMapper.map(registeredUser));
+        CoreUser coreUser = coreUserMapper.map(registeredUser);
+        coreUser.setCustomizations("{}");
+        userClient.create(coreUser);
 
         SignINRequest signInRequest = new SignINRequest();
         signInRequest.setUsername(userToRegister.getEmail());
         signInRequest.setPassword(notEncodedPassword);
-        String signInToken = this.authenticateUser(signInRequest);
-        registeredUser.setToken(signInToken);
 
-        return registeredUser;
+        return this.authenticateUser(signInRequest);
     }
 
     @Override

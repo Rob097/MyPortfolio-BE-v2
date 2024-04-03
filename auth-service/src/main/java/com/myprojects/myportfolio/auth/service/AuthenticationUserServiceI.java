@@ -16,7 +16,7 @@ public interface AuthenticationUserServiceI extends UserDetailsService {
 
     String authenticateUser(SignINRequest loginRequest);
 
-    DBUser registerUser(DBUser userToRegister);
+    String registerUser(DBUser userToRegister);
 
     void deleteUser(DBUser userToDelete);
 
