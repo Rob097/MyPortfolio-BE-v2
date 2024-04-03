@@ -1,10 +1,5 @@
 package com.myprojects.myportfolio.auth.service;
 
-import com.myprojects.myportfolio.clients.auth.ApplicationUserRole;
-import com.myprojects.myportfolio.clients.general.PatchOperation;
-import com.myprojects.myportfolio.clients.general.messages.MessageResource;
-import io.jsonwebtoken.Jwts;
-import jakarta.inject.Provider;
 import com.myprojects.myportfolio.auth.clients.UserClient;
 import com.myprojects.myportfolio.auth.dao.AuthenticationUser;
 import com.myprojects.myportfolio.auth.dao.DBRole;
@@ -14,6 +9,13 @@ import com.myprojects.myportfolio.auth.mapper.CoreUserMapper;
 import com.myprojects.myportfolio.auth.repository.IAuthenticationUserRepository;
 import com.myprojects.myportfolio.auth.repository.IRoleRepository;
 import com.myprojects.myportfolio.auth.security.JwtConfig;
+import com.myprojects.myportfolio.clients.auth.ApplicationUserRole;
+import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.SetUpRequest;
+import com.myprojects.myportfolio.clients.general.messages.MessageResource;
+import io.jsonwebtoken.Jwts;
+import jakarta.inject.Provider;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -115,6 +117,7 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
                 .claim("lastName", dbUser.getLastName())
                 .claim("roles", applicationUser.getRolesName())
                 .claim("authorities", applicationUser.getAuthoritiesName())
+                .claim("customizations", dbUser.getCustomizations())
                 .compact();
 
         SecurityContextHolder.getContext().setAuthentication(authenticate);
@@ -129,6 +132,7 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
         DBUser user = applicationUserRepository.findByEmail(userToRegister.getEmail());
         Validate.isTrue(user == null, "It already exists a user with this email.");
 
+        final String notEncodedPassword = userToRegister.getPassword();
         String encodedPsw = this.passwordEncoder.encode(userToRegister.getPassword());
         userToRegister.setPassword(encodedPsw);
 
@@ -137,6 +141,7 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
             DBRole basicRole = this.roleRepository.findByName(ApplicationUserRole.BASIC.getName());
             userToRegister.setRoles(Set.of(basicRole));
         }
+        userToRegister.addToCustomizations(DBUser.CustomizationKeysEnum.IS_SET.getKey(), false);
 
         // Try at max 10 times to get a valid id from core and save the user both in the Core DB and in the Auth DB with the same id
         int maxTries = 10;
@@ -156,6 +161,12 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
 
         // I need to update the user in the Core DB
         userClient.create(coreUserMapper.map(registeredUser));
+
+        SignINRequest signInRequest = new SignINRequest();
+        signInRequest.setUsername(userToRegister.getEmail());
+        signInRequest.setPassword(notEncodedPassword);
+        String signInToken = this.authenticateUser(signInRequest);
+        registeredUser.setToken(signInToken);
 
         return registeredUser;
     }
@@ -183,6 +194,19 @@ public class AuthenticationUserService implements AuthenticationUserServiceI {
 
         return savedUser;
 
+    }
+
+    @Override
+    public DBUser setUpUser(Integer userId, SetUpRequest request) throws Exception {
+        Validate.notNull(request, "No valid request was provided.");
+
+        DBUser authUser = this.applicationUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with id not found"));
+
+        userClient.setUp(userId, request);
+
+        authUser.addToCustomizations(DBUser.CustomizationKeysEnum.IS_SET.getKey(), true);
+        return this.applicationUserRepository.save(authUser);
     }
 
     /**********************/

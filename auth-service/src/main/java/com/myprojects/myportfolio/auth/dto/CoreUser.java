@@ -16,5 +16,6 @@ public class CoreUser {
     private String firstName;
     private String lastName;
     private String customizations = "{}";
+    private String token;
 
 }

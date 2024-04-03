@@ -11,6 +11,7 @@ import com.myprojects.myportfolio.auth.service.AuthenticationUserServiceI;
 import com.myprojects.myportfolio.auth.service.JwtServiceI;
 import com.myprojects.myportfolio.clients.auth.AuthenticatedUserClaims;
 import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.SetUpRequest;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import jakarta.validation.Valid;
@@ -84,6 +85,18 @@ public class AuthenticationUserController {
 
         MessageResource<CoreUser> result = new MessageResource<>(coreUserMapper.map(registeredUser), messages);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{id}/setup")
+    @PreAuthorize("@applicationUserService.hasId(#id)")
+    public ResponseEntity<MessageResource<?>> setUp(@PathVariable("id") Integer id, @RequestBody SetUpRequest request) throws Exception {
+        Validate.notNull(request, "No valid request was provided.");
+        List<Message> messages = new ArrayList<>();
+
+        DBUser updatedUser = this.applicationUserService.setUpUser(id, request);
+        messages.add(new Message("User setup completed successfully."));
+
+        return new ResponseEntity<>(new MessageResource<>(coreUserMapper.map(updatedUser), messages), HttpStatus.OK);
     }
 
     @PatchMapping(path = "/{id}")

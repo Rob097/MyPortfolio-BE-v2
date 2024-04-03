@@ -1,9 +1,12 @@
 package com.myprojects.myportfolio.core.services;
 
+import com.myprojects.myportfolio.clients.general.SetUpRequest;
 import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.dao.User;
+import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.stereotype.Service;
@@ -80,6 +83,34 @@ public class UserService extends BaseService<User> implements UserServiceI {
                 throw new IllegalArgumentException("Story with id " + user.getMainStoryId() + " is not a story of the user " + user.getFullName());
             }
         }
+
+        return super.update(user);
+    }
+
+    @Override
+    public User setUp(Integer id, SetUpRequest request) {
+        Validate.notNull(id, super.fieldMissing("id"));
+        Validate.notNull(request, super.fieldMissing("request"));
+
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
+
+        user.setNation(request.getNation());
+        user.setProvince(request.getRegion());
+        user.setCity(request.getCity());
+        user.setCap(request.getCap());
+        user.setAddress(request.getAddress());
+        user.setProfession(request.getRole());
+        user.setPresentation(request.getBio());
+        final int[] index = {1};
+        request.getSkills().forEach(skill -> {
+            UserSkill userSkill = new UserSkill();
+            userSkill.setUserId(id);
+            userSkill.setSkillId(skill);
+            userSkill.setIsMain(true);
+            userSkill.setOrderId(index[0]++);
+            user.getSkills().add(userSkill);
+        });
 
         return super.update(user);
     }

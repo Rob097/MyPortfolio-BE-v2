@@ -1,10 +1,13 @@
 package com.myprojects.myportfolio.auth.dao;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.annotations.Cache;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -17,6 +20,17 @@ import java.util.Set;
 @Table(name = "users")
 @Cache(region = "users", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DBUser {
+
+    @Getter
+    public enum CustomizationKeysEnum {
+        IS_SET("isSet");
+
+        private final String key;
+
+        CustomizationKeysEnum(String key) {
+            this.key = key;
+        }
+    }
 
     @Id
     @Column(
@@ -32,6 +46,11 @@ public class DBUser {
 
     private String firstName;
     private String lastName;
+
+    private String customizations = "{}";
+
+    @Transient
+    private String token;
 
     @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(
@@ -57,4 +76,14 @@ public class DBUser {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+    public void addToCustomizations(String key, boolean value) {
+        if (customizations == null) {
+            customizations = "{}";
+        }
+        JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
+        json.addProperty(key, value);
+        customizations = json.toString();
+    }
+
 }

@@ -1,8 +1,9 @@
 package com.myprojects.myportfolio.auth.service;
 
-import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.auth.dao.DBUser;
 import com.myprojects.myportfolio.auth.dto.SignINRequest;
+import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.SetUpRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
@@ -21,4 +22,5 @@ public interface AuthenticationUserServiceI extends UserDetailsService {
 
     DBUser updateUser(DBUser userToUpdate, List<PatchOperation> operations) throws Exception;
 
+    DBUser setUpUser(Integer userId, SetUpRequest request) throws Exception;
 }

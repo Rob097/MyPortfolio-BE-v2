@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.controllers;
 
 import com.myprojects.myportfolio.clients.general.PatchOperation;
+import com.myprojects.myportfolio.clients.general.SetUpRequest;
 import com.myprojects.myportfolio.clients.general.messages.IMessage;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
@@ -67,6 +68,19 @@ public class UserController extends UserRelatedBaseController<User, UserDto> {
     public ResponseEntity<MessageResources<String>> get() throws Exception {
         List<String> slugs = userService.findAllSlugs();
         return this.buildSuccessResponsesOfGenericType(slugs, Normal.value, new ArrayList<>(), false);
+    }
+
+    @PutMapping(path = "/{id}/setup")
+    @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.hasId(#id)")
+    public ResponseEntity<MessageResource<UserDto>> setUp(
+            @PathVariable("id") Integer id,
+            @RequestBody SetUpRequest request
+    ) {
+        Validate.notNull(request, "No valid operation was provided.");
+
+        User updatedUser = userService.setUp(id, request);
+
+        return this.buildSuccessResponse(userMapper.mapToDto(updatedUser));
     }
 
     @PutMapping(path = "/patch/{id}")
