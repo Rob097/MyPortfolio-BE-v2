@@ -47,6 +47,7 @@ public class DBUser {
     private String firstName;
     private String lastName;
 
+    @Column(columnDefinition = "TEXT")
     private String customizations = "{}";
 
     @ManyToMany(cascade = {CascadeType.PERSIST})

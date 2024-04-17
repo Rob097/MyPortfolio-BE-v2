@@ -4,7 +4,6 @@ import com.myprojects.myportfolio.clients.general.messages.IMessage;
 import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.controllers.SimpleController;
-import com.myprojects.myportfolio.core.dto.enums.EntityTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +74,25 @@ public class FilesController extends SimpleController<String> {
         }
 
         return this.buildSuccessResponsesOfGenericType(urls, Normal.value, List.of(message), false);
+    }
+
+    @DeleteMapping(path = "/{entityType}/{entityId}")
+    public ResponseEntity<?> deleteFromEntity(
+            @PathVariable("entityType") String entityType,
+            @PathVariable("entityId") Integer entityId,
+            @RequestParam(name = "fileType") String fileType,
+            @RequestParam(name = "language", required = false) String language
+    ) throws IOException {
+        Validate.notNull(entityType, fieldMissing("entityType"));
+        Validate.notNull(entityId, fieldMissing("entityId"));
+        Validate.notNull(fileType, fieldMissing("fileType"));
+
+        FileDto fileDto = new FileDto(null, language, fileType, entityType, entityId);
+
+        fileService.removeFileToEntity(fileDto);
+
+        Message message = new Message("File deleted successfully.", IMessage.Level.SUCCESS);
+        return this.buildSuccessResponseOfGenericType(true, Normal.value, List.of(message), false);
     }
 
 }

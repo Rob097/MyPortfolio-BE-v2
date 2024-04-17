@@ -225,7 +225,67 @@ public class FileService implements FileServiceI {
 
     }
 
-    private String deleteOldFileAndSaveNewFile(String commonLog, String oldImageUrl, String initialFileName, List<MultipartFile> files, FileTypeEnum fileTypeEnum, List<String> urls) throws IOException {
+    @Override
+    public void removeFileToEntity(FileDto fileDto) throws IOException {
+        String commonLog = "removeFileToEntity(" + fileDto.entityType + ", " + fileDto.entityId + ", " + fileDto.fileType + ")";
+        log.info(commonLog + " - BEGIN");
+
+        FileTypeEnum fileTypeEnum = FileTypeEnum.valueOf(fileDto.getFileType());
+        EntityTypeEnum entityTypeEnum = EntityTypeEnum.valueOf(fileDto.getEntityType());
+
+        switch (entityTypeEnum) {
+            case USER:
+                User user = userRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+                switch (fileTypeEnum) {
+                    case PROFILE_IMAGE:
+                        String oldProfileImageUrl = user.getStringFromCustomizations(User.CustomizationsKeysEnum.PROFILE_IMAGE.getKey());
+                        if (oldProfileImageUrl != null) {
+                            String oldProfileImageFilePath = getFileNameFromUrl(oldProfileImageUrl);
+                            log.info(commonLog + " - Deleting old file: " + oldProfileImageFilePath);
+                            delete(oldProfileImageFilePath);
+
+                            // Update the user's customizations:
+                            user.addToCustomizations(User.CustomizationsKeysEnum.PROFILE_IMAGE.getKey(), null);
+                        }
+
+                        break;
+                    case CURRICULUM_VITAE:
+                        JsonObject customizations = new Gson().fromJson(user.getCustomizations(), JsonObject.class);
+                        boolean doesCVExist = customizations.has(User.CustomizationsKeysEnum.CURRICULUM_VITAE.getKey());
+                        JsonObject cvs = doesCVExist ? customizations.getAsJsonObject(User.CustomizationsKeysEnum.CURRICULUM_VITAE.getKey()) : new JsonObject();
+
+                        String oldCurriculumVitaeUrl = cvs.has(fileDto.getLanguage()) ? cvs.get(fileDto.getLanguage()).getAsString() : null;
+                        if (oldCurriculumVitaeUrl != null) {
+                            String oldCurriculumVitaeFilePath = getFileNameFromUrl(oldCurriculumVitaeUrl);
+                            log.info(commonLog + " - Deleting old file: " + oldCurriculumVitaeFilePath);
+                            delete(oldCurriculumVitaeFilePath);
+
+                            // Update the user's customizations:
+                            cvs.remove(fileDto.getLanguage());
+                            customizations.add(User.CustomizationsKeysEnum.CURRICULUM_VITAE.getKey(), cvs);
+                            user.setCustomizations(customizations.toString());
+                        }
+
+                        break;
+                    default:
+                        throw new IllegalArgumentException("File type not supported: " + fileTypeEnum);
+                }
+
+                userRepository.save(user);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Entity type not supported: " + fileDto.getEntityType());
+
+        }
+
+        log.info(commonLog + " - END");
+    }
+
+    private String deleteOldFileAndSaveNewFile(String commonLog, String oldImageUrl, String
+            initialFileName, List<MultipartFile> files, FileTypeEnum fileTypeEnum, List<String> urls) throws
+            IOException {
         if (oldImageUrl != null) {
             String oldImageFilePath = getFileNameFromUrl(oldImageUrl);
             log.info(commonLog + " - Deleting old file: " + oldImageFilePath);

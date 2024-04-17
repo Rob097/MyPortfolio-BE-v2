@@ -103,6 +103,7 @@ public class User extends SlugDao {
 
     private Integer mainStoryId;
 
+    @Column(columnDefinition = "TEXT")
     private String customizations = "{}";
 
     /**
@@ -281,7 +282,9 @@ public class User extends SlugDao {
             this.customizations = "{}";
         }
         JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
-        json.remove(key);
+        if (json.has(key)) {
+            json.remove(key);
+        }
         customizations = json.toString();
     }
 
@@ -291,8 +294,8 @@ public class User extends SlugDao {
             this.customizations = "{}";
         }
         JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
-        JsonElement jsonElement = json.get(key);
-        if (jsonElement == null) {
+        JsonElement jsonElement = json.has(key) ? json.get(key) : null;
+        if (jsonElement == null || jsonElement.isJsonNull()) {
             return null;
         }
         return jsonElement.getAsString();
@@ -304,7 +307,7 @@ public class User extends SlugDao {
             this.customizations = "{}";
         }
         JsonObject json = new Gson().fromJson(customizations, JsonObject.class);
-        return json.get(key).getAsBoolean();
+        return json.has(key) ? json.get(key).getAsBoolean() : null;
     }
 
 }

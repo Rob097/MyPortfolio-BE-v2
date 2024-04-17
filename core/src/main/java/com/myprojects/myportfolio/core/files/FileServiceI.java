@@ -33,4 +33,6 @@ public interface FileServiceI {
     }
 
     List<String> addFileToEntity(FileDto fileDto) throws IOException;
+
+    void removeFileToEntity(FileDto fileDto) throws IOException;
 }
