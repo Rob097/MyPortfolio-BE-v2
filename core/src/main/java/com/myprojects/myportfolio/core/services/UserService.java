@@ -1,6 +1,7 @@
 package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.clients.general.SetUpRequest;
+import com.myprojects.myportfolio.core.dao.Diary;
 import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.dao.skills.UserSkill;
@@ -112,7 +113,33 @@ public class UserService extends BaseService<User> implements UserServiceI {
             user.getSkills().add(userSkill);
         });
 
-        return super.update(user);
+        super.update(user);
+
+        // when we set up the user profile, we need to set the main diary and the main story:
+        Diary mainDiary = new Diary();
+        mainDiary.setDescription("");
+        mainDiary.setTitle("My Diary");
+        mainDiary.setIsMain(true);
+        mainDiary.setUser(user);
+
+        Story mainStory = new Story();
+        mainStory.setTitle("My Story");
+        mainStory.setDescription("");
+        mainStory.setDiary(mainDiary);
+
+        mainDiary.getStories().add(mainStory);
+        user.getDiaries().add(mainDiary);
+
+        Diary createdDiary = diaryService.save(mainDiary);
+
+        createdDiary.getStories().stream().findFirst().ifPresent(
+                story -> {
+                    user.setMainStoryId(story.getId());
+                    super.update(user);
+                }
+        );
+
+        return user;
     }
 
     /**********************/

@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 public abstract class UserRelatedBaseController<A extends BaseDao, T extends BaseDto> extends BaseController<A, T> {
 
@@ -40,6 +38,7 @@ public abstract class UserRelatedBaseController<A extends BaseDao, T extends Bas
      */
 
     @Override
+    @PostMapping()
     @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.name() ) || @utilsService.isOfCurrentUser(#entity, true)")
     public ResponseEntity<MessageResource<T>> create(
             @Validated(OnCreate.class) @RequestBody T entity
@@ -48,6 +47,7 @@ public abstract class UserRelatedBaseController<A extends BaseDao, T extends Bas
     }
 
     @Override
+    @PutMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole(T(com.myprojects.myportfolio.clients.auth.ApplicationUserRole).SYS_ADMIN.getName()) || @utilsService.isOfCurrentUser(#entity, false)")
     public ResponseEntity<MessageResource<T>> update(
             @PathVariable("id") Integer id,
