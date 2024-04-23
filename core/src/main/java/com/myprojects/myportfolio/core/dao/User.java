@@ -177,14 +177,14 @@ public class User extends SlugDao {
 
     /**
      * @Owner: User is the owner of the relationship.
-     * @Create&Update: When creating or updating a user, you can create or update the relation UserSkill.
+     * @Create&Update: When creating or updating a user, you can create, update or delete the relation UserSkill.
      *                 You have to specify the skill id and, in the update, also the user id.
      * @Delete: When deleting a user, the experiences ARE DELETED because the user is the owner of the experience itself.
      */
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
-            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
+            cascade = {CascadeType.ALL},
             fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default
