@@ -125,7 +125,10 @@ public class Project extends SlugDao implements WithStoriesDao {
     @Override
     public void completeRelationships() {
         if(this.getStories()!=null) {
-            this.getStories().forEach(story -> story.setProject(this));
+            this.getStories().forEach(story -> {
+                story.setProject(this);
+                story.completeRelationships();
+            });
         }
         if (this.getUser() != null) {
             if (this.getUser().getProjects() == null)

@@ -140,7 +140,10 @@ public class Experience extends SlugDao implements WithStoriesDao {
     @Override
     public void completeRelationships() {
         if (this.getStories() != null) {
-            this.getStories().forEach(story -> story.setExperience(this));
+            this.getStories().forEach(story -> {
+                story.setExperience(this);
+                story.completeRelationships();
+            });
         }
         if (this.getUser() != null) {
             if (this.getUser().getExperiences() == null)
