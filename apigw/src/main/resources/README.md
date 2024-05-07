@@ -13,6 +13,11 @@ In order to create a new valid ssl certificate the things to do are:
   - keytool -import -alias bundle -trustcacerts -file ca_bundle.crt -keystore springboot.jks
 - Copy the springboot.jks into the resources folder of myapigw and push to the github repository and most importantly, on docker hub.
 - Connect to the hosting provider (or open the local machine) through ssh.
-- Stop the container of myapigw and delete the image
-- Run "docker compose up -d"
+- Stop the container of myapigw and delete the image:
+  - docker ps
+  - docker stop container_id
+  - docker rm container_id
+  - docker images
+  - docker image rm image_id
+- Run "docker compose -f docker-compose-prod.yml up -d"
 - If some problems occurs, reboot the VPS and restart the containers.
