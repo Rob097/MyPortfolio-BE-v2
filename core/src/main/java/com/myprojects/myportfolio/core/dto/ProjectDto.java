@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
+import com.myprojects.myportfolio.core.dao.enums.EntitiesStatusEnum;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
 import com.myprojects.myportfolio.core.dto.skills.SkillDto;
 import lombok.Data;
@@ -37,6 +38,8 @@ public class ProjectDto extends SlugDto {
     Integer mainStoryId;
 
     String coverImage;
+
+    EntitiesStatusEnum status;
 
     @Valid
     @JsonView(Verbose.class)

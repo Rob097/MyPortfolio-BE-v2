@@ -3,12 +3,12 @@ package com.myprojects.myportfolio.core.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.dto.groups.OnUpdate;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
 import java.util.Set;
 

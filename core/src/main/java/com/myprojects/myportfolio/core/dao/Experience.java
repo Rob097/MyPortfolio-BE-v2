@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.myprojects.myportfolio.core.aspects.interfaces.SlugSource;
 import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
+import com.myprojects.myportfolio.core.dao.enums.EntitiesStatusEnum;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,6 +47,7 @@ public class Experience extends SlugDao implements WithStoriesDao {
         LOCATION("location"),
         MAIN_STORY_ID("mainStoryId"),
         COVER_IMAGE("coverImage"),
+        STATUS("status"),
         ;
 
         private final String name;
@@ -80,6 +82,10 @@ public class Experience extends SlugDao implements WithStoriesDao {
     private Integer mainStoryId;
 
     private String coverImage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EntitiesStatusEnum status;
 
     /**
      * @Create: When Creating an Experience, we need to pass an existing userId.
