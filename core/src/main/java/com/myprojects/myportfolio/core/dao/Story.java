@@ -63,7 +63,7 @@ public class Story extends SlugDao {
     private LocalDate toDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'DRAFT'")
     private EntitiesStatusEnum status;
 
     @OneToMany(

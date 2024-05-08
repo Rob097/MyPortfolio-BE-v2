@@ -84,7 +84,7 @@ public class Experience extends SlugDao implements WithStoriesDao {
     private String coverImage;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'DRAFT'")
     private EntitiesStatusEnum status;
 
     /**
