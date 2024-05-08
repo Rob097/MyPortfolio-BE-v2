@@ -275,6 +275,69 @@ public class FileService implements FileServiceI {
                 userRepository.save(user);
                 break;
 
+            case EXPERIENCE:
+                Experience experience = experienceRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Experience not found"));
+
+                switch (fileTypeEnum) {
+                    case COVER_IMAGE:
+                        String oldCoverImageUrl = experience.getCoverImage();
+                        if (oldCoverImageUrl != null) {
+                            String oldCoverImageFilePath = getFileNameFromUrl(oldCoverImageUrl);
+                            log.info(commonLog + " - Deleting old file: " + oldCoverImageFilePath);
+                            delete(oldCoverImageFilePath);
+
+                            experience.setCoverImage(null);
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("File type not supported: " + fileTypeEnum);
+                }
+
+                experienceRepository.save(experience);
+                break;
+
+            case PROJECT:
+                Project project = projectRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Project not found"));
+
+                switch (fileTypeEnum) {
+                    case COVER_IMAGE:
+                        String oldCoverImageUrl = project.getCoverImage();
+                        if (oldCoverImageUrl != null) {
+                            String oldCoverImageFilePath = getFileNameFromUrl(oldCoverImageUrl);
+                            log.info(commonLog + " - Deleting old file: " + oldCoverImageFilePath);
+                            delete(oldCoverImageFilePath);
+
+                            project.setCoverImage(null);
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("File type not supported: " + fileTypeEnum);
+                }
+
+                projectRepository.save(project);
+                break;
+
+            case EDUCATION:
+                Education education = educationRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Education not found"));
+
+                switch (fileTypeEnum) {
+                    case COVER_IMAGE:
+                        String oldCoverImageUrl = education.getCoverImage();
+                        if (oldCoverImageUrl != null) {
+                            String oldCoverImageFilePath = getFileNameFromUrl(oldCoverImageUrl);
+                            log.info(commonLog + " - Deleting old file: " + oldCoverImageFilePath);
+                            delete(oldCoverImageFilePath);
+
+                            education.setCoverImage(null);
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("File type not supported: " + fileTypeEnum);
+                }
+
+                educationRepository.save(education);
+                break;
+
             default:
                 throw new IllegalArgumentException("Entity type not supported: " + fileDto.getEntityType());
 
