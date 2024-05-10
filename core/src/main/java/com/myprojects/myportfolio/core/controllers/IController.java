@@ -12,8 +12,8 @@ import com.myprojects.myportfolio.clients.general.views.Normal;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -130,12 +130,12 @@ public abstract class IController<R> {
 
     /* RESPONSES */
     /* Build Success Response for Iterables of Entities */
-    public ResponseEntity<MessageResources<R>> buildSuccessResponses(Iterable<R> slice) {
-        return this.buildSuccessResponses(slice, Normal.value);
+    public ResponseEntity<MessageResources<R>> buildSuccessResponses(Iterable<R> iterable) {
+        return this.buildSuccessResponses(iterable, Normal.value);
     }
 
-    public ResponseEntity<MessageResources<R>> buildSuccessResponses(Iterable<R> slice, IView view) {
-        return this.buildSuccessResponses(slice, view, new ArrayList<>());
+    public ResponseEntity<MessageResources<R>> buildSuccessResponses(Iterable<R> iterable, IView view) {
+        return this.buildSuccessResponses(iterable, view, new ArrayList<>());
     }
 
     public ResponseEntity<MessageResources<R>> buildSuccessResponses(@NotNull Iterable<R> iterable, IView view, List<Message> messages) {
@@ -144,20 +144,21 @@ public abstract class IController<R> {
 
     public <C> ResponseEntity<MessageResources<C>> buildSuccessResponsesOfGenericType(@NotNull Iterable<C> iterable, IView view, List<Message> messages, boolean logErrors) {
         boolean isLast = true;
-        if (iterable instanceof Slice) {
-            isLast = ((Slice<C>) iterable).isLast();
+        long count = iterable.spliterator().getExactSizeIfKnown();
+        if (iterable instanceof Page<C> page) {
+            isLast = page.isLast();
+            count = page.getTotalElements();
         }
 
-        int count = 0;
         List<C> content = new ArrayList<>();
         for (C r : iterable) {
-            count++;
             content.add(serializeElement(r, view, logErrors));
         }
 
         HttpHeaders headers = new HttpHeaders();
         headers.put("IS-EMPTY", List.of("" + !iterable.iterator().hasNext()));
         headers.put("IS-LAST", List.of("" + isLast));
+        // Set the "NUMBER" header with the total count of elements
         headers.put("NUMBER", List.of("" + count));
 
         MessageResources<C> result = new MessageResources<>(content, messages);

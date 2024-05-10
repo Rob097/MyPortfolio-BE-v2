@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -45,7 +45,7 @@ public abstract class BaseController<A extends BaseDao, T extends BaseDto> exten
     ) {
         Specification<A> specifications = this.defineFilters(filters);
 
-        Slice<A> entities = service.findAll(specifications, pageable);
+        Page<A> entities = service.findAll(specifications, pageable);
 
         return this.buildSuccessResponses(entities.map((entity) -> mapper.mapToDto(entity, view)), view);
     }

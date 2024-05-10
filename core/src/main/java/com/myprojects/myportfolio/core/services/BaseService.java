@@ -8,7 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public abstract class BaseService<T extends BaseDao> implements BaseServiceI<T> 
     }
 
     @Override
-    public Slice<T> findAll(Specification<T> specification, Pageable pageable) {
+    public Page<T> findAll(Specification<T> specification, Pageable pageable) {
         Validate.notNull(pageable, fieldMissing("pageble"));
 
         return repository.findAll(specification, pageable);
