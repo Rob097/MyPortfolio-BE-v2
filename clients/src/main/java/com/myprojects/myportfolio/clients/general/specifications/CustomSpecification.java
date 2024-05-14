@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.query.sqm.tree.domain.SqmPluralValuedSimplePath;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.ParseException;
@@ -52,6 +53,12 @@ public class CustomSpecification<T> implements Specification<T> {
             rootExpression = colJoin(root, childTable).get(childField);
         } else {
             rootExpression = root.get(field);
+        }
+
+        // Check if the field is a Collection
+        Predicate iterablePredicate = checkIterableSize(rootExpression, criteriaBuilder, root, field, criteria.getOperation());
+        if (iterablePredicate != null) {
+            return iterablePredicate;
         }
 
         // greaterThanOrEqualTo
@@ -154,7 +161,7 @@ public class CustomSpecification<T> implements Specification<T> {
         return null;
     }
 
-    private Predicate checkDates(Expression<?> rootExpression, CriteriaBuilder criteriaBuilder, String operation) throws ParseException {
+    private Predicate checkDates(Expression<?> rootExpression, CriteriaBuilder criteriaBuilder, String operation) {
         LocalDateTime localDateTime = (LocalDateTime) criteria.getValue();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Expression<Date> dateExpr;
@@ -176,6 +183,25 @@ public class CustomSpecification<T> implements Specification<T> {
 
         return predicate;
 
+    }
+
+    private Predicate checkIterableSize(Expression<?> rootExpression, CriteriaBuilder criteriaBuilder, Root<T> root, String field, String operation) {
+        if (!(rootExpression instanceof SqmPluralValuedSimplePath)) {
+            return null;
+        }
+
+        Expression<Integer> sizeExpression = criteriaBuilder.size(root.get(field));
+        Integer value = Integer.parseInt(criteria.getValue().toString());
+        Predicate predicate = null;
+
+        switch (operation) {
+            case ">" -> predicate = criteriaBuilder.greaterThanOrEqualTo(sizeExpression, value);
+            case "<" -> predicate = criteriaBuilder.lessThanOrEqualTo(sizeExpression, value);
+            case ":" -> predicate = criteriaBuilder.equal(sizeExpression, value);
+            case "!" -> predicate = criteriaBuilder.notEqual(sizeExpression, value);
+        }
+
+        return predicate;
     }
 
     private <R> Join<T, R> colJoin(Root<T> root, String child) {
