@@ -1,32 +1,25 @@
-server:
-  port: 8080
-
-core-module-basic-path: "api/core"
-scheduled-cron-expression:
-  cache-eviction: "0 0 0 * * ?" # Every day at midnight
-  #cache-eviction: "0 * * ? * *" # Every minute (Only for tests)
-
 spring:
-  application:
-    name: core
+  config:
+    import: classpath:common.yml
+
   datasource:
-    username: 'root'
+    username: 'myportfolio'
     url: jdbc:mysql://ourlists.ddns.net:33061/core
-    password: 'root_password'
-  zipkin:
-    base-url: http://ourlists.ddns.net:9411
+    password: 'password'
+
   jpa:
     properties:
       hibernate:
         ##### START CACHE CONFIGURATIONS #####
         cache:
-          use_query_cache: false
-          use_second_level_cache: false
+          use_query_cache: true
+          use_second_level_cache: true
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+          redisson:
+            fallback: true
+            config: redisson-dev-remote.yaml
         #####  END CACHE CONFIGURATIONS  #####
-    hibernate:
-      ddl-auto: update
-  jackson:
-    default-property-inclusion: non_null
 
 eureka:
   client:
@@ -34,14 +27,3 @@ eureka:
       defaultZone: http://ourlists.ddns.net:8761/eureka
     fetch-registry: true
     register-with-eureka: true
-
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        Cache: TRACE
-        type: TRACE
-        orm:
-          jdbc:
-            bind: TRACE
