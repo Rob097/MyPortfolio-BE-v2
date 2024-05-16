@@ -48,9 +48,17 @@ public class CustomSpecification<T> implements Specification<T> {
         Expression<T> rootExpression;
 
         if (field.contains(".")) {
-            String childTable = field.substring(0, field.indexOf("."));
-            String childField = field.substring(field.indexOf(".") + 1);
-            rootExpression = colJoin(root, childTable).get(childField);
+            String[] parts = field.split("\\.");
+            Join<?, ?> join = null;
+            for (int i = 0; i < parts.length - 1; i++) {
+                join = (join == null) ? root.join(parts[i]) : join.join(parts[i]);
+            }
+
+            if (join != null) {
+                rootExpression = join.get(parts[parts.length - 1]);
+            } else {
+                rootExpression = root.get(field);
+            }
         } else {
             rootExpression = root.get(field);
         }
