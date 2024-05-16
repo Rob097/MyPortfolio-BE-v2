@@ -24,6 +24,7 @@ import java.util.Set;
 @Entity
 @Table(name = "educations", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
 @SequenceGenerator(name = "default_gen", sequenceName = "education_seq", allocationSize = 1)
+@Cacheable
 @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Education extends SlugDao implements WithStoriesDao {
 
@@ -123,7 +124,7 @@ public class Education extends SlugDao implements WithStoriesDao {
     @JsonManagedReference
     @Builder.Default
     @OrderBy("orderInProject ASC, updatedAt DESC")
-    @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
     /**
@@ -140,7 +141,7 @@ public class Education extends SlugDao implements WithStoriesDao {
             joinColumns = @JoinColumn(name = "education_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override

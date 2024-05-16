@@ -24,6 +24,7 @@ import java.util.Set;
 @Entity
 @Table(name = "stories", uniqueConstraints = {@UniqueConstraint(columnNames = {"diary_id", "slug"})})
 @SequenceGenerator(name = "default_gen", sequenceName = "story_seq", allocationSize = 1)
+@Cacheable
 @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Story extends SlugDao {
 
@@ -75,7 +76,7 @@ public class Story extends SlugDao {
     @JsonManagedReference
     @Builder.Default
     @OrderBy("orderInStory ASC")
-    @Cache(region = "relevantSections", usage=CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "relevantSections", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<RelevantSection> relevantSections = new HashSet<>();
 
     /**
@@ -113,7 +114,7 @@ public class Story extends SlugDao {
             )
     )
     @JsonBackReference
-    @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Project project;
 
     // Defines the order of the story in the project
@@ -135,7 +136,7 @@ public class Story extends SlugDao {
             )
     )
     @JsonBackReference
-    @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Education education;
 
     // Defines the order of the story in the education
@@ -157,7 +158,7 @@ public class Story extends SlugDao {
             )
     )
     @JsonBackReference
-    @Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Experience experience;
 
     // Defines the order of the story in the experience
@@ -177,7 +178,7 @@ public class Story extends SlugDao {
             joinColumns = @JoinColumn(name = "story_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id"))
     @Builder.Default
-    @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
 
     @Override

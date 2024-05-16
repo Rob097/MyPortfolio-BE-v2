@@ -20,6 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "diaries")
 @SequenceGenerator(name = "default_gen", sequenceName = "diary_seq", allocationSize = 1)
+@Cacheable
 @Cache(region = "diaries", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Diary extends AuditableDao implements WithStoriesDao {
 
@@ -71,7 +72,7 @@ public class Diary extends AuditableDao implements WithStoriesDao {
     @JsonManagedReference
     @Builder.Default
     @OrderBy("orderInProject ASC, updatedAt DESC")
-    @Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
+    //@Cache(region = "stories", usage=CacheConcurrencyStrategy.READ_ONLY)
     private Set<Story> stories = new HashSet<>();
 
     @Override

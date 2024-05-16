@@ -17,6 +17,7 @@ import java.io.Serial;
 @Entity
 @Table(name = "relevant_sections")
 @SequenceGenerator(name = "default_gen", sequenceName = "relevant_sections_seq", allocationSize = 1)
+@Cacheable
 @Cache(region = "relevantSections", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class RelevantSection extends BaseDao {
 
