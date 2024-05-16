@@ -8,5 +8,6 @@ public enum EmploymentTypeEnum {
     CONTRACT,
     INTERNSHIP,
     APPRENTICESHIP,
-    SEASONAL
+    SEASONAL,
+    VOLUNTEER
 }
