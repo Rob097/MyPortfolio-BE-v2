@@ -18,6 +18,7 @@ spring:
               - OPTIONS
               - PUT
               - DELETE
+              - PATCH
             allowedHeaders: "*"
             exposedHeaders:
               - "IS-EMPTY"
