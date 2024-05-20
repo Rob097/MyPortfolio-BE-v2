@@ -85,40 +85,15 @@ public class StoryController extends UserRelatedBaseController<Story, StoryDto> 
         }
 
         for (PatchOperation operation : operations) {
-            if (operation.getPath().matches("^/diary") && operation.getOp() == PatchOperation.Op.replace) {
-                Diary oldDiary = story.getDiary();
-                diaryService.removeStoriesFromEntity(oldDiary.getId(), new Integer[]{story.getId()});
-
-                Diary newDiary = diaryService.findById(Integer.parseInt(operation.getValue()));
-                newDiary.getStories().add(story);
-                story.setDiary(newDiary);
-                isToUpdate = true;
-            } else if (operation.getPath().matches("^/project") && operation.getOp() == PatchOperation.Op.replace) {
-                Project oldProject = story.getProject();
-                projectService.removeStoriesFromEntity(oldProject.getId(), new Integer[]{story.getId()});
-
-                Project newProject = projectService.findById(Integer.parseInt(operation.getValue()));
-                newProject.getStories().add(story);
-                story.setProject(newProject);
-                isToUpdate = true;
+            if (operation.getPath().matches("^/diary")) {
+                isToUpdate = handleEntityOperation(story.getDiary(), Diary.class, diaryService, operation, story);
+            } else if (operation.getPath().matches("^/project")) {
+                isToUpdate = handleEntityOperation(story.getProject(), Project.class, projectService, operation, story);
             } else if (operation.getPath().matches("^/education")) {
-                Education oldEducation = story.getEducation();
-                educationService.removeStoriesFromEntity(oldEducation.getId(), new Integer[]{story.getId()});
-
-                Education newEducation = educationService.findById(Integer.parseInt(operation.getValue()));
-                newEducation.getStories().add(story);
-                story.setEducation(newEducation);
-                isToUpdate = true;
+                isToUpdate = handleEntityOperation(story.getEducation(), Education.class, educationService, operation, story);
             } else if (operation.getPath().matches("^/experience")) {
-                Experience oldExperience = story.getExperience();
-                experienceService.removeStoriesFromEntity(oldExperience.getId(), new Integer[]{story.getId()});
-
-                Experience newExperience = experienceService.findById(Integer.parseInt(operation.getValue()));
-                newExperience.getStories().add(story);
-                story.setExperience(newExperience);
-                isToUpdate = true;
+                isToUpdate = handleEntityOperation(story.getExperience(), Experience.class, experienceService, operation, story);
             }
-
         }
 
         if (isToUpdate) {
@@ -126,6 +101,23 @@ public class StoryController extends UserRelatedBaseController<Story, StoryDto> 
         }
 
         return this.buildSuccessResponse(storyMapper.mapToDto(story, Normal.value));
+    }
+
+    private <T extends BaseDao> boolean handleEntityOperation(T oldEntity, Class<T> entityClass, WithStoriesServiceI<T> service, PatchOperation operation, Story story) {
+        if (operation.getOp() == PatchOperation.Op.replace) {
+            service.removeStoriesFromEntity(oldEntity.getId(), new Integer[]{story.getId()});
+
+            T newEntity = service.findById(Integer.parseInt(operation.getValue()));
+            ((WithStoriesDao) newEntity).getStories().add(story);
+            story.setEntity(((WithStoriesDao) newEntity), entityClass);
+            return true;
+        } else if (operation.getOp() == PatchOperation.Op.remove) {
+            service.removeStoriesFromEntity(oldEntity.getId(), new Integer[]{story.getId()});
+
+            story.setEntity(null, entityClass);
+            return true;
+        }
+        return false;
     }
 
 }

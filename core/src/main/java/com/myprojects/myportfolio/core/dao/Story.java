@@ -15,6 +15,8 @@ import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Setter
 @Getter
@@ -229,8 +231,13 @@ public class Story extends SlugDao {
 
     @Override
     public void clearRelationships() {
-        this.skills = null;
-        this.relevantSections = null;
+        // The above code is commented because it causes a delete of the entities
+        /*if (this.skills != null && !this.skills.isEmpty()) {
+            this.skills.clear();
+        }
+        if (this.relevantSections != null && !this.relevantSections.isEmpty()) {
+            this.relevantSections.clear();
+        }*/
     }
 
     //////////////////////
@@ -271,5 +278,50 @@ public class Story extends SlugDao {
         if (clazz.equals(Experience.class))
             return this.getExperienceId();
         return null;
+    }
+
+    public void setEntityId(Integer entityId, Class<?> clazz) {
+        if (clazz.equals(Diary.class)){
+            setEntityIdForEntity(entityId, this::getDiary, this::setDiary, Diary::new);
+        } else if (clazz.equals(Project.class)){
+            setEntityIdForEntity(entityId, this::getProject, this::setProject, Project::new);
+        } else if (clazz.equals(Education.class)){
+            setEntityIdForEntity(entityId, this::getEducation, this::setEducation, Education::new);
+        } else if (clazz.equals(Experience.class)){
+            setEntityIdForEntity(entityId, this::getExperience, this::setExperience, Experience::new);
+        }
+    }
+
+    public void setEntity(WithStoriesDao entity, Class<?> clazz) {
+        if (clazz.equals(Diary.class)) {
+            this.setDiary((Diary) entity);
+        } else if (clazz.equals(Project.class)) {
+            this.setProject((Project) entity);
+            if(entity==null) {
+                setOrderInProject(null);
+            }
+        } else if (clazz.equals(Education.class)) {
+            this.setEducation((Education) entity);
+            if(entity==null) {
+                setOrderInEducation(null);
+            }
+        } else if (clazz.equals(Experience.class)) {
+            this.setExperience((Experience) entity);
+            if(entity==null) {
+                setOrderInExperience(null);
+            }
+        }
+    }
+
+    private <T extends BaseDao> void setEntityIdForEntity(Integer entityId, Supplier<T> getter, Consumer<T> setter, Supplier<T> constructor) {
+        if(entityId == null) {
+            setter.accept(null);
+        } else if(getter.get() == null) {
+            T entity = constructor.get();
+            setter.accept(entity);
+            entity.setId(entityId);
+        } else {
+            getter.get().setId(entityId);
+        }
     }
 }

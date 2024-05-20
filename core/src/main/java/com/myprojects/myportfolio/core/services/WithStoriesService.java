@@ -83,10 +83,10 @@ public abstract class WithStoriesService<T extends BaseDao> extends BaseService<
 
         // if entity.getMainStoryId() is not null, check if it's a story connected to the entity:
         if (((WithStoriesDao) entity).getMainStoryId() != null) {
-            boolean isMainStoryConnectedToExperience = ((WithStoriesDao) entity).getStories().stream()
-                    .filter(story -> story.getId()!=null)
+            boolean isMainStoryConnectedToEntity = ((WithStoriesDao) entity).getStories().stream()
+                    .filter(story -> story.getId() != null)
                     .anyMatch(story -> story.getId().equals(((WithStoriesDao) entity).getMainStoryId()));
-            if (!isMainStoryConnectedToExperience) {
+            if (!isMainStoryConnectedToEntity) {
                 throw new IllegalArgumentException("The main story is not connected to the entity");
             }
         }

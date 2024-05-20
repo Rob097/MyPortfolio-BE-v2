@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Slf4j
 @Transactional
@@ -65,21 +61,6 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         if (story.getExperience() != null && story.getExperience().getId() != null)
             isExperienceOfStoryUser(story);
 
-        updateOrderInEntity(story, story.getProject(),
-                projectRepository::findById,
-                Story::getOrderInProject,
-                story::setOrderInProject);
-
-        updateOrderInEntity(story, story.getEducation(),
-                educationRepository::findById,
-                Story::getOrderInEducation,
-                story::setOrderInEducation);
-
-        updateOrderInEntity(story, story.getExperience(),
-                experienceRepository::findById,
-                Story::getOrderInExperience,
-                story::setOrderInExperience);
-
         return super.save(story);
     }
 
@@ -103,21 +84,6 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         if (story.getRelevantSections() != null && !story.getRelevantSections().isEmpty()) {
             story.getRelevantSections().forEach(section -> section.setStory(story));
         }
-
-        updateOrderInEntity(story, story.getProject(),
-                projectRepository::findById,
-                Story::getOrderInProject,
-                story::setOrderInProject);
-
-        updateOrderInEntity(story, story.getEducation(),
-                educationRepository::findById,
-                Story::getOrderInEducation,
-                story::setOrderInEducation);
-
-        updateOrderInEntity(story, story.getExperience(),
-                experienceRepository::findById,
-                Story::getOrderInExperience,
-                story::setOrderInExperience);
 
         return super.update(story);
     }
@@ -173,24 +139,6 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
         story.setExperience(
                 story.getExperience() != null && story.getExperience().getId() != null ? experienceRepository.findById(story.getExperience().getId()).orElseThrow(() -> new EntityNotFoundException("No experience found with id.")) : null
         );
-    }
-
-    private <T extends BaseDao> void updateOrderInEntity(Story story,
-                                                         T entity,
-                                                         Function<Integer, Optional<T>> repositoryFindById,
-                                                         Function<Story, Integer> getOrderFunction,
-                                                         Consumer<Integer> setOrderConsumer) {
-        if (entity != null && entity.getId() != null && getOrderFunction.apply(story) == null) {
-            T retrievedEntity = repositoryFindById.apply(entity.getId()).orElse(null);
-            if (retrievedEntity != null) {
-                Set<Story> stories = ((WithStoriesDao) retrievedEntity).getStories();
-                if (stories != null && !stories.isEmpty()) {
-                    stories.stream()
-                            .reduce((first, second) -> second)
-                            .ifPresent(lastStory -> setOrderConsumer.accept(getOrderFunction.apply(lastStory) + 1));
-                }
-            }
-        }
     }
 
 }
