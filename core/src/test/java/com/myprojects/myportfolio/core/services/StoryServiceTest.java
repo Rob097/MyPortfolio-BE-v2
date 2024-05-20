@@ -3,7 +3,10 @@ package com.myprojects.myportfolio.core.services;
 import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.dao.*;
 import com.myprojects.myportfolio.core.dao.enums.EmploymentTypeEnum;
+import com.myprojects.myportfolio.core.dao.enums.EntitiesStatusEnum;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.CacheManager;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,18 +32,29 @@ public class StoryServiceTest extends BaseTest {
     private StoryServiceI storyService;
 
     @Autowired
+    private ExperienceServiceI experienceService;
+
+    @Autowired
+    private EducationServiceI educationService;
+
+    @Autowired
+    private ProjectServiceI projectService;
+
+    @Autowired
     private EntityManager entityManager;
 
     private Story story;
     private Story storyWithRelations;
+    private final Integer userId = 25;
 
     private Story getStory() {
         Story newStory = new Story();
-        newStory.setDiary(Diary.builder().id(1).build());
+        newStory.setDiary(Diary.builder().id(5).build());
         newStory.setTitle("Title");
         newStory.setDescription("Description");
         newStory.setFromDate(LocalDate.now());
         newStory.setToDate(LocalDate.now());
+        newStory.setStatus(EntitiesStatusEnum.DRAFT);
 
         RelevantSection relevantSection = new RelevantSection();
         relevantSection.setTitle("Title");
@@ -53,19 +70,33 @@ public class StoryServiceTest extends BaseTest {
         this.story = getStory();
         this.storyWithRelations = getStory();
 
-        Project project = Project.builder().id(1).build();
+        Project project = new Project();
+        project.setUser(User.builder().id(userId).build());
+        project.setTitle("Test Title");
+        project.setDescription("Test Description");
+        project.setFromDate(LocalDate.now());
+        project.setStatus(EntitiesStatusEnum.DRAFT);
+        projectService.save(project);
 
         Education education = new Education();
+        education.setUser(User.builder().id(userId).build());
         education.setField("Test Field");
         education.setSchool("Test School");
         education.setDegree("Test Degree");
         education.setDescription("Test Description");
+        education.setFromDate(LocalDate.now());
+        education.setStatus(EntitiesStatusEnum.DRAFT);
+        educationService.save(education);
 
         Experience experience = new Experience();
+        experience.setUser(User.builder().id(userId).build());
         experience.setTitle("Test Title");
         experience.setCompanyName("Test Company");
         experience.setDescription("Test Description");
         experience.setEmploymentType(EmploymentTypeEnum.FREELANCE);
+        experience.setFromDate(LocalDate.now());
+        experience.setStatus(EntitiesStatusEnum.DRAFT);
+        experienceService.save(experience);
 
         Set<Skill> skills = new HashSet<>();
         /*Skill newSkill = new Skill();
@@ -135,6 +166,11 @@ public class StoryServiceTest extends BaseTest {
             assertEquals(this.storyWithRelations.getEducation(), createdStory.getEducation());
             assertEquals(this.storyWithRelations.getExperience(), createdStory.getExperience());
             assertEquals(this.storyWithRelations.getSkills().size(), createdStory.getSkills().size());
+
+            Experience experience = this.experienceService.findById(this.storyWithRelations.getExperience().getId());
+            assertNotNull(experience, "Experience is null");
+            Story experienceStory = experience.getStories().stream().filter(story -> Objects.equals(story.getId(), this.storyWithRelations.getId())).findFirst().orElse(null);
+            assertNotNull(experienceStory, "Experience story is null");
 
         } catch (Exception e) {
             fail(e.getMessage());

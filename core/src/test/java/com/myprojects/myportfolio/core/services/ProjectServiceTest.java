@@ -2,6 +2,7 @@ package com.myprojects.myportfolio.core.services;
 
 import com.myprojects.myportfolio.core.BaseTest;
 import com.myprojects.myportfolio.core.dao.*;
+import com.myprojects.myportfolio.core.dao.enums.EntitiesStatusEnum;
 import com.myprojects.myportfolio.core.dao.skills.Skill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,16 +26,24 @@ public class ProjectServiceTest extends BaseTest {
     private ProjectService projectService;
 
     @Autowired
+    private StoryServiceI storyService;
+
+    @Autowired
     private EntityManager entityManager;
 
     private Project project;
     private Project projectWithRelations;
 
+    private final Integer userId = 25;
+    private final Integer diaryId = 5;
+
     private Project getProject() {
         Project project = new Project();
         project.setTitle("Test Project");
         project.setDescription("Test Description");
-        project.setUser(User.builder().id(1).build());
+        project.setUser(User.builder().id(userId).build());
+        project.setStatus(EntitiesStatusEnum.DRAFT);
+        project.setFromDate(LocalDate.now());
         return project;
     }
 
@@ -46,16 +55,19 @@ public class ProjectServiceTest extends BaseTest {
         // Create a new object Story and add it to the project
         Set<Story> stories = new HashSet<>();
         Story story = new Story();
-        story.setDiary(Diary.builder().id(1).build());
+        story.setDiary(Diary.builder().id(diaryId).build());
         story.setTitle("Test Story");
         story.setDescription("Test Description");
         story.setFromDate(LocalDate.now());
         story.setToDate(LocalDate.now());
+        story.setStatus(EntitiesStatusEnum.DRAFT);
 
+        Set<RelevantSection> relevantSections = new HashSet<>();
         RelevantSection relevantSection = new RelevantSection();
         relevantSection.setTitle("Title");
         relevantSection.setDescription("Description");
-        story.setRelevantSections(Set.of(relevantSection));
+        relevantSections.add(relevantSection);
+        story.setRelevantSections(relevantSections);
 
         stories.add(story);
 
@@ -173,7 +185,7 @@ public class ProjectServiceTest extends BaseTest {
 
             // Add a new Story:
             Story newStory = new Story();
-            newStory.setDiary(Diary.builder().id(1).build());
+            newStory.setDiary(Diary.builder().id(diaryId).build());
             newStory.setTitle(" Story");
             newStory.setDescription(" Description");
             newStory.setFromDate(LocalDate.now());
@@ -271,5 +283,62 @@ public class ProjectServiceTest extends BaseTest {
         } catch (Exception e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    void removeStories() {
+        try {
+            // Save the project
+            this.projectService.save(this.projectWithRelations);
+
+            // Remove the stories
+            Story story = this.projectWithRelations.getStories().iterator().next();
+            this.projectService.removeStoriesFromEntity(this.projectWithRelations.getId(), new Integer[]{story.getId()});
+            story.setProject(null);
+            this.storyService.update(story);
+
+            // Clear the entity manager to force the next query to hit the database
+            entityManager.flush();
+            entityManager.clear();
+
+            // Check if the stories have been deleted correctly:
+            Project updatedProject = this.projectService.findById(this.projectWithRelations.getId());
+            assertNotNull(updatedProject);
+            assertTrue(updatedProject.getStories().isEmpty());
+            assertNull(story.getProject());
+
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    void removeStories2() {
+        try {
+            Project project = projectService.findById(34);
+
+            // Remove the stories
+            Story story = project.getStories().stream().filter(prjStory -> prjStory.getId().equals(34)).findFirst().orElse(null);
+            this.projectService.removeStoriesFromEntity(project.getId(), new Integer[]{story.getId()});
+            testPrivateMethod(story);
+            this.storyService.update(story);
+
+            // Clear the entity manager to force the next query to hit the database
+            entityManager.flush();
+            entityManager.clear();
+
+            // Check if the stories have been deleted correctly:
+            Project updatedProject = this.projectService.findById(project.getId());
+            assertNotNull(updatedProject);
+            assertTrue(updatedProject.getStories().isEmpty());
+            assertNull(story.getProject());
+
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+    private void testPrivateMethod(Story story) {
+        story.setEntity(null, Project.class);
     }
 }
