@@ -4,6 +4,7 @@ import com.myprojects.myportfolio.clients.general.SetUpRequest;
 import com.myprojects.myportfolio.core.dao.Diary;
 import com.myprojects.myportfolio.core.dao.Story;
 import com.myprojects.myportfolio.core.dao.User;
+import com.myprojects.myportfolio.core.dao.enums.EntitiesStatusEnum;
 import com.myprojects.myportfolio.core.dao.skills.UserSkill;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
 import com.myprojects.myportfolio.core.services.skills.UserSkillService;
@@ -110,6 +111,7 @@ public class UserService extends BaseService<User> implements UserServiceI {
             userSkill.setSkillId(skill);
             userSkill.setIsMain(true);
             userSkill.setOrderId(index[0]++);
+            userSkillService.save(userSkill);
             user.getSkills().add(userSkill);
         });
 
@@ -118,13 +120,14 @@ public class UserService extends BaseService<User> implements UserServiceI {
         // when we set up the user profile, we need to set the main diary and the main story:
         Diary mainDiary = new Diary();
         mainDiary.setDescription("");
-        mainDiary.setTitle("My Diary");
+        mainDiary.setTitle(user.getFullName() + "'s Diary");
         mainDiary.setIsMain(true);
         mainDiary.setUser(user);
 
         Story mainStory = new Story();
-        mainStory.setTitle("My Story");
+        mainStory.setTitle(user.getFullName() + "'s Main Story");
         mainStory.setDescription("");
+        mainStory.setStatus(EntitiesStatusEnum.PUBLISHED);
         mainStory.setDiary(mainDiary);
 
         mainDiary.getStories().add(mainStory);

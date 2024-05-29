@@ -9,10 +9,12 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
+
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,7 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "projects", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "slug" }) })
+@Table(name = "projects", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "slug"})})
 @SequenceGenerator(name = "default_gen", sequenceName = "project_seq", allocationSize = 1)
 @Cacheable
 @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -90,7 +92,7 @@ public class Project extends SlugDao implements WithStoriesDao {
     )
     @JsonBackReference
     @Builder.Default
-    @Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "users", usage = CacheConcurrencyStrategy.READ_ONLY)
     private User user = new User();
 
     /**
@@ -131,7 +133,7 @@ public class Project extends SlugDao implements WithStoriesDao {
 
     @Override
     public void completeRelationships() {
-        if(this.getStories()!=null) {
+        if (this.getStories() != null) {
             this.getStories().forEach(story -> {
                 story.setProject(this);
                 story.completeRelationships();
@@ -146,8 +148,11 @@ public class Project extends SlugDao implements WithStoriesDao {
 
     @Override
     public void removeRelationships() {
-        if(this.getStories()!=null) {
-            this.getStories().forEach(story -> story.setProject(null));
+        if (this.getStories() != null) {
+            for (Story story : this.getStories()) {
+                story.setProject(null);
+            }
+            this.getStories().clear();
         }
         if (this.getUser() != null) {
             this.getUser().getProjects().remove(this);
@@ -165,7 +170,7 @@ public class Project extends SlugDao implements WithStoriesDao {
     //////////////////////
 
     public Integer getUserId() {
-        if(this.getUser()==null)
+        if (this.getUser() == null)
             return null;
         return this.getUser().getId();
     }

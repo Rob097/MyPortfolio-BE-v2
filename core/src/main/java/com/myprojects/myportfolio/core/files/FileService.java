@@ -7,17 +7,12 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.StorageClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.myprojects.myportfolio.clients.general.views.Verbose;
 import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.dao.Education;
 import com.myprojects.myportfolio.core.dao.Experience;
 import com.myprojects.myportfolio.core.dao.Project;
 import com.myprojects.myportfolio.core.dao.User;
 import com.myprojects.myportfolio.core.dto.enums.EntityTypeEnum;
-import com.myprojects.myportfolio.core.mappers.EducationMapper;
-import com.myprojects.myportfolio.core.mappers.ExperienceMapper;
-import com.myprojects.myportfolio.core.mappers.ProjectMapper;
-import com.myprojects.myportfolio.core.mappers.UserMapper;
 import com.myprojects.myportfolio.core.repositories.EducationRepository;
 import com.myprojects.myportfolio.core.repositories.ExperienceRepository;
 import com.myprojects.myportfolio.core.repositories.ProjectRepository;
@@ -56,23 +51,11 @@ public class FileService implements FileServiceI {
 
     private final EducationRepository educationRepository;
 
-    private final UserMapper userMapper;
-
-    private final ProjectMapper projectMapper;
-
-    private final ExperienceMapper experienceMapper;
-
-    private final EducationMapper educationMapper;
-
-    public FileService(UserRepository userRepository, ExperienceRepository experienceRepository, ProjectRepository projectRepository, EducationRepository educationRepository, UserMapper userMapper, ProjectMapper projectMapper, ExperienceMapper experienceMapper, EducationMapper educationMapper) {
+    public FileService(UserRepository userRepository, ExperienceRepository experienceRepository, ProjectRepository projectRepository, EducationRepository educationRepository) {
         this.userRepository = userRepository;
         this.experienceRepository = experienceRepository;
         this.projectRepository = projectRepository;
         this.educationRepository = educationRepository;
-        this.userMapper = userMapper;
-        this.projectMapper = projectMapper;
-        this.experienceMapper = experienceMapper;
-        this.educationMapper = educationMapper;
     }
 
     @Autowired
@@ -155,7 +138,7 @@ public class FileService implements FileServiceI {
         switch (entityTypeEnum) {
             case USER:
                 User user = userRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-                if (!utilsService.isOfCurrentUser(userMapper.mapToDto(user, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(user, false)) {
                     throw new IOException("You can't add a file to another user");
                 }
 
@@ -190,7 +173,7 @@ public class FileService implements FileServiceI {
 
             case EXPERIENCE:
                 Experience experience = experienceRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Experience not found"));
-                if (!utilsService.isOfCurrentUser(experienceMapper.mapToDto(experience, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(experience, false)) {
                     throw new IOException("You can't add a file to another user's experience");
                 }
 
@@ -210,7 +193,7 @@ public class FileService implements FileServiceI {
 
             case PROJECT:
                 Project project = projectRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Project not found"));
-                if (!utilsService.isOfCurrentUser(projectMapper.mapToDto(project, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(project, false)) {
                     throw new IOException("You can't add a file to another user's project");
                 }
 
@@ -230,7 +213,7 @@ public class FileService implements FileServiceI {
 
             case EDUCATION:
                 Education education = educationRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Education not found"));
-                if (!utilsService.isOfCurrentUser(educationMapper.mapToDto(education, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(education, false)) {
                     throw new IOException("You can't add a file to another user's education");
                 }
 
@@ -269,7 +252,7 @@ public class FileService implements FileServiceI {
         switch (entityTypeEnum) {
             case USER:
                 User user = userRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-                if (!utilsService.isOfCurrentUser(userMapper.mapToDto(user, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(user, false)) {
                     throw new IOException("You can't remove a file from another user");
                 }
 
@@ -313,7 +296,7 @@ public class FileService implements FileServiceI {
 
             case EXPERIENCE:
                 Experience experience = experienceRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Experience not found"));
-                if (!utilsService.isOfCurrentUser(experienceMapper.mapToDto(experience, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(experience, false)) {
                     throw new IOException("You can't remove a file from another user's experience");
                 }
 
@@ -337,7 +320,7 @@ public class FileService implements FileServiceI {
 
             case PROJECT:
                 Project project = projectRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Project not found"));
-                if (!utilsService.isOfCurrentUser(projectMapper.mapToDto(project, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(project, false)) {
                     throw new IOException("You can't remove a file from another user's project");
                 }
 
@@ -361,7 +344,7 @@ public class FileService implements FileServiceI {
 
             case EDUCATION:
                 Education education = educationRepository.findById(fileDto.getEntityId()).orElseThrow(() -> new EntityNotFoundException("Education not found"));
-                if (!utilsService.isOfCurrentUser(educationMapper.mapToDto(education, Verbose.value), false)) {
+                if (!utilsService.isOfCurrentUser(education, false)) {
                     throw new IOException("You can't remove a file from another user's education");
                 }
 

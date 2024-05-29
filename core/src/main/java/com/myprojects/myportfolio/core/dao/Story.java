@@ -212,6 +212,9 @@ public class Story extends SlugDao {
 
     @Override
     public void removeRelationships() {
+        if (this.getRelevantSections() != null) {
+            this.getRelevantSections().clear();
+        }
         if (this.getDiary() != null) {
             this.getDiary().getStories().remove(this);
         }
@@ -221,23 +224,15 @@ public class Story extends SlugDao {
         if (this.getEducation() != null) {
             this.getEducation().getStories().remove(this);
         }
-        if (this.getEducation() != null) {
-            this.getEducation().getStories().remove(this);
-        }
-        if (this.getRelevantSections() != null) {
-            this.getRelevantSections().forEach(relevantSection -> relevantSection.setStory(null));
+        if (this.getExperience() != null) {
+            this.getExperience().getStories().remove(this);
         }
     }
 
     @Override
     public void clearRelationships() {
-        // The above code is commented because it causes a delete of the entities
-        /*if (this.skills != null && !this.skills.isEmpty()) {
-            this.skills.clear();
-        }
-        if (this.relevantSections != null && !this.relevantSections.isEmpty()) {
-            this.relevantSections.clear();
-        }*/
+        this.skills = null;
+        this.relevantSections = null;
     }
 
     //////////////////////
@@ -281,13 +276,13 @@ public class Story extends SlugDao {
     }
 
     public void setEntityId(Integer entityId, Class<?> clazz) {
-        if (clazz.equals(Diary.class)){
+        if (clazz.equals(Diary.class)) {
             setEntityIdForEntity(entityId, this::getDiary, this::setDiary, Diary::new);
-        } else if (clazz.equals(Project.class)){
+        } else if (clazz.equals(Project.class)) {
             setEntityIdForEntity(entityId, this::getProject, this::setProject, Project::new);
-        } else if (clazz.equals(Education.class)){
+        } else if (clazz.equals(Education.class)) {
             setEntityIdForEntity(entityId, this::getEducation, this::setEducation, Education::new);
-        } else if (clazz.equals(Experience.class)){
+        } else if (clazz.equals(Experience.class)) {
             setEntityIdForEntity(entityId, this::getExperience, this::setExperience, Experience::new);
         }
     }
@@ -297,26 +292,26 @@ public class Story extends SlugDao {
             this.setDiary((Diary) entity);
         } else if (clazz.equals(Project.class)) {
             this.setProject((Project) entity);
-            if(entity==null) {
+            if (entity == null) {
                 setOrderInProject(null);
             }
         } else if (clazz.equals(Education.class)) {
             this.setEducation((Education) entity);
-            if(entity==null) {
+            if (entity == null) {
                 setOrderInEducation(null);
             }
         } else if (clazz.equals(Experience.class)) {
             this.setExperience((Experience) entity);
-            if(entity==null) {
+            if (entity == null) {
                 setOrderInExperience(null);
             }
         }
     }
 
     private <T extends BaseDao> void setEntityIdForEntity(Integer entityId, Supplier<T> getter, Consumer<T> setter, Supplier<T> constructor) {
-        if(entityId == null) {
+        if (entityId == null) {
             setter.accept(null);
-        } else if(getter.get() == null) {
+        } else if (getter.get() == null) {
             T entity = constructor.get();
             setter.accept(entity);
             entity.setId(entityId);

@@ -2,18 +2,18 @@ package com.myprojects.myportfolio.core.dao.skills;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.myprojects.myportfolio.core.dao.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * UserSkill Is a composite relational entity that represents the many-to-many relationship between User and Skill.
@@ -94,16 +94,6 @@ public class UserSkill implements Serializable {
         }
         if (this.skill != null) {
             this.skill.getUsers().add(this);
-        }
-    }
-
-    @PreRemove
-    public void removeRelationships() {
-        if (this.user != null) {
-            this.user.getSkills().remove(this);
-        }
-        if (this.skill != null) {
-            this.skill.getUsers().remove(this);
         }
     }
 

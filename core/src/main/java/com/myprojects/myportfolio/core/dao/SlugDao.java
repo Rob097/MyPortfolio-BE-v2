@@ -1,13 +1,13 @@
 package com.myprojects.myportfolio.core.dao;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;
@@ -29,8 +29,8 @@ public class SlugDao extends AuditableDao {
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
 
     public String generateSlug(List<String> sources, String appendix) {
-       if(sources==null || sources.isEmpty())
-           return null;
+        if (sources == null || sources.isEmpty())
+            return null;
 
         String input = sources.stream().map(String::toLowerCase).reduce((s1, s2) -> s1 + " " + s2).orElse("").concat(appendix);
 

@@ -80,7 +80,7 @@ public class StoryController extends UserRelatedBaseController<Story, StoryDto> 
         boolean isToUpdate = false;
 
         Story story = storyService.findById(id);
-        if (!utilsService.isOfCurrentUser(storyMapper.mapToDto(story, Normal.value), false)) {
+        if (!utilsService.isOfCurrentUser(story, false)) {
             throw new Exception("You can't edit this story because is not yours.");
         }
 

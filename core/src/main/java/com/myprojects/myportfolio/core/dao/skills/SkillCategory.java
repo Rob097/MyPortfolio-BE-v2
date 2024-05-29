@@ -39,7 +39,14 @@ public class SkillCategory extends BaseDao {
     )
     @JsonManagedReference
     @Builder.Default
-    @Cache(region = "skills", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "skills", usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Skill> skills = new HashSet<>();
+
+    @Override
+    public void removeRelationships() {
+        if (this.getSkills() != null) {
+            this.getSkills().clear();
+        }
+    }
 
 }

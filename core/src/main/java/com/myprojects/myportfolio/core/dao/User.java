@@ -234,6 +234,25 @@ public class User extends SlugDao {
         this.skills = null;
     }
 
+    @Override
+    public void removeRelationships() {
+        if (this.getDiaries() != null) {
+            this.getDiaries().clear();
+        }
+        if (this.getProjects() != null) {
+            this.getProjects().clear();
+        }
+        if (this.getEducations() != null) {
+            this.getEducations().clear();
+        }
+        if (this.getExperiences() != null) {
+            this.getExperiences().clear();
+        }
+        if (this.getSkills() != null) {
+            this.getSkills().clear();
+        }
+    }
+
     public User(Integer id, String email) {
         this.id = id;
         this.email = email;

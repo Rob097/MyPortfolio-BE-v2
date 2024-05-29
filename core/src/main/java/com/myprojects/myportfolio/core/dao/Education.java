@@ -162,7 +162,10 @@ public class Education extends SlugDao implements WithStoriesDao {
     @Override
     public void removeRelationships() {
         if (this.getStories() != null) {
-            this.getStories().forEach(story -> story.setEducation(null));
+            for (Story story : this.getStories()) {
+                story.setEducation(null);
+            }
+            this.getStories().clear();
         }
         if (this.getUser() != null) {
             this.getUser().getEducations().remove(this);

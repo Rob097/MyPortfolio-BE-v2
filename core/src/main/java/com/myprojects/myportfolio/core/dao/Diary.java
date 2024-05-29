@@ -2,15 +2,15 @@ package com.myprojects.myportfolio.core.dao;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import jakarta.persistence.*;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Setter
 @Getter
@@ -52,7 +52,7 @@ public class Diary extends AuditableDao implements WithStoriesDao {
     )
     @JsonBackReference
     @Builder.Default
-    @Cache(region = "users", usage=CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(region = "users", usage = CacheConcurrencyStrategy.READ_ONLY)
     private User user = new User();
 
     /**
@@ -92,6 +92,13 @@ public class Diary extends AuditableDao implements WithStoriesDao {
 
     @Override
     public void removeRelationships() {
+        if (this.getStories() != null) {
+            for (Story story : this.getStories()) {
+                story.setDiary(null);
+                story.removeRelationships();
+            }
+            this.getStories().clear();
+        }
         if (this.getUser() != null) {
             this.getUser().getDiaries().remove(this);
         }
@@ -107,7 +114,7 @@ public class Diary extends AuditableDao implements WithStoriesDao {
     //////////////////////
 
     public Integer getUserId() {
-        if(this.getUser()==null)
+        if (this.getUser() == null)
             return null;
         return this.getUser().getId();
     }

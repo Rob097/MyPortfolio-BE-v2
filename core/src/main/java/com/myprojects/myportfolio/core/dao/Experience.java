@@ -162,7 +162,10 @@ public class Experience extends SlugDao implements WithStoriesDao {
     @Override
     public void removeRelationships() {
         if (this.getStories() != null) {
-            this.getStories().forEach(story -> story.setExperience(null));
+            for (Story story : this.getStories()) {
+                story.setExperience(null);
+            }
+            this.getStories().clear();
         }
         if (this.getUser() != null) {
             this.getUser().getExperiences().remove(this);
