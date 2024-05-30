@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 @SequenceGenerator(name = "default_gen", sequenceName = "story_seq", allocationSize = 1)
 @Cacheable
 @Cache(region = "stories", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Story extends SlugDao {
+public class Story extends SlugDao implements WithStatusDao {
 
     @Serial
     private static final long serialVersionUID = 3219080188292925051L;

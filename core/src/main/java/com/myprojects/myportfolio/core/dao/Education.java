@@ -26,7 +26,7 @@ import java.util.Set;
 @SequenceGenerator(name = "default_gen", sequenceName = "education_seq", allocationSize = 1)
 @Cacheable
 @Cache(region = "educations", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Education extends SlugDao implements WithStoriesDao {
+public class Education extends SlugDao implements WithStoriesDao, WithStatusDao {
 
     @Serial
     private static final long serialVersionUID = 1569828648829514030L;

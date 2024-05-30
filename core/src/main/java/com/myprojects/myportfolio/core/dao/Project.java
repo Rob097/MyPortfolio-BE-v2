@@ -28,7 +28,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SequenceGenerator(name = "default_gen", sequenceName = "project_seq", allocationSize = 1)
 @Cacheable
 @Cache(region = "projects", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Project extends SlugDao implements WithStoriesDao {
+public class Project extends SlugDao implements WithStoriesDao, WithStatusDao {
 
     @Serial
     private static final long serialVersionUID = -9073812554333350801L;

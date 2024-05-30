@@ -27,7 +27,7 @@ import java.util.Set;
 @SequenceGenerator(name = "default_gen", sequenceName = "experience_seq", allocationSize = 1)
 @Cacheable
 @Cache(region = "experiences", usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Experience extends SlugDao implements WithStoriesDao {
+public class Experience extends SlugDao implements WithStoriesDao, WithStatusDao {
 
     @Serial
     private static final long serialVersionUID = 6813981328660668957L;
