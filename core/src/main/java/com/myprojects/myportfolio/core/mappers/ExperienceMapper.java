@@ -9,13 +9,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {StoryMapper.class, SkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface ExperienceMapper extends BaseMapper<Experience, ExperienceDto> {
+public abstract class ExperienceMapper extends BaseMapper<Experience, ExperienceDto> {
 
     @Override
     @Mapping(target = "userId", source = "entity.user.id")
-    ExperienceDto mapToDto(Experience entity, IView view);
+    public abstract ExperienceDto mapToDto(Experience entity, IView view);
 
     @Override
     @Mapping(target = "user.id", source = "userId")
-    Experience mapToDao(ExperienceDto dto);
+    public abstract Experience mapToDao(ExperienceDto dto);
 }

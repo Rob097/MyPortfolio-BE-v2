@@ -9,14 +9,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {StoryMapper.class, SkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface ProjectMapper extends BaseMapper<Project, ProjectDto> {
+public abstract class ProjectMapper extends BaseMapper<Project, ProjectDto> {
 
     @Override
     @Mapping(target = "userId", source = "entity.user.id")
-    ProjectDto mapToDto(Project entity, IView view);
+    public abstract ProjectDto mapToDto(Project entity, IView view);
 
     @Override
     @Mapping(target = "user.id", source = "userId")
-    Project mapToDao(ProjectDto dto);
+    public abstract Project mapToDao(ProjectDto dto);
 
 }

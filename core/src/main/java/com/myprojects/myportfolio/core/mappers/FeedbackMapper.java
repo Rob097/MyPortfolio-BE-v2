@@ -5,5 +5,5 @@ import com.myprojects.myportfolio.core.dto.FeedbackDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface FeedbackMapper extends BaseMapper<FeedbackDao, FeedbackDto> {
+public abstract class FeedbackMapper extends BaseMapper<FeedbackDao, FeedbackDto> {
 }

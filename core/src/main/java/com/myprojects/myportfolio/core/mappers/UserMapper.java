@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {DiaryMapper.class, ProjectMapper.class, EducationMapper.class, ExperienceMapper.class, UserSkillMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface UserMapper extends BaseMapper<User, UserDto> {
+public abstract class UserMapper extends BaseMapper<User, UserDto> {
 
     @Override
     @Mapping(target = "address.nationality", source = "dao.nationality")
@@ -21,7 +21,7 @@ public interface UserMapper extends BaseMapper<User, UserDto> {
     @Mapping(target = "address.city", source = "dao.city")
     @Mapping(target = "address.cap", source = "dao.cap")
     @Mapping(target = "address.address", source = "dao.address")
-    UserDto mapToDto(User dao, IView view);
+    public abstract UserDto mapToDto(User dao, IView view);
 
     @Override
     @Mapping(target = "nationality", source = "address.nationality")
@@ -30,6 +30,6 @@ public interface UserMapper extends BaseMapper<User, UserDto> {
     @Mapping(target = "city", source = "address.city")
     @Mapping(target = "cap", source = "address.cap")
     @Mapping(target = "address", source = "address.address")
-    User mapToDao(UserDto dto);
+    public abstract User mapToDao(UserDto dto);
 
 }

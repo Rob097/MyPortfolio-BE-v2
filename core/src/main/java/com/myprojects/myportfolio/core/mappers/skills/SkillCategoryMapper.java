@@ -6,5 +6,5 @@ import com.myprojects.myportfolio.core.mappers.BaseMapper;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface SkillCategoryMapper extends BaseMapper<SkillCategory, SkillCategoryDto> {
+public abstract class SkillCategoryMapper extends BaseMapper<SkillCategory, SkillCategoryDto> {
 }

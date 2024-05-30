@@ -9,14 +9,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {StoryMapper.class, UserMapper.class}, nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-public interface DiaryMapper extends BaseMapper<Diary, DiaryDto> {
+public abstract class DiaryMapper extends BaseMapper<Diary, DiaryDto> {
 
     @Override
     @Mapping(target = "userId", source = "entity.user.id")
-    DiaryDto mapToDto(Diary entity, IView view);
+    public abstract DiaryDto mapToDto(Diary entity, IView view);
 
     @Override
     @Mapping(target = "user.id", source = "userId")
-    Diary mapToDao(DiaryDto dto);
+    public abstract Diary mapToDao(DiaryDto dto);
 
 }

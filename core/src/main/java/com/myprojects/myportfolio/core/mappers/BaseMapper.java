@@ -9,18 +9,19 @@ import com.myprojects.myportfolio.core.dto.BaseDto;
 import com.myprojects.myportfolio.core.dto.StoryDto;
 import org.mapstruct.BeforeMapping;
 
-public interface BaseMapper<A extends BaseDao, T extends BaseDto> {
+public abstract class BaseMapper<A extends BaseDao, T extends BaseDto> {
 
-    T mapToDto(A dao, IView view);
 
-    A mapToDao(T dto);
+    public abstract T mapToDto(A dao, IView view);
 
-    default T mapToDto(A entity) {
+    public abstract A mapToDao(T dto);
+
+    public T mapToDto(A entity) {
         return mapToDto(entity, Verbose.value);
     }
 
     @BeforeMapping
-    default void beforeMapping(A dao, IView view) {
+    protected void beforeMapping(A dao, IView view) {
         if (!(view instanceof Verbose)) {
             dao.clearRelationships();
         }
