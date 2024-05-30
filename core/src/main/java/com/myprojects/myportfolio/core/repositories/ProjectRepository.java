@@ -19,7 +19,7 @@ public interface ProjectRepository extends BaseRepository<Project, Integer>, Use
     Optional<Project> findBySlugConstraint(@Param("slug") String slug, @Param("project") Object project);
 
     @Override
-    @Query("SELECT p.slug FROM Project p WHERE p.user.id = :#{#userId}")
-    Optional<List<String>> findSlugsByUserId(Integer userId);
+    @Query("SELECT p.slug FROM Project p WHERE p.user.id = :#{#userId} AND (:#{#isCurrentUser} = true OR p.status = 'PUBLISHED')")
+    Optional<List<String>> findSlugsByUserId(@Param("userId") Integer userId, @Param("isCurrentUser") boolean isCurrentUser);
 
 }

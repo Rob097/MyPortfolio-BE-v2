@@ -19,7 +19,7 @@ public interface StoryRepository extends BaseRepository<Story, Integer>, UserRel
     Optional<Story> findBySlugConstraint(@Param("slug") String slug, @Param("story") Object story);
 
     @Override
-    @Query("SELECT s.slug FROM Story s WHERE s.diary.user.id = :#{#userId}")
-    Optional<List<String>> findSlugsByUserId(Integer userId);
+    @Query("SELECT s.slug FROM Story s WHERE s.diary.user.id = :#{#userId} AND (:#{#isCurrentUser} = true OR s.status = 'PUBLISHED')")
+    Optional<List<String>> findSlugsByUserId(@Param("userId") Integer userId, @Param("isCurrentUser") boolean isCurrentUser);
 
 }

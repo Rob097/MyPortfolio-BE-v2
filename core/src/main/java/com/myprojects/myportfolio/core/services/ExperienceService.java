@@ -1,5 +1,6 @@
 package com.myprojects.myportfolio.core.services;
 
+import com.myprojects.myportfolio.core.configAndUtils.UtilsServiceI;
 import com.myprojects.myportfolio.core.dao.Experience;
 import com.myprojects.myportfolio.core.repositories.ExperienceRepository;
 import com.myprojects.myportfolio.core.repositories.StoryRepository;
@@ -19,16 +20,19 @@ public class ExperienceService extends WithStoriesService<Experience> implements
 
     private final StoryRepository storyRepository;
 
-    public ExperienceService(ExperienceRepository experienceRepository, StoryRepository storyRepository) {
+    private final UtilsServiceI utilsService;
+
+    public ExperienceService(ExperienceRepository experienceRepository, StoryRepository storyRepository, UtilsServiceI utilsService) {
         super(experienceRepository, storyRepository);
 
         this.experienceRepository = experienceRepository;
         this.storyRepository = storyRepository;
+        this.utilsService = utilsService;
     }
 
     @Override
     public List<String> findSlugsByUserId(Integer userId) {
-        return experienceRepository.findSlugsByUserId(userId).orElseThrow(() -> new RuntimeException("No experiences found for user id: " + userId));
+        return experienceRepository.findSlugsByUserId(userId, utilsService.hasId(userId)).orElseThrow(() -> new RuntimeException("No experiences found for user id: " + userId));
     }
 
     /**********************/

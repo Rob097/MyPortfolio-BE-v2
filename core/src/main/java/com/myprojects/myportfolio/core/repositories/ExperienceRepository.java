@@ -19,6 +19,6 @@ public interface ExperienceRepository extends BaseRepository<Experience, Integer
     Optional<Experience> findBySlugConstraint(@Param("slug") String slug, @Param("experience") Object experience);
 
     @Override
-    @Query("SELECT e.slug FROM Experience e WHERE e.user.id = :#{#userId}")
-    Optional<List<String>> findSlugsByUserId(Integer userId);
+    @Query("SELECT e.slug FROM Experience e WHERE e.user.id = :#{#userId} AND (:#{#isCurrentUser} = true OR e.status = 'PUBLISHED')")
+    Optional<List<String>> findSlugsByUserId(@Param("userId") Integer userId, @Param("isCurrentUser") boolean isCurrentUser);
 }

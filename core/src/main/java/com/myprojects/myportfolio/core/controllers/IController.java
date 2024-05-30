@@ -26,8 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +42,11 @@ public abstract class IController<R> {
     public final String filtersSeparator = ",";
     public final String DATE_FORMAT = "dd/MM/yyyy";
     public final String TIME_FORMAT = "HH:mm:ss";
+    private static final int MAX_DEPTH = 200;
+
+    private static final Set<Class<?>> SIMPLE_TYPES = new HashSet<>(Arrays.asList(
+            String.class, Integer.class, Long.class, Double.class, Float.class, Boolean.class, Character.class, Byte.class, Short.class
+    ));
 
 
     /* METHODS */
@@ -146,8 +150,9 @@ public abstract class IController<R> {
     public <C> ResponseEntity<MessageResources<C>> buildSuccessResponsesOfGenericType(@NotNull Iterable<C> iterable, IView view, List<Message> messages, boolean logErrors) {
         List<C> content = new ArrayList<>();
         for (C r : iterable) {
-            if (!isEmptyObject(r)) {
-                content.add(serializeElement(r, view, logErrors));
+            C serializedElement = serializeElement(r, view, logErrors);
+            if (serializedElement != null) {
+                content.add(serializedElement);
             }
         }
 
@@ -204,6 +209,11 @@ public abstract class IController<R> {
      */
     private <C> C serializeElement(C element, IView view, boolean logErrors) {
         try {
+            element = removeEmptyObjects(element, 0);
+            if (element == null) {
+                return null;
+            }
+
             Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
             Class<C> clazz = (Class<C>) actualTypeArguments[actualTypeArguments.length - 1];
 
@@ -219,16 +229,23 @@ public abstract class IController<R> {
     }
 
     /**
-     * Check if an object is empty
+     * Remove empty objects from a given object
      *
-     * @param obj the object to check
-     * @return true if the object is empty, false otherwise
+     * @param obj   the object to remove empty objects from
+     * @param depth the current depth
+     * @return the object without empty objects or null if the object is empty
      */
-    private <C> boolean isEmptyObject(C obj) {
-        if (obj == null) {
-            return true;
+    private <C> C removeEmptyObjects(C obj, int depth) {
+        if (obj == null || depth > MAX_DEPTH) {
+            return null;
         }
 
+        // Return false if obj is a primitive type or a "simple" type
+        if (obj.getClass().isPrimitive() || SIMPLE_TYPES.contains(obj.getClass())) {
+            return obj;
+        }
+
+        boolean hasNotEmptyFields = false;
         for (Field field : obj.getClass().getDeclaredFields()) {
             if (field.getName().equals("serialVersionUID")) {
                 continue; // Skip serialVersionUID field
@@ -238,11 +255,19 @@ public abstract class IController<R> {
             try {
                 if (field.get(obj) != null) {
                     if (field.get(obj) instanceof Iterable<?> iterable) {
-                        if (iterable.iterator().hasNext()) {
-                            return false;
+                        Iterator<?> iterator = iterable.iterator();
+                        while (iterator.hasNext()) {
+                            Object o = iterator.next();
+                            Object removed = removeEmptyObjects(o, depth + 1);
+                            if (removed == null) {
+                                iterator.remove();
+                            } else {
+                                hasNotEmptyFields = true;
+                            }
                         }
                     } else {
-                        return false;
+                        hasNotEmptyFields = true;
+                        continue;
                     }
                 }
             } catch (IllegalAccessException e) {
@@ -250,7 +275,7 @@ public abstract class IController<R> {
             }
         }
 
-        return true;
+        return hasNotEmptyFields ? obj : null;
     }
 
 }

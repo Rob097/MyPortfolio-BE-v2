@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface UserRelatedRepository<A extends BaseDao> {
 
-    Optional<List<String>> findSlugsByUserId(java.lang.Integer userId);
+    Optional<List<String>> findSlugsByUserId(Integer userId, boolean isCurrentUser);
 
 }

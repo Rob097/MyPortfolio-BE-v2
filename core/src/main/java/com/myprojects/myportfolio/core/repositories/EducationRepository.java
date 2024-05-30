@@ -19,7 +19,7 @@ public interface EducationRepository extends BaseRepository<Education, Integer>,
     Optional<Education> findBySlugConstraint(@Param("slug") String slug, @Param("education") Object education);
 
     @Override
-    @Query("SELECT e.slug FROM Education e WHERE e.user.id = :#{#userId}")
-    Optional<List<String>> findSlugsByUserId(Integer userId);
+    @Query("SELECT e.slug FROM Education e WHERE e.user.id = :#{#userId} AND (:#{#isCurrentUser} = true OR e.status = 'PUBLISHED')")
+    Optional<List<String>> findSlugsByUserId(@Param("userId") Integer userId, @Param("isCurrentUser") boolean isCurrentUser);
 
 }

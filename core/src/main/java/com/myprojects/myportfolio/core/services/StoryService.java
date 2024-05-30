@@ -42,7 +42,7 @@ public class StoryService extends BaseService<Story> implements StoryServiceI {
 
     @Override
     public List<String> findSlugsByUserId(Integer userId) {
-        return storyRepository.findSlugsByUserId(userId).orElseThrow(() -> new RuntimeException("No stories found for user id: " + userId));
+        return storyRepository.findSlugsByUserId(userId, utilsService.hasId(userId)).orElseThrow(() -> new RuntimeException("No stories found for user id: " + userId));
     }
 
     @Override
