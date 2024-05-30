@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
@@ -143,16 +144,18 @@ public abstract class IController<R> {
     }
 
     public <C> ResponseEntity<MessageResources<C>> buildSuccessResponsesOfGenericType(@NotNull Iterable<C> iterable, IView view, List<Message> messages, boolean logErrors) {
-        boolean isLast = true;
-        long count = iterable.spliterator().getExactSizeIfKnown();
-        if (iterable instanceof Page<C> page) {
-            isLast = page.isLast();
-            count = page.getTotalElements();
-        }
-
         List<C> content = new ArrayList<>();
         for (C r : iterable) {
-            content.add(serializeElement(r, view, logErrors));
+            if (!isEmptyObject(r)) {
+                content.add(serializeElement(r, view, logErrors));
+            }
+        }
+
+        boolean isLast = true;
+        long count = content.spliterator().getExactSizeIfKnown();
+        if (iterable instanceof Page<C> page) {
+            isLast = page.isLast();
+            count = content.size();//page.getTotalElements();
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -213,6 +216,41 @@ public abstract class IController<R> {
                 log.error("Error in serializeElement: " + e.getMessage());
             return element;
         }
+    }
+
+    /**
+     * Check if an object is empty
+     *
+     * @param obj the object to check
+     * @return true if the object is empty, false otherwise
+     */
+    private <C> boolean isEmptyObject(C obj) {
+        if (obj == null) {
+            return true;
+        }
+
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            if (field.getName().equals("serialVersionUID")) {
+                continue; // Skip serialVersionUID field
+            }
+
+            field.setAccessible(true);
+            try {
+                if (field.get(obj) != null) {
+                    if (field.get(obj) instanceof Iterable<?> iterable) {
+                        if (iterable.iterator().hasNext()) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Error in isEmptyObject: " + e.getMessage(), e);
+            }
+        }
+
+        return true;
     }
 
 }
