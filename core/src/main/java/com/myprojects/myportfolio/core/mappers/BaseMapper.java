@@ -37,7 +37,12 @@ public abstract class BaseMapper<A extends BaseDao, T extends BaseDto> {
     protected T afterMappingToDto(@MappingTarget T dto, A entity, IView view) {
         try {
             if (entity instanceof WithStatusDao) {
-                boolean isOfCurrentUser = utilsService.isOfCurrentUser(entity, false);
+                boolean isOfCurrentUser = false;
+                try {
+                    isOfCurrentUser = utilsService.isOfCurrentUser(entity, false);
+                } catch (Exception e) {
+                    // May happen an exception during delete operations.
+                }
 
                 // If the entity is NOT of the current user we have to return it only if its status is PUBLISHED. Otherwise, we return a new instance of the dto:
                 if (!isOfCurrentUser && !((WithStatusDao) entity).getStatus().equals(EntitiesStatusEnum.PUBLISHED)) {
