@@ -2,3 +2,5 @@
 **/target
 **/*.iml
 **/serviceAccountKey.json
+**/*.yml
+**/*.yaml
