@@ -4,3 +4,6 @@
 **/serviceAccountKey.json
 **/*.yml
 **/*.yaml
+!docker-compose-dev.yml
+!docker-compose-prod.yml
+!k8s
