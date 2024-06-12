@@ -13,4 +13,8 @@ public interface UtilsServiceI {
     <T extends BaseDto> boolean isOfCurrentUser(T entity, boolean isCreate);
 
     <T extends BaseDao> boolean isOfCurrentUser(T entity, boolean isCreate);
+
+    String getCurrentProfile();
+
+    boolean isProd();
 }

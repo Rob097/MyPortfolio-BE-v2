@@ -125,7 +125,7 @@ public abstract class IController<R> {
     }
 
     public ResponseEntity<MessageResource<R>> buildSuccessResponse(@NotNull R element, IView view, List<Message> messages) {
-        return this.buildSuccessResponseOfGenericType(element, view, new ArrayList<>(), true);
+        return this.buildSuccessResponseOfGenericType(element, view, messages, true);
     }
 
     public <C> ResponseEntity<MessageResource<C>> buildSuccessResponseOfGenericType(@NotNull C element, IView view, List<Message> messages, boolean logErrors) {
@@ -144,7 +144,7 @@ public abstract class IController<R> {
     }
 
     public ResponseEntity<MessageResources<R>> buildSuccessResponses(@NotNull Iterable<R> iterable, IView view, List<Message> messages) {
-        return this.buildSuccessResponsesOfGenericType(iterable, view, new ArrayList<>(), true);
+        return this.buildSuccessResponsesOfGenericType(iterable, view, messages, true);
     }
 
     public <C> ResponseEntity<MessageResources<C>> buildSuccessResponsesOfGenericType(@NotNull Iterable<C> iterable, IView view, List<Message> messages, boolean logErrors) {

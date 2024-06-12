@@ -4,6 +4,7 @@ import com.myprojects.myportfolio.core.dao.*;
 import com.myprojects.myportfolio.core.dto.*;
 import com.myprojects.myportfolio.core.repositories.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +26,16 @@ public class UtilsService implements UtilsServiceI {
 
     private final StoryRepository storyRepository;
 
-    public UtilsService(UserRepository userRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, ExperienceRepository experienceRepository, StoryRepository storyRepository) {
+    private final Environment environment;
+
+    public UtilsService(UserRepository userRepository, DiaryRepository diaryRepository, ProjectRepository projectRepository, EducationRepository educationRepository, ExperienceRepository experienceRepository, StoryRepository storyRepository, Environment environment) {
         this.userRepository = userRepository;
         this.diaryRepository = diaryRepository;
         this.projectRepository = projectRepository;
         this.educationRepository = educationRepository;
         this.experienceRepository = experienceRepository;
         this.storyRepository = storyRepository;
+        this.environment = environment;
     }
 
     /**
@@ -167,6 +171,19 @@ public class UtilsService implements UtilsServiceI {
                 throw new RuntimeException("Unknown entity type");
             }
         }
+    }
+
+    @Override
+    public String getCurrentProfile() {
+        String profile = environment.getActiveProfiles()[0];
+        log.info("Current profile: " + profile);
+        return profile;
+    }
+
+    @Override
+    public boolean isProd() {
+        String profile = getCurrentProfile();
+        return profile != null && profile.equals("prod");
     }
 
     private boolean isJUnitTest() {

@@ -2,27 +2,23 @@ package com.myprojects.myportfolio.core.controllers;
 
 import com.myprojects.myportfolio.clients.general.PatchOperation;
 import com.myprojects.myportfolio.clients.general.SetUpRequest;
-import com.myprojects.myportfolio.clients.general.messages.IMessage;
-import com.myprojects.myportfolio.clients.general.messages.Message;
 import com.myprojects.myportfolio.clients.general.messages.MessageResource;
 import com.myprojects.myportfolio.clients.general.messages.MessageResources;
 import com.myprojects.myportfolio.clients.general.views.IView;
 import com.myprojects.myportfolio.clients.general.views.Normal;
 import com.myprojects.myportfolio.core.dao.User;
-import com.myprojects.myportfolio.core.files.FileTypeEnum;
 import com.myprojects.myportfolio.core.dto.UserDto;
 import com.myprojects.myportfolio.core.mappers.UserMapper;
 import com.myprojects.myportfolio.core.repositories.UserRepository;
+import com.myprojects.myportfolio.core.services.AttachmentServiceI;
 import com.myprojects.myportfolio.core.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -37,13 +33,16 @@ public class UserController extends UserRelatedBaseController<User, UserDto> {
 
     private final UserRepository userRepository;
 
-    public UserController(UserRepository userRepository, UserService userService, UserMapper userMapper) {
+    private final AttachmentServiceI attachmentService;
+
+    public UserController(UserRepository userRepository, UserService userService, UserMapper userMapper, AttachmentServiceI attachmentService) {
         super(userService, userMapper);
 
         this.userService = userService;
         this.userMapper = userMapper;
 
         this.userRepository = userRepository;
+        this.attachmentService = attachmentService;
     }
 
     /** Methods, if not overridden under, are implemented in super class. */
@@ -123,6 +122,24 @@ public class UserController extends UserRelatedBaseController<User, UserDto> {
         Integer nextId = userRepository.getNextId();
         userRepository.incrementNextId();
         return this.buildSuccessResponseOfGenericType(nextId, Normal.value, new ArrayList<>(), false);
+    }
+
+    @Override
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<MessageResource<UserDto>> delete(
+            @PathVariable("id") Integer id
+    ) throws Exception {
+
+        // Safety check
+        if (!utilsService.isOfCurrentUser(User.builder().id(id).build(), false)) {
+            throw new Exception("You can't delete this user because it's not you.");
+        }
+
+        // Delete all attachments of the user (from firebase and DB)
+        attachmentService.deleteByUserId(id);
+
+        // Delete the user and all related data
+        return super.delete(id);
     }
 
 }

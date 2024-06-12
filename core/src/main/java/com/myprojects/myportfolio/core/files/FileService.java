@@ -65,7 +65,7 @@ public class FileService implements FileServiceI {
     /** File operations **/
     /*********************/
 
-    @EventListener
+    /*@EventListener
     public void init(ApplicationReadyEvent event) {
         log.info("Initializing Firebase...");
         try {
@@ -84,7 +84,7 @@ public class FileService implements FileServiceI {
         }
 
         log.info("Firebase initialized successfully.");
-    }
+    }*/
 
     @Override
     public String getImageUrl(String name) {
