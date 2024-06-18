@@ -37,16 +37,22 @@ public class AttachmentController extends UserRelatedBaseController<Attachment, 
             @RequestParam(name = "files") MultipartFile[] files
     ) {
         List<Attachment> attachments = new ArrayList<>();
+        List<Message> messages = new ArrayList<>();
         for (MultipartFile file : files) {
-            try {
-                attachments.add(attachmentService.save(file));
-            } catch (Exception e) {
-                log.error("Error while saving file", e);
+
+            if (file.getSize() <= 1024 * 1024) {
+                try {
+                    attachments.add(attachmentService.save(file));
+                } catch (Exception e) {
+                    log.error("Error while saving file", e);
+                }
+            } else {
+                messages.add(new Message("File " + file.getOriginalFilename() + " is too large. Maximum size is 1MB", IMessage.Level.ERROR));
             }
         }
 
         List<AttachmentDto> attachmentsDto = attachments.stream().map(attachmentMapper::mapToDto).collect(Collectors.toList());
-        return this.buildSuccessResponses(attachmentsDto);
+        return this.buildSuccessResponses(attachmentsDto, null, messages);
     }
 
     @DeleteMapping("/delete")

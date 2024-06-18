@@ -98,8 +98,8 @@ public class AttachmentService extends BaseService<Attachment> implements Attach
             if (file.getOriginalFilename() == null) {
                 throw new RuntimeException("File name is required.");
             }
-            String folderName = (utilsService.isProd() ? "" : "TEST_" ) + "USER_" + currentLoggedInUser.getId();
-            name = folderName + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
+            String folderName = (utilsService.isProd() ? "" : "TEST_") + "USER_" + currentLoggedInUser.getId();
+            name = folderName + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll("\\s|\\(|\\)", "_");
         }
 
         bucket.create(name, file.getBytes(), file.getContentType());
