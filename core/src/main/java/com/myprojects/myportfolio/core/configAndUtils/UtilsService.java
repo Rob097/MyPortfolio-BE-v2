@@ -183,7 +183,7 @@ public class UtilsService implements UtilsServiceI {
     @Override
     public boolean isProd() {
         String profile = getCurrentProfile();
-        return profile != null && profile.equals("prod");
+        return profile != null && profile.contains("prod");
     }
 
     private boolean isJUnitTest() {
