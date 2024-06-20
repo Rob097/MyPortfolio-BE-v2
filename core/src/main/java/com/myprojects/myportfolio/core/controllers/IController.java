@@ -160,7 +160,7 @@ public abstract class IController<R> {
         long count = content.spliterator().getExactSizeIfKnown();
         if (iterable instanceof Page<C> page) {
             isLast = page.isLast();
-            count = content.size();//page.getTotalElements();
+            count = page.getTotalElements() - (count - content.size());
         }
 
         HttpHeaders headers = new HttpHeaders();
