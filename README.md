@@ -19,7 +19,7 @@ So the technology stack used is the following:
 	- Zipkin used to trace requests and responses between microservices
 	- Security: Spring security with *JWT Token*
 	- Cache: *Redis* for in memory cache
-- FrontEnd: Angular. For more information, visit the relative GitHub repository [here](https://github.com/Rob097/MyPortfolio-Frontend).
+- FrontEnd: React microfrontends + NextJs. For more information, visit the relative GitHub repository [here](https://github.com/Rob097/MyPortfolio-FE-React).
 
 
 For all the details check out the [Wiki of the repository](https://github.com/Rob097/MyPortfolio-BE-v2/wiki)
