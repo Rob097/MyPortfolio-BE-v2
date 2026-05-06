@@ -1,25 +1,26 @@
-# MyPortfolio-BE
-Hi! This is the BackEnd of MyPortfolio.
+# MyPortfolio — Backend
 
-### *What is MyPortfolio?*
-MyPortfolio is a place where you can tell your own stories. About your job, your educational path, your projects and so on. 
+Backend of MyPortfolio, a platform for building detailed professional portfolios structured as stories. This service exposes the APIs consumed by the [React frontend](https://github.com/Rob097/MyPortfolio-FE-React).
 
-MyPortfolio is meant to be a community for those people who want to see beyond just a completed project or simple hiring. For those who wants to know the whole story that is behind these achievements.
+---
 
-### How its build
-The architectural design used to create this project is based on the **Microservices design**.
+## Architecture
 
-So the technology stack used is the following:
+The backend follows a **microservices design**, with each service running as a Docker container managed by a Kubernetes cluster.
 
- - Deployed on **docker** and managed using a **Kubernetes** cluster
- - Database: Relational DB using MySql.
- - BackEnd: Java with spring boot as framework.
- 	- *ApiGateway* as entryPoint of microservices and used as *LoadBalancer*
-	- EurekaServer used to track every microservice status
-	- Zipkin used to trace requests and responses between microservices
-	- Security: Spring security with *JWT Token*
-	- Cache: *Redis* for in memory cache
-- FrontEnd: React microfrontends + NextJs. For more information, visit the relative GitHub repository [here](https://github.com/Rob097/MyPortfolio-FE-React).
+| Service | Role |
+|---|---|
+| API Gateway | Entry point and load balancer for all microservices |
+| Eureka Server | Service registry — tracks every microservice status |
+| Zipkin | Distributed tracing across services |
+| Auth Service | Authentication via Spring Security and JWT |
+| Core Service | Main business logic, connected to MySQL |
+| Cache | Redis for in-memory caching |
 
+**Database:** MySQL
 
-For all the details check out the [Wiki of the repository](https://github.com/Rob097/MyPortfolio-BE-v2/wiki)
+**Security:** Spring Security with JWT tokens
+
+**Frontend:** React microfrontend architecture with Next.js — see the [frontend repository](https://github.com/Rob097/MyPortfolio-FE-React).
+
+For full technical details, see the [repository wiki](https://github.com/Rob097/MyPortfolio-BE-v2/wiki).
